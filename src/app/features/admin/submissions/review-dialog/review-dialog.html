@@ -1,0 +1,120 @@
+<h2 mat-dialog-title>{{ 'admin.review.title' | translate }}</h2>
+
+<mat-dialog-content>
+  <dl class="details">
+    <dt>{{ 'fields.doctorName' | translate }}</dt>
+    <dd class="font-semibold">{{ submission.full_name }}</dd>
+
+    <dt>{{ 'fields.specialty' | translate }}</dt>
+    <dd>
+      @if (submission.specialty) {
+        {{ language.name(submission.specialty) }}
+      } @else {
+        {{ submission.specialty_other }}
+        <span class="badge">{{ 'admin.review.unlisted' | translate }}</span>
+      }
+    </dd>
+
+    <dt>{{ 'fields.location' | translate }}</dt>
+    <dd>{{ language.name(submission.governorate) }} · {{ language.name(submission.area) }}</dd>
+
+    <dt>{{ 'fields.address' | translate }}</dt>
+    <dd>{{ submission.address }}</dd>
+
+    @if (submission.clinic_phone) {
+      <dt>{{ 'fields.clinicPhone' | translate }}</dt>
+      <dd dir="ltr" class="text-start">{{ submission.clinic_phone }}</dd>
+    }
+
+    @if (map) {
+      <dt>{{ 'fields.mapUrl' | translate }}</dt>
+      <dd>
+        <a class="text-brand-800 underline" [href]="map" target="_blank" rel="noopener noreferrer">
+          {{ 'actions.map' | translate }}
+        </a>
+      </dd>
+    }
+
+    @if (submission.submitter_name || submission.submitter_contact) {
+      <dt>{{ 'admin.review.submitter' | translate }}</dt>
+      <dd>{{ submission.submitter_name }} {{ submission.submitter_contact }}</dd>
+    }
+
+    @if (submission.admin_note) {
+      <dt>{{ 'fields.adminNote' | translate }}</dt>
+      <dd>{{ submission.admin_note }}</dd>
+    }
+  </dl>
+
+  @if (pending) {
+    <section class="mt-4" aria-labelledby="dup-title">
+      <h3 id="dup-title" class="mb-2 font-bold text-slate-900">{{ 'admin.review.duplicates' | translate }}</h3>
+      @if (duplicates() === null) {
+        <app-loading-state />
+      } @else if (duplicates()!.length === 0) {
+        <p class="text-slate-700">{{ 'admin.review.noDuplicates' | translate }}</p>
+      } @else {
+        <ul class="space-y-2" role="list">
+          @for (dup of duplicates(); track dup.id) {
+            <li class="dup">
+              <p class="font-semibold">{{ dup.full_name }}</p>
+              <p class="text-sm text-slate-700">
+                {{ dup.specialty_name_ar }} · {{ dup.area_name_ar }} · {{ dup.address }}
+              </p>
+              <p class="text-sm">
+                @if (dup.phone_match) {
+                  <span class="badge badge-rejected">{{ 'admin.review.samePhone' | translate }}</span>
+                }
+                <span class="badge">{{ 'admin.review.similarity' | translate: { value: (dup.name_similarity * 100).toFixed(0) } }}</span>
+              </p>
+            </li>
+          }
+        </ul>
+        <label class="check mt-2">
+          <input type="checkbox" [checked]="allowDuplicate()" (change)="onAllowDuplicate($event)" />
+          <span>{{ 'admin.review.allowDuplicate' | translate }}</span>
+        </label>
+      }
+    </section>
+
+    <section class="mt-4">
+      <label class="mb-1 block text-sm font-semibold text-slate-800" for="r-specialty">
+        {{ 'admin.review.specialtyToUse' | translate }}
+      </label>
+      <select id="r-specialty" class="control" [value]="specialtyId()" (change)="onSpecialty($event)">
+        <option value="">{{ 'common.choose' | translate }}</option>
+        @for (specialty of locations.specialties(); track specialty.id) {
+          <option [value]="specialty.id" [selected]="specialty.id === specialtyId()">
+            {{ language.name(specialty) }}
+          </option>
+        }
+      </select>
+      @if (!submission.specialty_id) {
+        <p class="mt-1 text-xs text-slate-600">{{ 'admin.review.specialtyHint' | translate }}</p>
+      }
+    </section>
+
+    <section class="mt-4">
+      <label class="mb-1 block text-sm font-semibold text-slate-800" for="r-note">
+        {{ 'admin.review.rejectNote' | translate }}
+      </label>
+      <textarea id="r-note" class="control" rows="2" maxlength="500" (input)="onNote($event)"></textarea>
+    </section>
+  }
+
+  @if (failure(); as key) {
+    <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button matButton type="button" mat-dialog-close>{{ 'common.close' | translate }}</button>
+  @if (pending) {
+    <button matButton type="button" class="danger-button" [disabled]="busy()" (click)="reject()">
+      {{ 'admin.review.reject' | translate }}
+    </button>
+    <button matButton="filled" type="button" [disabled]="busy()" (click)="approve()">
+      {{ 'admin.review.approve' | translate }}
+    </button>
+  }
+</mat-dialog-actions>

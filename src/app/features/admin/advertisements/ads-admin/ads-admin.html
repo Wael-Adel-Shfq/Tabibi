@@ -1,0 +1,101 @@
+<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-xl font-bold text-slate-900">{{ 'admin.nav.advertisements' | translate }}</h1>
+  <button matButton="filled" type="button" (click)="edit()">{{ 'admin.ads.add' | translate }}</button>
+</div>
+
+<form class="admin-filters" role="search" (submit)="$event.preventDefault()">
+  <div>
+    <label for="ad-search">{{ 'common.search' | translate }}</label>
+    <input id="ad-search" class="control" type="search" autocomplete="off" (input)="onTerm($event)" />
+  </div>
+  <div>
+    <label for="ad-placement">{{ 'fields.placement' | translate }}</label>
+    <select id="ad-placement" class="control" (change)="onPlacement($event)">
+      <option value="">{{ 'filters.allPlacements' | translate }}</option>
+      @for (placement of placements; track placement) {
+        <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
+      }
+    </select>
+  </div>
+</form>
+
+@if (list.error()) {
+  <app-error-state (retry)="list.refresh()" />
+} @else if (!list.loaded()) {
+  <app-loading-state />
+} @else if (list.empty()) {
+  <app-empty-state message="admin.noRecords" />
+} @else {
+  <div class="table-wrap card" [attr.aria-busy]="list.loading()">
+    <table class="admin-table">
+      <caption class="sr-only">
+        {{ 'admin.nav.advertisements' | translate }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'fields.image' | translate }}</th>
+          <th scope="col">{{ 'fields.title' | translate }}</th>
+          <th scope="col">{{ 'fields.placement' | translate }}</th>
+          <th scope="col">{{ 'fields.displayOrder' | translate }}</th>
+          <th scope="col">{{ 'fields.period' | translate }}</th>
+          <th scope="col">{{ 'fields.active' | translate }}</th>
+          <th scope="col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ad of list.items(); track ad.id) {
+          <tr>
+            <td>
+              <img class="thumb" [src]="ads.imageUrl(ad.image_path)" alt="" width="96" height="40" loading="lazy" />
+            </td>
+            <th scope="row">
+              {{ ad.title }}
+              <span class="block text-sm font-normal text-slate-700">{{ ad.advertiser_name }}</span>
+            </th>
+            <td>{{ 'placements.' + ad.placement | translate }}</td>
+            <td>{{ ad.display_order }}</td>
+            <td dir="ltr" class="whitespace-nowrap text-start text-sm">
+              {{ ad.starts_at ? (ad.starts_at | date: 'yyyy-MM-dd') : '…' }} →
+              {{ ad.ends_at ? (ad.ends_at | date: 'yyyy-MM-dd') : '…' }}
+            </td>
+            <td>
+              <mat-slide-toggle
+                [checked]="ad.is_active"
+                (change)="toggle(ad, $event.checked)"
+                [aria-label]="('fields.active' | translate) + ': ' + ad.title"
+              />
+            </td>
+            <td class="whitespace-nowrap">
+              <button
+                matButton
+                type="button"
+                (click)="edit(ad)"
+                [attr.aria-label]="('common.edit' | translate) + ': ' + ad.title"
+              >
+                {{ 'common.edit' | translate }}
+              </button>
+              <button
+                matButton
+                type="button"
+                class="danger-button"
+                (click)="remove(ad)"
+                [attr.aria-label]="('common.delete' | translate) + ': ' + ad.title"
+              >
+                {{ 'common.delete' | translate }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<mat-paginator
+  [length]="list.total()"
+  [pageIndex]="list.page()"
+  [pageSize]="pageSize"
+  [hidePageSize]="true"
+  [showFirstLastButtons]="true"
+  (page)="onPage($event)"
+/>

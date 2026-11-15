@@ -1,0 +1,10 @@
+<div class="flex flex-col items-center gap-3 px-4 py-10 text-center" role="alert">
+  <p class="text-red-800">{{ message() | translate }}</p>
+  <button
+    type="button"
+    class="focus-ring min-h-11 rounded-lg border border-brand-700 px-4 font-semibold text-brand-800"
+    (click)="retry.emit()"
+  >
+    {{ 'common.retry' | translate }}
+  </button>
+</div>

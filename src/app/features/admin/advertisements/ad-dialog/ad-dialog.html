@@ -1,0 +1,116 @@
+<h2 mat-dialog-title>{{ (data.ad ? 'admin.ads.edit' : 'admin.ads.add') | translate }}</h2>
+
+@if (!ready()) {
+  <mat-dialog-content><app-loading-state /></mat-dialog-content>
+} @else {
+  <form novalidate (submit)="onSubmit($event)">
+    <mat-dialog-content>
+      <app-form-field label="fields.title" for="a-title" [field]="ad.title" [required]="true">
+        <input id="a-title" class="control" type="text" autocomplete="off" [formField]="ad.title" />
+      </app-form-field>
+
+      <app-form-field label="fields.advertiser" for="a-advertiser" [field]="ad.advertiser_name" [required]="true">
+        <input id="a-advertiser" class="control" type="text" autocomplete="off" [formField]="ad.advertiser_name" />
+      </app-form-field>
+
+      <div class="mb-4">
+        <label class="mb-1 block text-sm font-semibold text-slate-800" for="a-image">
+          {{ 'fields.image' | translate }}
+          @if (!data.ad) {
+            <span class="text-red-700" aria-hidden="true">*</span>
+          }
+        </label>
+        @if (imageSrc(); as src) {
+          <img class="preview" [src]="src" [alt]="'admin.ads.preview' | translate" width="600" height="250" />
+        }
+        <input
+          id="a-image"
+          class="control"
+          type="file"
+          [accept]="accept"
+          aria-describedby="a-image-hint"
+          [attr.aria-invalid]="imageMissing()"
+          (change)="onFile($event)"
+        />
+        <p id="a-image-hint" class="mt-1 text-xs text-slate-600">{{ 'hints.adImage' | translate }}</p>
+        @if (imageMissing()) {
+          <p class="mt-1 text-sm font-semibold text-red-700" role="alert">{{ 'admin.ads.imageRequired' | translate }}</p>
+        }
+      </div>
+
+      <div class="grid gap-x-3 sm:grid-cols-2">
+        <app-form-field label="fields.placement" for="a-placement" [field]="ad.placement" [required]="true">
+          <select id="a-placement" class="control" [formField]="ad.placement">
+            @for (placement of placements; track placement) {
+              <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field
+          label="fields.displayOrder"
+          for="a-order"
+          [field]="ad.display_order"
+          [required]="true"
+          hint="hints.sortOrder"
+        >
+          <input id="a-order" class="control" type="text" inputmode="numeric" dir="ltr" [formField]="ad.display_order" />
+        </app-form-field>
+
+        <app-form-field label="fields.startsAt" for="a-start" [field]="ad.starts_at" hint="hints.optional">
+          <input id="a-start" class="control" type="datetime-local" dir="ltr" [formField]="ad.starts_at" />
+        </app-form-field>
+
+        <app-form-field label="fields.endsAt" for="a-end" [field]="ad.ends_at" hint="hints.optional">
+          <input id="a-end" class="control" type="datetime-local" dir="ltr" [formField]="ad.ends_at" />
+        </app-form-field>
+
+        <app-form-field label="fields.governorate" for="a-governorate" [field]="ad.governorate_id" hint="hints.adGovernorate">
+          <select id="a-governorate" class="control" [formField]="ad.governorate_id" (change)="onGovernorateChange()">
+            <option value="">{{ 'filters.allGovernorates' | translate }}</option>
+            @for (governorate of locations.governorates(); track governorate.id) {
+              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.area" for="a-area" [field]="ad.area_id">
+          <select id="a-area" class="control" [formField]="ad.area_id">
+            <option value="">{{ 'filters.allAreas' | translate }}</option>
+            @for (area of areaOptions.areas(); track area.id) {
+              <option [value]="area.id">{{ language.name(area) }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.phone" for="a-phone" [field]="ad.phone">
+          <input id="a-phone" class="control" type="tel" dir="ltr" autocomplete="off" [formField]="ad.phone" />
+        </app-form-field>
+
+        <app-form-field label="fields.mapUrl" for="a-map" [field]="ad.map_url">
+          <input id="a-map" class="control" type="url" dir="ltr" autocomplete="off" [formField]="ad.map_url" />
+        </app-form-field>
+      </div>
+
+      <app-form-field label="fields.address" for="a-address" [field]="ad.address">
+        <textarea id="a-address" class="control" rows="2" [formField]="ad.address"></textarea>
+      </app-form-field>
+
+      <label class="check">
+        <input type="checkbox" [formField]="ad.is_active" />
+        <span>{{ 'fields.active' | translate }}</span>
+      </label>
+
+      @if (failure(); as key) {
+        <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton type="button" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+      <button matButton="filled" type="submit" [disabled]="ad().submitting()">
+        {{ (ad().submitting() ? 'common.sending' : 'common.save') | translate }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+}

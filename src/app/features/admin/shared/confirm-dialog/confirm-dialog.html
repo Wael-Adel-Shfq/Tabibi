@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{ data.title | translate }}</h2>
+<mat-dialog-content>
+  @if (data.subject) {
+    <p class="font-semibold text-slate-900">{{ data.subject }}</p>
+  }
+  @if (data.message) {
+    <p class="text-slate-700">{{ data.message | translate }}</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton type="button" [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
+  <button
+    matButton="filled"
+    type="button"
+    [class.danger]="data.danger"
+    [mat-dialog-close]="true"
+  >
+    {{ data.confirm | translate }}
+  </button>
+</mat-dialog-actions>

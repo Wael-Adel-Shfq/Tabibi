@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>
+  {{ (data.item ? 'common.edit' : 'common.add') | translate }} ·
+  {{ 'admin.singular.' + data.table | translate }}
+</h2>
+
+<form novalidate (submit)="onSubmit($event)">
+  <mat-dialog-content>
+    @if (isArea) {
+      <app-form-field
+        label="fields.governorate"
+        for="lookup-gov"
+        [field]="lookup.governorate_id"
+        [required]="true"
+      >
+        <select id="lookup-gov" class="control" [formField]="lookup.governorate_id">
+          <option value="">{{ 'common.choose' | translate }}</option>
+          @for (governorate of locations.governorates(); track governorate.id) {
+            <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+          }
+        </select>
+      </app-form-field>
+    }
+
+    <app-form-field label="fields.nameAr" for="lookup-ar" [field]="lookup.name_ar" [required]="true">
+      <input id="lookup-ar" class="control" type="text" lang="ar" dir="rtl" [formField]="lookup.name_ar" />
+    </app-form-field>
+
+    <app-form-field label="fields.nameEn" for="lookup-en" [field]="lookup.name_en" [required]="!isArea">
+      <input id="lookup-en" class="control" type="text" lang="en" dir="ltr" [formField]="lookup.name_en" />
+    </app-form-field>
+
+    <app-form-field
+      label="fields.sortOrder"
+      for="lookup-order"
+      [field]="lookup.sort_order"
+      [required]="true"
+      hint="hints.sortOrder"
+    >
+      <input
+        id="lookup-order"
+        class="control"
+        type="text"
+        inputmode="numeric"
+        dir="ltr"
+        [formField]="lookup.sort_order"
+      />
+    </app-form-field>
+
+    <label class="check">
+      <input type="checkbox" [formField]="lookup.is_active" />
+      <span>{{ 'fields.active' | translate }}</span>
+    </label>
+
+    @if (failure(); as key) {
+      <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button matButton type="button" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+    <button matButton="filled" type="submit" [disabled]="lookup().submitting()">
+      {{ 'common.save' | translate }}
+    </button>
+  </mat-dialog-actions>
+</form>

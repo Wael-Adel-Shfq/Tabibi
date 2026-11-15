@@ -1,0 +1,68 @@
+<app-public-header title="facilities.title" />
+
+<ion-content>
+  <main class="mx-auto max-w-3xl space-y-4 p-4">
+    <h1 class="sr-only">{{ 'facilities.title' | translate }}</h1>
+
+    <div class="types" role="group" [attr.aria-label]="'facilities.typeLabel' | translate">
+      @for (type of types; track type) {
+        <button
+          type="button"
+          class="type focus-ring"
+          [class.type-selected]="filter.facilityType() === type"
+          [attr.aria-pressed]="filter.facilityType() === type"
+          (click)="selectType(type)"
+        >
+          {{ 'facilityTypes.' + type | translate }}
+        </button>
+      }
+    </div>
+
+    <form class="space-y-3" role="search" (submit)="$event.preventDefault()">
+      <div>
+        <label class="mb-1 block text-sm font-semibold text-slate-800" for="facility-search">
+          {{ 'facilities.searchLabel' | translate }}
+        </label>
+        <input
+          id="facility-search"
+          class="control"
+          type="search"
+          autocomplete="off"
+          [value]="filter.facilityTerm()"
+          (input)="onTerm($event)"
+          [placeholder]="'facilities.searchPlaceholder' | translate"
+        />
+      </div>
+      <app-location-filter />
+    </form>
+
+    <app-ad-slot placement="facilities_list" />
+
+    <section aria-labelledby="facility-results" aria-live="polite">
+      <h2 id="facility-results" class="mb-2 text-sm font-semibold text-slate-700">
+        @if (list.loaded()) {
+          {{ 'common.results' | translate: { count: list.total() } }}
+        }
+      </h2>
+
+      @if (list.error()) {
+        <app-error-state (retry)="list.reload()" />
+      } @else if (list.empty()) {
+        <app-empty-state message="facilities.none" />
+      } @else {
+        <ul class="space-y-3">
+          @for (facility of list.items(); track facility.id) {
+            <li><app-facility-card [facility]="facility" /></li>
+          }
+        </ul>
+        @if (list.loading() && list.items().length === 0) {
+          <app-loading-state />
+        }
+      }
+    </section>
+  </main>
+
+  <ion-infinite-scroll [disabled]="!list.hasMore()" (ionInfinite)="onInfinite($event)">
+    <ion-infinite-scroll-content />
+  </ion-infinite-scroll>
+</ion-content>

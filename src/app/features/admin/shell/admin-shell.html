@@ -1,0 +1,46 @@
+<div class="layout">
+  <a class="skip focus-ring" href="#admin-main">{{ 'common.skipToContent' | translate }}</a>
+
+  <header class="bar">
+    <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2">
+      <p class="text-lg font-bold text-white">{{ 'admin.title' | translate }}</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-sm text-white" dir="ltr">{{ auth.email() }}</span>
+        <button
+          type="button"
+          class="bar-button focus-ring"
+          (click)="language.toggle()"
+          [attr.aria-label]="'common.switchLanguage' | translate"
+        >
+          {{ language.lang() === 'ar' ? 'English' : 'العربية' }}
+        </button>
+        <a class="bar-button focus-ring" routerLink="/home">{{ 'admin.backToSite' | translate }}</a>
+        <button type="button" class="bar-button focus-ring" (click)="signOut()">
+          {{ 'admin.signOut' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <nav [attr.aria-label]="'admin.nav.label' | translate">
+      <ul class="tabs">
+        @for (item of nav; track item.path) {
+          <li>
+            <a
+              class="tab focus-ring"
+              [routerLink]="item.path"
+              routerLinkActive="tab-active"
+              [routerLinkActiveOptions]="{ exact: item.exact }"
+              ariaCurrentWhenActive="page"
+            >
+              {{ item.label | translate }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+  </header>
+
+  <main id="admin-main" class="content" tabindex="-1">
+    <router-outlet />
+  </main>
+</div>

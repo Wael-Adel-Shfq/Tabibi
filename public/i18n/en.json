@@ -1,0 +1,266 @@
+{
+  "app": {
+    "name": "Tabibi",
+    "tagline": "Find doctors, labs, pharmacies and medical centers"
+  },
+  "nav": {
+    "home": "Home",
+    "doctors": "Doctors",
+    "facilities": "Facilities",
+    "suggest": "Add a doctor"
+  },
+  "common": {
+    "loading": "Loading…",
+    "loadError": "Could not load the data. Check your connection and try again.",
+    "error": "Something went wrong. Please try again.",
+    "empty": "No results.",
+    "retry": "Try again",
+    "search": "Search",
+    "results": "{{count}} results",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "view": "View",
+    "actions": "Actions",
+    "choose": "Choose…",
+    "required": "required",
+    "sending": "Sending…",
+    "saved": "Saved.",
+    "deleted": "Deleted.",
+    "activated": "Activated.",
+    "deactivated": "Deactivated.",
+    "back": "Back",
+    "switchLanguage": "التبديل إلى العربية",
+    "skipToContent": "Skip to content"
+  },
+  "actions": {
+    "call": "Call",
+    "map": "Map",
+    "details": "Details"
+  },
+  "filters": {
+    "governorate": "Governorate",
+    "area": "Area",
+    "specialty": "Specialty",
+    "allGovernorates": "All governorates",
+    "allAreas": "All areas",
+    "allSpecialties": "All specialties",
+    "allTypes": "All types",
+    "allPlacements": "All placements"
+  },
+  "home": {
+    "searchLabel": "Find a doctor",
+    "searchPlaceholder": "Doctor name or specialty",
+    "categories": "Browse",
+    "recentDoctors": "Recently added doctors"
+  },
+  "categories": {
+    "doctors": "Doctors",
+    "lab": "Laboratories",
+    "pharmacy": "Pharmacies",
+    "medical_center": "Medical centers"
+  },
+  "facilityTypes": {
+    "lab": "Laboratory",
+    "pharmacy": "Pharmacy",
+    "medical_center": "Medical center"
+  },
+  "doctors": {
+    "title": "Doctors",
+    "detailTitle": "Doctor details",
+    "searchLabel": "Search by name or specialty",
+    "searchPlaceholder": "e.g. Ahmed or Pediatrics",
+    "none": "No doctors match your search.",
+    "notFound": "This doctor is not available."
+  },
+  "facilities": {
+    "title": "Medical facilities",
+    "typeLabel": "Facility type",
+    "searchLabel": "Search by name",
+    "searchPlaceholder": "Lab, pharmacy or center name",
+    "none": "No facilities match your search."
+  },
+  "ads": {
+    "sponsored": "Sponsored",
+    "sectionLabel": "Advertisements"
+  },
+  "placements": {
+    "home_top": "Home – top",
+    "home_middle": "Home – middle",
+    "doctors_list": "Doctors list",
+    "facilities_list": "Facilities list"
+  },
+  "suggest": {
+    "title": "Suggest a doctor",
+    "intro": "Help us complete the directory. Our team reviews every suggestion before it is published.",
+    "otherSpecialty": "Specialty not in the list",
+    "noAreas": "No areas have been added for this governorate yet.",
+    "aboutYou": "About you (optional)",
+    "submit": "Send suggestion",
+    "successTitle": "Thank you!",
+    "successBody": "We received your suggestion. It will appear in the directory after review.",
+    "another": "Suggest another doctor",
+    "rateLimited": "You sent many suggestions in a short time. Please try again in an hour.",
+    "invalid": "Some details are not valid. Check the fields and try again.",
+    "failed": "Could not send the suggestion. Please try again."
+  },
+  "fields": {
+    "doctorName": "Doctor name",
+    "facilityName": "Facility name",
+    "facilityType": "Facility type",
+    "specialty": "Specialty",
+    "specialtyOther": "Type the specialty",
+    "clinicPhone": "Clinic phone",
+    "phone": "Phone",
+    "governorate": "Governorate",
+    "area": "Area",
+    "location": "Location",
+    "address": "Address",
+    "mapUrl": "Google Maps link",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "submitterName": "Your name",
+    "submitterContact": "How to reach you",
+    "submittedAt": "Submitted",
+    "status": "Status",
+    "active": "Active",
+    "nameAr": "Arabic name",
+    "nameEn": "English name",
+    "sortOrder": "Display order",
+    "displayOrder": "Display order",
+    "title": "Title",
+    "advertiser": "Advertiser",
+    "image": "Image",
+    "placement": "Placement",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "period": "Display period",
+    "adminNote": "Reviewer note",
+    "email": "Email",
+    "password": "Password"
+  },
+  "hints": {
+    "mapUrl": "Copy the place link from Google Maps.",
+    "sortOrder": "Lower numbers are shown first.",
+    "optional": "Optional",
+    "adImage": "WebP, JPEG or PNG. Images are resized to 1200 px wide automatically.",
+    "adGovernorate": "Leave empty to show the ad in every governorate."
+  },
+  "errors": {
+    "required": "This field is required.",
+    "minLength": "This value is too short.",
+    "maxLength": "This value is too long.",
+    "pattern": "The format is not valid.",
+    "email": "Enter a valid email address.",
+    "coordinatesPair": "Enter both latitude and longitude, or leave both empty.",
+    "endBeforeStart": "The end date must be after the start date."
+  },
+  "status": {
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "paginator": {
+    "perPage": "Items per page",
+    "next": "Next page",
+    "previous": "Previous page",
+    "first": "First page",
+    "last": "Last page",
+    "range": "{{start}} – {{end}} of {{length}}",
+    "none": "No items"
+  },
+  "adminErrors": {
+    "duplicate": "A record with this name already exists.",
+    "inUse": "This record is used by other data. Deactivate it instead of deleting it.",
+    "invalid": "Some values are not accepted. Check the details.",
+    "notAllowed": "You are not allowed to do this."
+  },
+  "admin": {
+    "title": "Tabibi admin",
+    "backToSite": "Back to site",
+    "signOut": "Sign out",
+    "noRecords": "No records.",
+    "deleteWarning": "Deleting cannot be undone.",
+    "nav": {
+      "label": "Admin sections",
+      "dashboard": "Overview",
+      "submissions": "Suggestions",
+      "doctors": "Doctors",
+      "facilities": "Facilities",
+      "advertisements": "Advertisements",
+      "governorates": "Governorates",
+      "areas": "Areas",
+      "specialties": "Specialties"
+    },
+    "singular": {
+      "governorates": "Governorate",
+      "areas": "Area",
+      "specialties": "Specialty"
+    },
+    "login": {
+      "title": "Admin sign in",
+      "intro": "This page is for directory administrators only.",
+      "submit": "Sign in",
+      "failed": "Incorrect email or password.",
+      "notAdmin": "This account does not have admin access."
+    },
+    "stats": {
+      "pending": "Suggestions to review",
+      "doctors": "Active doctors",
+      "labs": "Laboratories",
+      "pharmacies": "Pharmacies",
+      "centers": "Medical centers",
+      "ads": "Ads showing now"
+    },
+    "doctors": {
+      "add": "Add doctor",
+      "edit": "Edit doctor",
+      "deleteTitle": "Delete this doctor?"
+    },
+    "facilities": {
+      "add": "Add facility",
+      "edit": "Edit facility",
+      "deleteTitle": "Delete this facility?"
+    },
+    "ads": {
+      "add": "Add advertisement",
+      "edit": "Edit advertisement",
+      "deleteTitle": "Delete this advertisement?",
+      "deleteWarning": "The advertisement and its image will be deleted permanently.",
+      "preview": "Advertisement image preview",
+      "imageRequired": "Choose an image for the advertisement.",
+      "imageType": "Unsupported file type. Use WebP, JPEG or PNG.",
+      "imageSize": "The image is too large even after compression (2 MB limit)."
+    },
+    "review": {
+      "title": "Review suggestion",
+      "none": "No suggestions in this list.",
+      "open": "Review",
+      "submitter": "Submitted by",
+      "unlisted": "not listed",
+      "duplicates": "Similar doctors already in the directory",
+      "noDuplicates": "No similar doctor found.",
+      "duplicatesFailed": "Could not check for duplicates.",
+      "samePhone": "Same phone number",
+      "similarity": "Name similarity {{value}}%",
+      "allowDuplicate": "I confirm this is a different doctor and want to add it",
+      "specialtyToUse": "Specialty to publish with",
+      "specialtyHint": "The visitor typed an unlisted specialty. Pick the closest one, or add it on the Specialties page first.",
+      "rejectNote": "Note (saved when rejecting)",
+      "approve": "Approve and publish",
+      "reject": "Reject",
+      "approvedToast": "Suggestion approved and doctor added.",
+      "rejectedToast": "Suggestion rejected.",
+      "deleteTitle": "Delete this suggestion?",
+      "possible_duplicate": "A similar doctor exists. Check the list and confirm if this is a different doctor.",
+      "specialty_required": "Choose a specialty before approving.",
+      "submission_not_pending": "This suggestion was already reviewed."
+    }
+  }
+}

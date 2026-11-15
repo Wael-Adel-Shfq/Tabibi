@@ -1,0 +1,74 @@
+<app-public-header title="doctors.title" />
+
+<ion-content>
+  <main class="mx-auto max-w-3xl space-y-4 p-4">
+    <h1 class="sr-only">{{ 'doctors.title' | translate }}</h1>
+
+    <form class="space-y-3" role="search" (submit)="$event.preventDefault()">
+      <div>
+        <label class="mb-1 block text-sm font-semibold text-slate-800" for="doctor-search">
+          {{ 'doctors.searchLabel' | translate }}
+        </label>
+        <input
+          id="doctor-search"
+          class="control"
+          type="search"
+          autocomplete="off"
+          [value]="filter.doctorTerm()"
+          (input)="onTerm($event)"
+          [placeholder]="'doctors.searchPlaceholder' | translate"
+        />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-sm font-semibold text-slate-800" for="doctor-specialty">
+          {{ 'filters.specialty' | translate }}
+        </label>
+        <select
+          id="doctor-specialty"
+          class="control"
+          [value]="filter.specialtyId()"
+          (change)="onSpecialty($event)"
+        >
+          <option value="">{{ 'filters.allSpecialties' | translate }}</option>
+          @for (specialty of locations.specialties(); track specialty.id) {
+            <option [value]="specialty.id" [selected]="specialty.id === filter.specialtyId()">
+              {{ language.name(specialty) }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <app-location-filter />
+    </form>
+
+    <app-ad-slot placement="doctors_list" />
+
+    <section aria-labelledby="doctor-results" aria-live="polite">
+      <h2 id="doctor-results" class="mb-2 text-sm font-semibold text-slate-700">
+        @if (list.loaded()) {
+          {{ 'common.results' | translate: { count: list.total() } }}
+        }
+      </h2>
+
+      @if (list.error()) {
+        <app-error-state (retry)="list.reload()" />
+      } @else if (list.empty()) {
+        <app-empty-state message="doctors.none" />
+      } @else {
+        <ul class="space-y-3">
+          @for (doctor of list.items(); track doctor.id) {
+            <li><app-doctor-card [doctor]="doctor" /></li>
+          }
+        </ul>
+        @if (list.loading() && list.items().length === 0) {
+          <app-loading-state />
+        }
+      }
+    </section>
+  </main>
+
+  <ion-infinite-scroll [disabled]="!list.hasMore()" (ionInfinite)="onInfinite($event)">
+    <ion-infinite-scroll-content />
+  </ion-infinite-scroll>
+</ion-content>

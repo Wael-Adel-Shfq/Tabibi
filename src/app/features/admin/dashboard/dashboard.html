@@ -1,0 +1,18 @@
+<h1 class="mb-4 text-xl font-bold text-slate-900">{{ 'admin.nav.dashboard' | translate }}</h1>
+
+@if (loading()) {
+  <app-loading-state />
+} @else if (failed()) {
+  <app-error-state (retry)="load()" />
+} @else {
+  <ul class="grid grid-cols-2 gap-3 lg:grid-cols-3">
+    @for (card of cards(); track card.label) {
+      <li>
+        <a class="card focus-ring block p-4" [routerLink]="card.link">
+          <span class="block text-sm font-semibold text-slate-700">{{ card.label | translate }}</span>
+          <span class="block text-3xl font-bold text-brand-800">{{ card.value }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+}

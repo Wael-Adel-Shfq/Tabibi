@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    @if (backHref()) {
+      <ion-buttons slot="start">
+        <ion-back-button [defaultHref]="backHref()" [attr.aria-label]="'common.back' | translate" text="" />
+      </ion-buttons>
+    }
+    <ion-title>{{ title() | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <button
+        type="button"
+        class="lang focus-ring"
+        (click)="language.toggle()"
+        [attr.aria-label]="'common.switchLanguage' | translate"
+        [attr.lang]="language.lang() === 'ar' ? 'en' : 'ar'"
+      >
+        {{ language.lang() === 'ar' ? 'English' : 'العربية' }}
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

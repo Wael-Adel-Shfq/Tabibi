@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.lang {
+  min-height: 2.75rem;
+  margin-inline-end: 0.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid #0f766e;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #115e59;
+  font-weight: 600;
+}

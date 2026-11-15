@@ -1,3 +1,201 @@
-/* You can add global styles to this file, and also import other style files */
+/* Ionic core styles (public application shell) */
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
 
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Cairo', 'Segoe UI', Tahoma, system-ui, sans-serif;
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+}
+
+:root {
+  --ion-font-family: 'Cairo', 'Segoe UI', Tahoma, system-ui, sans-serif;
+
+  --ion-color-primary: #0f766e;
+  --ion-color-primary-rgb: 15, 118, 110;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0d6861;
+  --ion-color-primary-tint: #27847d;
+
+  --ion-color-secondary: #1d4ed8;
+  --ion-color-secondary-rgb: 29, 78, 216;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #1a45be;
+  --ion-color-secondary-tint: #3460dc;
+
+  --ion-color-danger: #b91c1c;
+  --ion-color-danger-rgb: 185, 28, 28;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #a31919;
+  --ion-color-danger-tint: #c03333;
+
+  --ion-background-color: #f8fafc;
+  --ion-text-color: #0f172a;
+  --ion-toolbar-background: #ffffff;
+  --ion-tab-bar-background: #ffffff;
+  --ion-tab-bar-color: #475569;
+  --ion-tab-bar-color-selected: #0f766e;
+
+  /* Angular Material (admin area) follows the same brand colour. */
+  --mat-sys-primary: #0f766e;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-primary-container: #ccfbf1;
+  --mat-sys-on-primary-container: #134e4a;
+  --mat-sys-surface: #ffffff;
+  --mat-sys-surface-container: #f1f5f9;
+  --mat-sys-surface-container-high: #ffffff;
+  --mat-sys-surface-container-low: #f8fafc;
+  --mat-sys-background: #f8fafc;
+  --mat-sys-error: #b91c1c;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  color-scheme: light;
+}
+
+/* Shared form control look for native inputs bound with Signal Forms. */
+.control {
+  display: block;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #94a3b8;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.control:focus-visible,
+.focus-ring:focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+}
+
+.control[aria-invalid='true'] {
+  border-color: #b91c1c;
+}
+
+.control:disabled {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+textarea.control {
+  min-height: 5rem;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+/* Material dialogs sit above the Ionic app shell. */
+.cdk-overlay-container {
+  z-index: 30000;
+}
+
+/* ---- Admin area: filters, tables, form bits shared by every management page ---- */
+.admin-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.admin-filters label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: start;
+  vertical-align: middle;
+}
+
+.admin-table thead th {
+  background: #f1f5f9;
+  color: #1e293b;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.admin-table tbody th {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #1e293b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #78350f;
+}
+
+.badge-approved {
+  background: #ccfbf1;
+  color: #134e4a;
+}
+
+.badge-rejected {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.check input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: #0f766e;
+}
+
+.danger-button {
+  --mat-button-text-label-text-color: #b91c1c;
+  --mat-button-filled-container-color: #b91c1c;
+}

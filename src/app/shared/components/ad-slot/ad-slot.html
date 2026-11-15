@@ -1,0 +1,48 @@
+@if (items().length > 0) {
+  <section [attr.aria-label]="'ads.sectionLabel' | translate">
+    <p class="mb-1 text-xs text-slate-600">{{ 'ads.sponsored' | translate }}</p>
+    <ul class="ad-track">
+      @for (item of items(); track item.ad.id) {
+        <li class="ad-card card overflow-hidden">
+          @if (item.href; as href) {
+            <a class="focus-ring block" [href]="href" target="_blank" rel="noopener noreferrer sponsored">
+              <img
+                class="ad-image"
+                [src]="item.image"
+                [alt]="item.ad.title"
+                width="600"
+                height="250"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="block px-3 py-2">
+                <span class="block font-semibold text-slate-900">{{ item.ad.title }}</span>
+                <span class="block text-sm text-slate-700">{{ item.ad.advertiser_name }}</span>
+                @if (item.ad.address) {
+                  <span class="block text-sm text-slate-600">{{ item.ad.address }}</span>
+                }
+              </span>
+            </a>
+          } @else {
+            <img
+              class="ad-image"
+              [src]="item.image"
+              [alt]="item.ad.title"
+              width="600"
+              height="250"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="px-3 py-2">
+              <p class="font-semibold text-slate-900">{{ item.ad.title }}</p>
+              <p class="text-sm text-slate-700">{{ item.ad.advertiser_name }}</p>
+              @if (item.ad.address) {
+                <p class="text-sm text-slate-600">{{ item.ad.address }}</p>
+              }
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+}

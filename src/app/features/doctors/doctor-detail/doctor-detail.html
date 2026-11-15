@@ -1,0 +1,49 @@
+<app-public-header title="doctors.detailTitle" backHref="/doctors" />
+
+<ion-content>
+  <main class="mx-auto max-w-3xl p-4">
+    @if (loading()) {
+      <app-loading-state />
+    } @else if (failed()) {
+      <app-error-state (retry)="load(id())" />
+    } @else {
+      @if (doctor(); as doctor) {
+        <article class="card p-4">
+          <h1 class="text-xl font-bold text-slate-900">{{ doctor.full_name }}</h1>
+          <p class="font-semibold text-brand-800">{{ language.name(doctor.specialty) }}</p>
+
+          <dl class="mt-4 space-y-3 text-slate-800">
+            <div>
+              <dt class="text-sm font-semibold text-slate-600">{{ 'fields.governorate' | translate }}</dt>
+              <dd>{{ language.name(doctor.governorate) }}</dd>
+            </div>
+            <div>
+              <dt class="text-sm font-semibold text-slate-600">{{ 'fields.area' | translate }}</dt>
+              <dd>{{ language.name(doctor.area) }}</dd>
+            </div>
+            <div>
+              <dt class="text-sm font-semibold text-slate-600">{{ 'fields.address' | translate }}</dt>
+              <dd>{{ doctor.address }}</dd>
+            </div>
+            @if (doctor.clinic_phone) {
+              <div>
+                <dt class="text-sm font-semibold text-slate-600">{{ 'fields.clinicPhone' | translate }}</dt>
+                <dd dir="ltr" class="text-start">{{ doctor.clinic_phone }}</dd>
+              </div>
+            }
+          </dl>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <app-contact-actions
+              [phone]="doctor.clinic_phone"
+              [place]="doctor"
+              [name]="doctor.full_name"
+            />
+          </div>
+        </article>
+      } @else {
+        <app-empty-state message="doctors.notFound" />
+      }
+    }
+  </main>
+</ion-content>

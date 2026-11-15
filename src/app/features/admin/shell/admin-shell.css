@@ -1,0 +1,74 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f8fafc;
+}
+
+.bar {
+  flex: 0 0 auto;
+  background: #115e59;
+}
+
+.bar-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid #ffffff;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.bar-button:focus-visible,
+.tab:focus-visible {
+  outline-color: #ffffff;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  padding: 0 0.75rem;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tab-active {
+  background: #f8fafc;
+  color: #134e4a;
+}
+
+.content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.content:focus {
+  outline: none;
+}
+
+.skip {
+  position: absolute;
+  inset-inline-start: -9999px;
+  background: #ffffff;
+  color: #134e4a;
+  padding: 0.5rem 1rem;
+  z-index: 10;
+}
+
+.skip:focus {
+  inset-inline-start: 0.5rem;
+  top: 0.5rem;
+}

@@ -1,0 +1,84 @@
+<h1 class="mb-4 text-xl font-bold text-slate-900">{{ 'admin.nav.submissions' | translate }}</h1>
+
+<div class="mb-4 flex flex-wrap gap-2" role="group" [attr.aria-label]="'fields.status' | translate">
+  @for (option of statuses; track option) {
+    <button
+      type="button"
+      class="chip focus-ring"
+      [class.chip-selected]="status() === option"
+      [attr.aria-pressed]="status() === option"
+      (click)="setStatus(option)"
+    >
+      {{ 'status.' + option | translate }}
+    </button>
+  }
+</div>
+
+@if (list.error()) {
+  <app-error-state (retry)="list.refresh()" />
+} @else if (!list.loaded()) {
+  <app-loading-state />
+} @else if (list.empty()) {
+  <app-empty-state message="admin.review.none" />
+} @else {
+  <div class="table-wrap card" [attr.aria-busy]="list.loading()">
+    <table class="admin-table">
+      <caption class="sr-only">
+        {{ 'admin.nav.submissions' | translate }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'fields.doctorName' | translate }}</th>
+          <th scope="col">{{ 'fields.specialty' | translate }}</th>
+          <th scope="col">{{ 'fields.location' | translate }}</th>
+          <th scope="col">{{ 'fields.submittedAt' | translate }}</th>
+          <th scope="col">{{ 'fields.status' | translate }}</th>
+          <th scope="col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of list.items(); track item.id) {
+          <tr>
+            <th scope="row">{{ item.full_name }}</th>
+            <td>{{ item.specialty ? language.name(item.specialty) : item.specialty_other }}</td>
+            <td>{{ language.name(item.governorate) }} · {{ language.name(item.area) }}</td>
+            <td dir="ltr" class="text-start">{{ item.created_at | date: 'yyyy-MM-dd HH:mm' }}</td>
+            <td>
+              <span [class]="'badge badge-' + item.status">
+                {{ 'status.' + item.status | translate }}
+              </span>
+            </td>
+            <td class="whitespace-nowrap">
+              <button
+                matButton
+                type="button"
+                (click)="review(item)"
+                [attr.aria-label]="('admin.review.open' | translate) + ': ' + item.full_name"
+              >
+                {{ (item.status === 'pending' ? 'admin.review.open' : 'common.view') | translate }}
+              </button>
+              <button
+                matButton
+                type="button"
+                class="danger-button"
+                (click)="remove(item)"
+                [attr.aria-label]="('common.delete' | translate) + ': ' + item.full_name"
+              >
+                {{ 'common.delete' | translate }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<mat-paginator
+  [length]="list.total()"
+  [pageIndex]="list.page()"
+  [pageSize]="pageSize"
+  [hidePageSize]="true"
+  [showFirstLastButtons]="true"
+  (page)="onPage($event)"
+/>

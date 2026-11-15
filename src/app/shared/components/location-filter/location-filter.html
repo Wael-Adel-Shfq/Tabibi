@@ -1,0 +1,40 @@
+<div class="grid grid-cols-2 gap-3">
+  <div>
+    <label class="mb-1 block text-sm font-semibold text-slate-800" for="filter-governorate">
+      {{ 'filters.governorate' | translate }}
+    </label>
+    <select
+      id="filter-governorate"
+      class="control"
+      [value]="filter.governorateId()"
+      (change)="onGovernorate($event)"
+    >
+      <option value="">{{ 'filters.allGovernorates' | translate }}</option>
+      @for (governorate of locations.governorates(); track governorate.id) {
+        <option [value]="governorate.id" [selected]="governorate.id === filter.governorateId()">
+          {{ language.name(governorate) }}
+        </option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label class="mb-1 block text-sm font-semibold text-slate-800" for="filter-area">
+      {{ 'filters.area' | translate }}
+    </label>
+    <select
+      id="filter-area"
+      class="control"
+      [value]="filter.areaId()"
+      [disabled]="!filter.governorateId()"
+      (change)="onArea($event)"
+    >
+      <option value="">{{ 'filters.allAreas' | translate }}</option>
+      @for (area of areas(); track area.id) {
+        <option [value]="area.id" [selected]="area.id === filter.areaId()">
+          {{ language.name(area) }}
+        </option>
+      }
+    </select>
+  </div>
+</div>

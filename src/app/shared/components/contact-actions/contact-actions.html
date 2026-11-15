@@ -1,0 +1,22 @@
+@if (tel(); as href) {
+  <a
+    class="action action-primary focus-ring"
+    [href]="href"
+    [attr.aria-label]="('actions.call' | translate) + ': ' + name()"
+  >
+    <ion-icon name="call-outline" aria-hidden="true" />
+    <span>{{ 'actions.call' | translate }}</span>
+  </a>
+}
+@if (map(); as href) {
+  <a
+    class="action focus-ring"
+    [href]="href"
+    target="_blank"
+    rel="noopener noreferrer"
+    [attr.aria-label]="('actions.map' | translate) + ': ' + name()"
+  >
+    <ion-icon name="location-outline" aria-hidden="true" />
+    <span>{{ 'actions.map' | translate }}</span>
+  </a>
+}

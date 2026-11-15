@@ -1,0 +1,104 @@
+<h2 mat-dialog-title>
+  {{ (data.facility ? 'admin.facilities.edit' : 'admin.facilities.add') | translate }}
+</h2>
+
+@if (!ready()) {
+  <mat-dialog-content><app-loading-state /></mat-dialog-content>
+} @else {
+  <form novalidate (submit)="onSubmit($event)">
+    <mat-dialog-content>
+      <app-form-field label="fields.facilityName" for="f-name" [field]="facility.name" [required]="true">
+        <input id="f-name" class="control" type="text" autocomplete="off" [formField]="facility.name" />
+      </app-form-field>
+
+      <div class="grid gap-x-3 sm:grid-cols-2">
+        <app-form-field label="fields.facilityType" for="f-type" [field]="facility.type" [required]="true">
+          <select id="f-type" class="control" [formField]="facility.type">
+            @for (type of types; track type) {
+              <option [value]="type">{{ 'facilityTypes.' + type | translate }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.phone" for="f-phone" [field]="facility.phone">
+          <input id="f-phone" class="control" type="tel" dir="ltr" autocomplete="off" [formField]="facility.phone" />
+        </app-form-field>
+
+        <app-form-field
+          label="fields.governorate"
+          for="f-governorate"
+          [field]="facility.governorate_id"
+          [required]="true"
+        >
+          <select
+            id="f-governorate"
+            class="control"
+            [formField]="facility.governorate_id"
+            (change)="onGovernorateChange()"
+          >
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (governorate of locations.governorates(); track governorate.id) {
+              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.area" for="f-area" [field]="facility.area_id" [required]="true">
+          <select id="f-area" class="control" [formField]="facility.area_id">
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (area of areaOptions.areas(); track area.id) {
+              <option [value]="area.id">{{ language.name(area) }}</option>
+            }
+          </select>
+        </app-form-field>
+      </div>
+
+      <app-form-field label="fields.address" for="f-address" [field]="facility.address" [required]="true">
+        <textarea id="f-address" class="control" rows="2" [formField]="facility.address"></textarea>
+      </app-form-field>
+
+      <app-form-field label="fields.mapUrl" for="f-map" [field]="facility.map_url" hint="hints.mapUrl">
+        <input id="f-map" class="control" type="url" dir="ltr" autocomplete="off" [formField]="facility.map_url" />
+      </app-form-field>
+
+      <div class="grid gap-x-3 sm:grid-cols-2">
+        <app-form-field label="fields.latitude" for="f-lat" [field]="facility.latitude">
+          <input
+            id="f-lat"
+            class="control"
+            type="text"
+            inputmode="decimal"
+            dir="ltr"
+            [formField]="facility.latitude"
+          />
+        </app-form-field>
+        <app-form-field label="fields.longitude" for="f-lng" [field]="facility.longitude">
+          <input
+            id="f-lng"
+            class="control"
+            type="text"
+            inputmode="decimal"
+            dir="ltr"
+            [formField]="facility.longitude"
+          />
+        </app-form-field>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" [formField]="facility.is_active" />
+        <span>{{ 'fields.active' | translate }}</span>
+      </label>
+
+      @if (failure(); as key) {
+        <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton type="button" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+      <button matButton="filled" type="submit" [disabled]="facility().submitting()">
+        {{ 'common.save' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+}

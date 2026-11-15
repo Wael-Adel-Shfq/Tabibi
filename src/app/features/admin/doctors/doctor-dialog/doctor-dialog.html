@@ -1,0 +1,112 @@
+<h2 mat-dialog-title>
+  {{ (data.doctor ? 'admin.doctors.edit' : 'admin.doctors.add') | translate }}
+</h2>
+
+@if (!ready()) {
+  <mat-dialog-content><app-loading-state /></mat-dialog-content>
+} @else {
+  <form novalidate (submit)="onSubmit($event)">
+    <mat-dialog-content>
+      <app-form-field label="fields.doctorName" for="d-name" [field]="doctor.full_name" [required]="true">
+        <input id="d-name" class="control" type="text" autocomplete="off" [formField]="doctor.full_name" />
+      </app-form-field>
+
+      <div class="grid gap-x-3 sm:grid-cols-2">
+        <app-form-field label="fields.specialty" for="d-specialty" [field]="doctor.specialty_id" [required]="true">
+          <select id="d-specialty" class="control" [formField]="doctor.specialty_id">
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (specialty of locations.specialties(); track specialty.id) {
+              <option [value]="specialty.id">{{ language.name(specialty) }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.clinicPhone" for="d-phone" [field]="doctor.clinic_phone">
+          <input
+            id="d-phone"
+            class="control"
+            type="tel"
+            dir="ltr"
+            autocomplete="off"
+            [formField]="doctor.clinic_phone"
+          />
+        </app-form-field>
+
+        <app-form-field
+          label="fields.governorate"
+          for="d-governorate"
+          [field]="doctor.governorate_id"
+          [required]="true"
+        >
+          <select
+            id="d-governorate"
+            class="control"
+            [formField]="doctor.governorate_id"
+            (change)="onGovernorateChange()"
+          >
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (governorate of locations.governorates(); track governorate.id) {
+              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+            }
+          </select>
+        </app-form-field>
+
+        <app-form-field label="fields.area" for="d-area" [field]="doctor.area_id" [required]="true">
+          <select id="d-area" class="control" [formField]="doctor.area_id">
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (area of areaOptions.areas(); track area.id) {
+              <option [value]="area.id">{{ language.name(area) }}</option>
+            }
+          </select>
+        </app-form-field>
+      </div>
+
+      <app-form-field label="fields.address" for="d-address" [field]="doctor.address" [required]="true">
+        <textarea id="d-address" class="control" rows="2" [formField]="doctor.address"></textarea>
+      </app-form-field>
+
+      <app-form-field label="fields.mapUrl" for="d-map" [field]="doctor.map_url" hint="hints.mapUrl">
+        <input id="d-map" class="control" type="url" dir="ltr" autocomplete="off" [formField]="doctor.map_url" />
+      </app-form-field>
+
+      <div class="grid gap-x-3 sm:grid-cols-2">
+        <app-form-field label="fields.latitude" for="d-lat" [field]="doctor.latitude">
+          <input
+            id="d-lat"
+            class="control"
+            type="text"
+            inputmode="decimal"
+            dir="ltr"
+            [formField]="doctor.latitude"
+          />
+        </app-form-field>
+        <app-form-field label="fields.longitude" for="d-lng" [field]="doctor.longitude">
+          <input
+            id="d-lng"
+            class="control"
+            type="text"
+            inputmode="decimal"
+            dir="ltr"
+            [formField]="doctor.longitude"
+          />
+        </app-form-field>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" [formField]="doctor.is_active" />
+        <span>{{ 'fields.active' | translate }}</span>
+      </label>
+
+      @if (failure(); as key) {
+        <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button matButton type="button" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+      <button matButton="filled" type="submit" [disabled]="doctor().submitting()">
+        {{ 'common.save' | translate }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+}

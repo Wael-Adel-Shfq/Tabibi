@@ -1,0 +1,110 @@
+<div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-xl font-bold text-slate-900">{{ 'admin.nav.facilities' | translate }}</h1>
+  <button matButton="filled" type="button" (click)="edit()">
+    {{ 'admin.facilities.add' | translate }}
+  </button>
+</div>
+
+<form class="admin-filters" role="search" (submit)="$event.preventDefault()">
+  <div>
+    <label for="fa-search">{{ 'facilities.searchLabel' | translate }}</label>
+    <input id="fa-search" class="control" type="search" autocomplete="off" (input)="onTerm($event)" />
+  </div>
+  <div>
+    <label for="fa-type">{{ 'fields.facilityType' | translate }}</label>
+    <select id="fa-type" class="control" (change)="onType($event)">
+      <option value="">{{ 'filters.allTypes' | translate }}</option>
+      @for (type of types; track type) {
+        <option [value]="type">{{ 'facilityTypes.' + type | translate }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="fa-governorate">{{ 'fields.governorate' | translate }}</label>
+    <select id="fa-governorate" class="control" (change)="onGovernorate($event)">
+      <option value="">{{ 'filters.allGovernorates' | translate }}</option>
+      @for (governorate of locations.governorates(); track governorate.id) {
+        <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="fa-status">{{ 'fields.status' | translate }}</label>
+    <select id="fa-status" class="control" (change)="onStatus($event)">
+      <option value="all">{{ 'status.all' | translate }}</option>
+      <option value="active">{{ 'status.active' | translate }}</option>
+      <option value="inactive">{{ 'status.inactive' | translate }}</option>
+    </select>
+  </div>
+</form>
+
+@if (list.error()) {
+  <app-error-state (retry)="list.refresh()" />
+} @else if (!list.loaded()) {
+  <app-loading-state />
+} @else if (list.empty()) {
+  <app-empty-state message="admin.noRecords" />
+} @else {
+  <div class="table-wrap card" [attr.aria-busy]="list.loading()">
+    <table class="admin-table">
+      <caption class="sr-only">
+        {{ 'admin.nav.facilities' | translate }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'fields.facilityName' | translate }}</th>
+          <th scope="col">{{ 'fields.facilityType' | translate }}</th>
+          <th scope="col">{{ 'fields.location' | translate }}</th>
+          <th scope="col">{{ 'fields.phone' | translate }}</th>
+          <th scope="col">{{ 'fields.active' | translate }}</th>
+          <th scope="col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (facility of list.items(); track facility.id) {
+          <tr>
+            <th scope="row">{{ facility.name }}</th>
+            <td>{{ 'facilityTypes.' + facility.type | translate }}</td>
+            <td>{{ language.name(facility.governorate) }} · {{ language.name(facility.area) }}</td>
+            <td dir="ltr" class="text-start">{{ facility.phone }}</td>
+            <td>
+              <mat-slide-toggle
+                [checked]="facility.is_active"
+                (change)="toggle(facility, $event.checked)"
+                [aria-label]="('fields.active' | translate) + ': ' + facility.name"
+              />
+            </td>
+            <td class="whitespace-nowrap">
+              <button
+                matButton
+                type="button"
+                (click)="edit(facility)"
+                [attr.aria-label]="('common.edit' | translate) + ': ' + facility.name"
+              >
+                {{ 'common.edit' | translate }}
+              </button>
+              <button
+                matButton
+                type="button"
+                class="danger-button"
+                (click)="remove(facility)"
+                [attr.aria-label]="('common.delete' | translate) + ': ' + facility.name"
+              >
+                {{ 'common.delete' | translate }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<mat-paginator
+  [length]="list.total()"
+  [pageIndex]="list.page()"
+  [pageSize]="pageSize"
+  [hidePageSize]="true"
+  [showFirstLastButtons]="true"
+  (page)="onPage($event)"
+/>

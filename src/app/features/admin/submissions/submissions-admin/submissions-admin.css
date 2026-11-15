@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.chip {
+  min-height: 2.75rem;
+  padding: 0 1rem;
+  border: 1px solid #0f766e;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #115e59;
+  font-weight: 600;
+}
+
+.chip-selected {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+mat-paginator {
+  background: transparent;
+}

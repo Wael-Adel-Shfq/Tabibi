@@ -1,0 +1,47 @@
+<div class="page">
+  <main class="card mx-auto mt-10 w-full max-w-sm p-6">
+    <h1 class="text-xl font-bold text-brand-900">{{ 'admin.login.title' | translate }}</h1>
+    <p class="mb-4 text-sm text-slate-700">{{ 'admin.login.intro' | translate }}</p>
+
+    <form novalidate (submit)="onSubmit($event)">
+      <app-form-field label="fields.email" for="login-email" [field]="credentials.email" [required]="true">
+        <input
+          id="login-email"
+          class="control"
+          type="email"
+          dir="ltr"
+          autocomplete="username"
+          [formField]="credentials.email"
+        />
+      </app-form-field>
+
+      <app-form-field
+        label="fields.password"
+        for="login-password"
+        [field]="credentials.password"
+        [required]="true"
+      >
+        <input
+          id="login-password"
+          class="control"
+          type="password"
+          dir="ltr"
+          autocomplete="current-password"
+          [formField]="credentials.password"
+        />
+      </app-form-field>
+
+      @if (failure(); as key) {
+        <p class="mb-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+      }
+
+      <button matButton="filled" type="submit" class="w-full" [disabled]="credentials().submitting()">
+        {{ (credentials().submitting() ? 'common.sending' : 'admin.login.submit') | translate }}
+      </button>
+    </form>
+
+    <a class="mt-4 inline-block text-sm text-brand-800 underline" routerLink="/home">
+      {{ 'admin.backToSite' | translate }}
+    </a>
+  </main>
+</div>

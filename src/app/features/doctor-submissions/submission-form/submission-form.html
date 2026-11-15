@@ -1,0 +1,166 @@
+<app-public-header title="suggest.title" />
+
+<ion-content>
+  <main class="mx-auto max-w-2xl p-4">
+    <h1 class="text-xl font-bold text-slate-900">{{ 'suggest.title' | translate }}</h1>
+
+    @if (outcome() === 'ok') {
+      <section class="card mt-4 p-4" role="status">
+        <h2 class="text-lg font-bold text-brand-900">{{ 'suggest.successTitle' | translate }}</h2>
+        <p class="mt-1 text-slate-800">{{ 'suggest.successBody' | translate }}</p>
+        <button type="button" class="primary focus-ring mt-4" (click)="startOver()">
+          {{ 'suggest.another' | translate }}
+        </button>
+      </section>
+    } @else {
+      <p class="mt-1 text-slate-700">{{ 'suggest.intro' | translate }}</p>
+
+      <form class="mt-4" novalidate (submit)="onSubmit($event)">
+        <app-form-field label="fields.doctorName" for="s-name" [field]="suggestion.full_name" [required]="true">
+          <input id="s-name" class="control" type="text" autocomplete="off" [formField]="suggestion.full_name" />
+        </app-form-field>
+
+        <app-form-field label="fields.specialty" for="s-specialty" [field]="suggestion.specialty_id" [required]="true">
+          <select id="s-specialty" class="control" [formField]="suggestion.specialty_id">
+            <option value="">{{ 'common.choose' | translate }}</option>
+            @for (specialty of locations.specialties(); track specialty.id) {
+              <option [value]="specialty.id">{{ language.name(specialty) }}</option>
+            }
+            <option [value]="other">{{ 'suggest.otherSpecialty' | translate }}</option>
+          </select>
+        </app-form-field>
+
+        @if (model().specialty_id === other) {
+          <app-form-field
+            label="fields.specialtyOther"
+            for="s-specialty-other"
+            [field]="suggestion.specialty_other"
+            [required]="true"
+          >
+            <input
+              id="s-specialty-other"
+              class="control"
+              type="text"
+              autocomplete="off"
+              [formField]="suggestion.specialty_other"
+            />
+          </app-form-field>
+        }
+
+        <app-form-field label="fields.clinicPhone" for="s-phone" [field]="suggestion.clinic_phone">
+          <input
+            id="s-phone"
+            class="control"
+            type="tel"
+            dir="ltr"
+            inputmode="tel"
+            autocomplete="off"
+            [formField]="suggestion.clinic_phone"
+          />
+        </app-form-field>
+
+        <div class="grid gap-x-3 sm:grid-cols-2">
+          <app-form-field
+            label="fields.governorate"
+            for="s-governorate"
+            [field]="suggestion.governorate_id"
+            [required]="true"
+          >
+            <select
+              id="s-governorate"
+              class="control"
+              [formField]="suggestion.governorate_id"
+              (change)="onGovernorateChange()"
+            >
+              <option value="">{{ 'common.choose' | translate }}</option>
+              @for (governorate of locations.governorates(); track governorate.id) {
+                <option [value]="governorate.id">{{ language.name(governorate) }}</option>
+              }
+            </select>
+          </app-form-field>
+
+          <app-form-field
+            label="fields.area"
+            for="s-area"
+            [field]="suggestion.area_id"
+            [required]="true"
+            [hint]="model().governorate_id && areas().length === 0 ? 'suggest.noAreas' : ''"
+          >
+            <select id="s-area" class="control" [formField]="suggestion.area_id">
+              <option value="">{{ 'common.choose' | translate }}</option>
+              @for (area of areas(); track area.id) {
+                <option [value]="area.id">{{ language.name(area) }}</option>
+              }
+            </select>
+          </app-form-field>
+        </div>
+
+        <app-form-field label="fields.address" for="s-address" [field]="suggestion.address" [required]="true">
+          <textarea id="s-address" class="control" rows="2" [formField]="suggestion.address"></textarea>
+        </app-form-field>
+
+        <app-form-field label="fields.mapUrl" for="s-map" [field]="suggestion.map_url" hint="hints.mapUrl">
+          <input
+            id="s-map"
+            class="control"
+            type="url"
+            dir="ltr"
+            inputmode="url"
+            autocomplete="off"
+            [formField]="suggestion.map_url"
+          />
+        </app-form-field>
+
+        <fieldset class="card mb-4 p-3">
+          <legend class="px-1 text-sm font-semibold text-slate-800">
+            {{ 'suggest.aboutYou' | translate }}
+          </legend>
+          <app-form-field label="fields.submitterName" for="s-submitter" [field]="suggestion.submitter_name">
+            <input
+              id="s-submitter"
+              class="control"
+              type="text"
+              autocomplete="name"
+              [formField]="suggestion.submitter_name"
+            />
+          </app-form-field>
+          <app-form-field
+            label="fields.submitterContact"
+            for="s-contact"
+            [field]="suggestion.submitter_contact"
+          >
+            <input
+              id="s-contact"
+              class="control"
+              type="text"
+              autocomplete="off"
+              [formField]="suggestion.submitter_contact"
+            />
+          </app-form-field>
+        </fieldset>
+
+        <!-- Honeypot: hidden from people and assistive technology. -->
+        <div class="honeypot" aria-hidden="true">
+          <label for="s-website">Website</label>
+          <input id="s-website" type="text" tabindex="-1" autocomplete="off" [formField]="suggestion.website" />
+        </div>
+
+        @switch (outcome()) {
+          @case ('rate_limited') {
+            <p class="mb-3 font-semibold text-red-700" role="alert">{{ 'suggest.rateLimited' | translate }}</p>
+          }
+          @case ('invalid') {
+            <p class="mb-3 font-semibold text-red-700" role="alert">{{ 'suggest.invalid' | translate }}</p>
+          }
+          @case ('error') {
+            <p class="mb-3 font-semibold text-red-700" role="alert">{{ 'suggest.failed' | translate }}</p>
+          }
+        }
+
+        <button type="submit" class="primary focus-ring w-full" [disabled]="suggestion().submitting()">
+          {{ (suggestion().submitting() ? 'common.sending' : 'suggest.submit') | translate }}
+        </button>
+      </form>
+    }
+  </main>
+</ion-content>
