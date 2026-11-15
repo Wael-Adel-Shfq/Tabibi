@@ -3,5 +3,5 @@
 export const environment = {
   production: false,
   supabaseUrl: 'http://127.0.0.1:55321',
-  supabaseKey: 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH',
+  supabaseKey: 'sb_publishable_yII3wCmOjUBcw5wVs0LvKg_K9th-aSz',
 };
