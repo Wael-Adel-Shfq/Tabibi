@@ -78,8 +78,9 @@ Deno.serve(async (req) => {
   if (countError) return json(500, { error: 'server_error' });
   if ((count ?? 0) >= MAX_PER_HOUR) return json(429, { error: 'rate_limited' });
 
-  // The location must be specific enough (district, center, city or area)
-  // and it and every ancestor must be active.
+  // The location must be active down its whole chain, and specific enough
+  // (district, center, city or area) unless the visitor proposes a missing
+  // place under it, which the admin resolves on approval.
   const { data: location, error: locationError } = await admin
     .from('locations')
     .select('id, kind, path')
@@ -87,7 +88,8 @@ Deno.serve(async (req) => {
     .maybeSingle();
   if (locationError) return json(500, { error: 'server_error' });
   const invalidLocation = json(400, { error: 'validation_failed', fields: { location_id: 'invalid' } });
-  if (!location || location.kind === 'governorate' || location.kind === 'region') return invalidLocation;
+  const tooBroad = location?.kind === 'governorate' || location?.kind === 'region';
+  if (!location || (tooBroad && !input.location_other)) return invalidLocation;
 
   const { count: inactive, error: chainError } = await admin
     .from('locations')

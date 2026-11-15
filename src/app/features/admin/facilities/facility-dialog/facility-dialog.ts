@@ -24,6 +24,7 @@ import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation'
 import { FacilitiesService } from '../../../facilities/facilities.service';
 import { LocationsService } from '../../../locations/locations.service';
 import { adminErrorKey } from '../../shared/admin-errors';
+import { LocationQuickAdd } from '../../shared/location-quick-add.service';
 import { COORDINATE_PATTERN, toCoordinate } from '../../shared/coordinates';
 
 export interface FacilityDialogData {
@@ -56,6 +57,7 @@ export class FacilityDialog {
   protected readonly language = inject(LanguageService);
 
   protected readonly types = FACILITY_TYPES;
+  private readonly quickAdd = inject(LocationQuickAdd);
   protected readonly location = new LocationField(this.data.facility);
   protected readonly ready = signal(false);
   protected readonly failure = signal<string | null>(null);
@@ -100,6 +102,14 @@ export class FacilityDialog {
   private async prepare(): Promise<void> {
     await this.locations.load().catch(() => undefined);
     this.ready.set(true);
+  }
+
+  /** Adds a missing place under `parent` and selects it. */
+  protected async onAddRequest(parent: Location): Promise<void> {
+    const created = await this.quickAdd.create(parent);
+    if (!created) return;
+    this.location.path.set([...created.path]);
+    this.onLocation(created);
   }
 
   protected onLocation(location: Location | null): void {

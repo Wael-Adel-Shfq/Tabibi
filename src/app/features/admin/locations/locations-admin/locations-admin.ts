@@ -104,7 +104,7 @@ export class LocationsAdmin {
   }
 
   protected async edit(item?: Location): Promise<void> {
-    const saved = await this.dialogs.open<LocationDialogData, boolean>(LocationDialog, {
+    const saved = await this.dialogs.open<LocationDialogData, Location>(LocationDialog, {
       parent: this.current(),
       item,
     });

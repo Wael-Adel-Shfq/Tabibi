@@ -16,7 +16,12 @@
     </dd>
 
     <dt>{{ 'fields.location' | translate }}</dt>
-    <dd>{{ language.chain(submission.location_chain) }}</dd>
+    <dd>
+      {{ language.chain(submission.location_chain) }}
+      @if (submission.location_other) {
+        · <span class="badge">{{ 'admin.review.proposedPlace' | translate }} {{ submission.location_other }}</span>
+      }
+    </dd>
 
     <dt>{{ 'fields.address' | translate }}</dt>
     <dd>{{ submission.address }}</dd>
@@ -92,6 +97,25 @@
       @if (!submission.specialty_id) {
         <p class="mt-1 text-xs text-slate-600">{{ 'admin.review.specialtyHint' | translate }}</p>
       }
+    </section>
+
+    <section class="mt-4" aria-labelledby="r-location-title">
+      <h3 id="r-location-title" class="mb-2 font-bold text-slate-900">{{ 'admin.review.locationToUse' | translate }}</h3>
+      @if (submission.location_other) {
+        <p class="proposal mb-2">
+          {{ 'admin.review.proposedPlace' | translate }} <strong>{{ submission.location_other }}</strong>
+          — {{ 'admin.review.proposedUnder' | translate }} {{ language.chain(submission.location_chain) }}
+        </p>
+        <p class="mb-2 text-xs text-slate-600">{{ 'admin.review.proposedHint' | translate }}</p>
+      }
+      <app-location-picker
+        idPrefix="r-location"
+        mode="form"
+        [(path)]="location.path"
+        [allowAdd]="true"
+        (selection)="onLocation($event)"
+        (addRequest)="onAddRequest($event)"
+      />
     </section>
 
     <section class="mt-4">

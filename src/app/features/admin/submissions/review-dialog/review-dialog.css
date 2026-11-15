@@ -20,3 +20,11 @@
   border-radius: 0.5rem;
   background: #fffbeb;
 }
+
+.proposal {
+  padding: 0.5rem 0.75rem;
+  border: 1px dashed #0f766e;
+  border-radius: 0.5rem;
+  background: #f0fdfa;
+  color: #134e4a;
+}

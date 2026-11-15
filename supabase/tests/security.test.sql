@@ -76,7 +76,7 @@ begin
 end;
 $$;
 
-select plan(78);
+select plan(83);
 select pg_temp.fixtures();
 
 -- ===========================================================================
@@ -316,6 +316,32 @@ select results_eq(
   'rejection records status, note and reviewer without creating a doctor');
 select throws_ok($$ select public.approve_submission('00000000-0000-0000-0000-0000000000c7') $$,
   'P0001', 'specialty_required', 'an unlisted specialty must be resolved before approval');
+
+-- Proposed places ----------------------------------------------------------
+reset role;
+select throws_ok(
+  $$ insert into public.doctor_submissions (full_name, specialty_id, location_id, address)
+     select 'مقترح واسع', id, (select id from public.locations where name_en = 'Minya'), 'عنوان'
+     from public.specialties limit 1 $$,
+  '23514', 'location_too_broad', 'a suggestion cannot stop at a governorate without proposing a place');
+insert into public.doctor_submissions (id, full_name, specialty_id, location_id, location_other, address)
+select '00000000-0000-0000-0000-0000000000c6', 'مقترح بمكان جديد', id,
+  (select id from public.locations where name_en = 'Minya'), 'قرية جديدة', 'عنوان'
+from public.specialties limit 1;
+select pg_temp.login('00000000-0000-0000-0000-000000000001');
+select throws_ok($$ select public.approve_submission('00000000-0000-0000-0000-0000000000c6') $$,
+  'P0001', 'location_required', 'a proposed place must be resolved to a real location before approval');
+select throws_ok(
+  $$ select public.approve_submission('00000000-0000-0000-0000-0000000000c6', null, false,
+       (select id from public.locations where name_en = 'Minya')) $$,
+  '23514', 'location_too_broad', 'approval cannot place a doctor at governorate level');
+select lives_ok(
+  $$ select public.approve_submission('00000000-0000-0000-0000-0000000000c6', null, false,
+       '00000000-0000-0000-0000-0000000000a3') $$,
+  'admin approves a proposed-place suggestion by choosing the real location');
+select is((select location_id from public.doctors where full_name = 'مقترح بمكان جديد'),
+  '00000000-0000-0000-0000-0000000000a3'::uuid,
+  'approval places the doctor at the location the admin chose');
 
 -- Popup advertisements -----------------------------------------------------
 select lives_ok(

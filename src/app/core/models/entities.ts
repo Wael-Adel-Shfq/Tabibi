@@ -112,6 +112,8 @@ export interface DoctorSubmission extends Located, Placed {
   clinic_phone: string | null;
   location_id: string;
   address: string;
+  /** A place the visitor could not find, proposed under `location_id`. */
+  location_other: string | null;
   submitter_name: string | null;
   submitter_contact: string | null;
   status: SubmissionStatus;

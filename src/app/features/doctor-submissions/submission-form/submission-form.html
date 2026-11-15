@@ -70,8 +70,30 @@
             mode="form"
             [(path)]="location.path"
             [invalid]="suggestion.location_id().touched() && suggestion.location_id().invalid()"
+            [allowAdd]="true"
             (selection)="onLocation($event)"
+            (addRequest)="onAddRequest($event)"
           />
+
+          @if (proposingUnder(); as parent) {
+            <div class="propose mt-3">
+              <app-form-field
+                label="fields.newPlace"
+                for="s-location-other"
+                [field]="suggestion.location_other"
+                [required]="true"
+                hint="hints.newPlace"
+              >
+                <input id="s-location-other" class="control" type="text" autocomplete="off" [formField]="suggestion.location_other" />
+              </app-form-field>
+              <p class="text-sm text-slate-700">
+                {{ 'suggest.proposedUnder' | translate }} <strong>{{ language.name(parent) }}</strong>
+              </p>
+              <button type="button" class="mt-2 text-sm font-semibold text-brand-800 underline focus-ring" (click)="cancelProposal()">
+                {{ 'suggest.cancelProposal' | translate }}
+              </button>
+            </div>
+          }
         </app-field-group>
 
         <app-form-field label="fields.address" for="s-address" [field]="suggestion.address" [required]="true">

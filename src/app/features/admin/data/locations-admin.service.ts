@@ -75,11 +75,12 @@ export class LocationsAdminService {
     return unwrap<Location[]>(result) ?? [];
   }
 
-  async save(input: LocationInput, id?: string): Promise<void> {
+  /** Creates or updates a location and returns the stored row. */
+  async save(input: LocationInput, id?: string): Promise<Location> {
     const request = id
-      ? this.supabase.from('locations').update(input).eq('id', id)
-      : this.supabase.from('locations').insert(input);
-    unwrap(await request);
+      ? this.supabase.from('locations').update(input).eq('id', id).select('*').single()
+      : this.supabase.from('locations').insert(input).select('*').single();
+    return unwrap<Location>(await request);
   }
 
   async setActive(id: string, isActive: boolean): Promise<void> {

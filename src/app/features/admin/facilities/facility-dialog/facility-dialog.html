@@ -32,7 +32,9 @@
           mode="form"
           [(path)]="location.path"
           [invalid]="facility.location_id().touched() && facility.location_id().invalid()"
+          [allowAdd]="true"
           (selection)="onLocation($event)"
+          (addRequest)="onAddRequest($event)"
         />
       </app-field-group>
 

@@ -40,7 +40,9 @@
           mode="form"
           [(path)]="location.path"
           [invalid]="doctor.location_id().touched() && doctor.location_id().invalid()"
+          [allowAdd]="true"
           (selection)="onLocation($event)"
+          (addRequest)="onAddRequest($event)"
         />
       </app-field-group>
 

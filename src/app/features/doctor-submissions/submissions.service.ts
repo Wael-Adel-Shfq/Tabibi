@@ -19,6 +19,7 @@ export interface SubmissionPayload {
   specialty_other: string | null;
   clinic_phone: string | null;
   location_id: string;
+  location_other: string | null;
   address: string;
   map_url: string | null;
   submitter_name: string | null;
@@ -30,7 +31,12 @@ export interface SubmissionPayload {
 export type SubmitOutcome = 'ok' | 'rate_limited' | 'invalid' | 'error';
 
 /** Reasons the database can refuse an approval. */
-export type ApprovalProblem = 'possible_duplicate' | 'specialty_required' | 'submission_not_pending';
+export type ApprovalProblem =
+  | 'possible_duplicate'
+  | 'specialty_required'
+  | 'submission_not_pending'
+  | 'location_required'
+  | 'location_too_broad';
 
 @Service()
 export class SubmissionsService {
@@ -81,17 +87,21 @@ export class SubmissionsService {
     submissionId: string,
     specialtyId: string | null,
     allowDuplicate: boolean,
+    locationId: string | null = null,
   ): Promise<ApprovalProblem | null> {
     const { error } = await this.supabase.rpc('approve_submission', {
       p_submission_id: submissionId,
       p_specialty_id: specialtyId,
       p_allow_duplicate: allowDuplicate,
+      p_location_id: locationId,
     });
     if (!error) return null;
     const known: ApprovalProblem[] = [
       'possible_duplicate',
       'specialty_required',
       'submission_not_pending',
+      'location_required',
+      'location_too_broad',
     ];
     const problem = known.find((reason) => error.message.includes(reason));
     if (problem) return problem;

@@ -10,17 +10,33 @@
         class="control"
         [id]="idPrefix() + '-' + level.index"
         [attr.aria-invalid]="invalid()"
+        [attr.aria-describedby]="!level.loading && level.options.length === 0 ? idPrefix() + '-' + level.index + '-empty' : null"
+        [disabled]="level.loading || (level.options.length === 0 && !(allowAdd() && level.parent))"
         (change)="onSelect(level, $event)"
       >
         <option value="" [selected]="!level.selected">
-          {{ (mode() === 'filter' ? 'filters.all' : 'common.choose') | translate }}
+          @if (level.loading) {
+            {{ 'common.loading' | translate }}
+          } @else if (level.options.length === 0) {
+            {{ 'locations.noneYet' | translate }}
+          } @else {
+            {{ (mode() === 'filter' ? 'filters.all' : 'common.choose') | translate }}
+          }
         </option>
         @for (option of level.options; track option.id) {
           <option [value]="option.id" [selected]="option.id === level.selected">
             {{ language.name(option) }}
           </option>
         }
+        @if (allowAdd() && level.parent) {
+          <option [value]="addValue">{{ 'locations.addNew' | translate }}</option>
+        }
       </select>
+      @if (!level.loading && level.options.length === 0) {
+        <p class="mt-1 text-xs text-slate-600" [id]="idPrefix() + '-' + level.index + '-empty'">
+          {{ (allowAdd() ? 'locations.noneYetAdd' : 'locations.noneYetHint') | translate }}
+        </p>
+      }
     </div>
   }
 </div>

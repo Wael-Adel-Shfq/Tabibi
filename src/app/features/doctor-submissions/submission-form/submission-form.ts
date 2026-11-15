@@ -32,6 +32,8 @@ interface SuggestionModel {
   specialty_other: string;
   clinic_phone: string;
   location_id: string;
+  /** A place missing from the list, proposed under `location_id`. */
+  location_other: string;
   address: string;
   map_url: string;
   submitter_name: string;
@@ -47,6 +49,7 @@ function emptyModel(): SuggestionModel {
     specialty_other: '',
     clinic_phone: '',
     location_id: '',
+    location_other: '',
     address: '',
     map_url: '',
     submitter_name: '',
@@ -78,6 +81,8 @@ export class SubmissionForm {
   protected readonly other = OTHER;
   protected readonly model = signal<SuggestionModel>(emptyModel());
   protected readonly location = new LocationField();
+  /** Set while the visitor is proposing a place missing under this location. */
+  protected readonly proposingUnder = signal<Location | null>(null);
   /** Result of the last attempt; `null` while the form is being filled. */
   protected readonly outcome = signal<SubmitOutcome | null>(null);
 
@@ -92,7 +97,13 @@ export class SubmissionForm {
     maxLength(path.specialty_other, 80);
     pattern(path.clinic_phone, PHONE_PATTERN);
     required(path.location_id);
-    validate(path.location_id, () => (this.location.tooBroad() ? { kind: 'locationTooBroad' } : null));
+    // A broad level is fine only when the visitor names the missing place under it.
+    validate(path.location_id, () =>
+      this.location.tooBroad() && !this.proposingUnder() ? { kind: 'locationTooBroad' } : null,
+    );
+    required(path.location_other, { when: () => this.proposingUnder() !== null });
+    minLength(path.location_other, 2);
+    maxLength(path.location_other, 80);
     required(path.address);
     minLength(path.address, 3);
     maxLength(path.address, 300);
@@ -106,9 +117,25 @@ export class SubmissionForm {
   }
 
   protected onLocation(location: Location | null): void {
+    this.proposingUnder.set(null);
     const locationId = this.location.select(location);
-    this.model.update((value) => ({ ...value, location_id: locationId }));
+    this.model.update((value) => ({ ...value, location_id: locationId, location_other: '' }));
     this.suggestion.location_id().markAsTouched();
+  }
+
+  /** The visitor could not find their place under `parent`: let them type it. */
+  protected onAddRequest(parent: Location): void {
+    this.location.path.set([...parent.path]);
+    const locationId = this.location.select(parent);
+    this.model.update((value) => ({ ...value, location_id: locationId }));
+    this.proposingUnder.set(parent);
+  }
+
+  protected cancelProposal(): void {
+    const parent = this.proposingUnder();
+    this.proposingUnder.set(null);
+    this.model.update((value) => ({ ...value, location_other: '' }));
+    if (parent) this.location.select(parent);
   }
 
   protected async onSubmit(event: Event): Promise<void> {
@@ -123,6 +150,7 @@ export class SubmissionForm {
         specialty_other: listed ? null : orNull(value.specialty_other),
         clinic_phone: orNull(value.clinic_phone),
         location_id: value.location_id,
+        location_other: this.proposingUnder() ? orNull(value.location_other) : null,
         address: value.address.trim(),
         map_url: orNull(value.map_url),
         submitter_name: orNull(value.submitter_name),
@@ -137,6 +165,7 @@ export class SubmissionForm {
   protected startOver(): void {
     this.suggestion().reset(emptyModel());
     this.location.reset();
+    this.proposingUnder.set(null);
     this.outcome.set(null);
   }
 }

@@ -111,7 +111,9 @@
     "another": "Suggest another doctor",
     "rateLimited": "You sent many suggestions in a short time. Please try again in an hour.",
     "invalid": "Some details are not valid. Check the fields and try again.",
-    "failed": "Could not send the suggestion. Please try again."
+    "failed": "Could not send the suggestion. Please try again.",
+    "proposedUnder": "It will be added under:",
+    "cancelProposal": "Cancel and choose from the list"
   },
   "fields": {
     "doctorName": "Doctor name",
@@ -153,7 +155,8 @@
     "popupDelay": "Show after (seconds)",
     "popupDuration": "Close automatically after (seconds)",
     "popupRepeat": "Don't repeat for a visitor within (hours)",
-    "popupSettings": "Popup settings"
+    "popupSettings": "Popup settings",
+    "newPlace": "Name of the missing place"
   },
   "hints": {
     "mapUrl": "Copy the place link from Google Maps.",
@@ -165,7 +168,8 @@
     "moveLocation": "Change it to move this place, and everything under it, within the same governorate.",
     "popupDelay": "0 to 120 seconds after the page opens.",
     "popupDuration": "3 to 300 seconds. Leave empty to keep it until the visitor closes it.",
-    "popupRepeat": "0 = every visit. Up to 720 hours (30 days)."
+    "popupRepeat": "0 = every visit. Up to 720 hours (30 days).",
+    "newPlace": "For example the district, village or area name. The team will review it and add it to the list."
   },
   "errors": {
     "required": "This field is required.",
@@ -280,7 +284,13 @@
       "deleteTitle": "Delete this suggestion?",
       "possible_duplicate": "A similar doctor exists. Check the list and confirm if this is a different doctor.",
       "specialty_required": "Choose a specialty before approving.",
-      "submission_not_pending": "This suggestion was already reviewed."
+      "submission_not_pending": "This suggestion was already reviewed.",
+      "locationToUse": "Location to publish the doctor at",
+      "proposedPlace": "Proposed place:",
+      "proposedUnder": "under",
+      "proposedHint": "Choose the place from the list if it exists, or choose \"Add a new place\" to create it, then approve.",
+      "location_required": "The visitor proposed a new place. Choose or add the right location before approving.",
+      "location_too_broad": "Choose a more specific place for the doctor: at least a district, center or city."
     },
     "locations": {
       "root": "All governorates",
@@ -301,5 +311,11 @@
     "center": "Center",
     "city": "City",
     "area": "Area / village"
+  },
+  "locations": {
+    "noneYet": "Nothing added yet",
+    "noneYetHint": "No places have been added under this level yet.",
+    "noneYetAdd": "No places here yet. Choose \"Add a new place\" if yours is missing.",
+    "addNew": "+ Add a new place…"
   }
 }

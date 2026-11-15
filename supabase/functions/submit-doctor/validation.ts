@@ -7,6 +7,8 @@ export interface SubmissionInput {
   specialty_other: string | null;
   clinic_phone: string | null;
   location_id: string;
+  /** A place the visitor could not find in the list, proposed under `location_id`. */
+  location_other: string | null;
   address: string;
   map_url: string | null;
   submitter_name: string | null;
@@ -59,6 +61,7 @@ export function validateSubmission(body: unknown): ValidationResult {
 
   const full_name = requiredText('full_name', 2, 150);
   const location_id = requiredUuid('location_id');
+  const location_other = optionalText('location_other', 2, 80);
   const address = requiredText('address', 3, 300);
 
   const specialty_id = text(raw['specialty_id']);
@@ -85,6 +88,7 @@ export function validateSubmission(body: unknown): ValidationResult {
       specialty_other,
       clinic_phone,
       location_id,
+      location_other,
       address,
       map_url,
       submitter_name,

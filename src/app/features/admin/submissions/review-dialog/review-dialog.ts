@@ -3,8 +3,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import type { DoctorSubmission, DuplicateDoctor } from '../../../../core/models/entities';
+import type { DoctorSubmission, DuplicateDoctor, Location } from '../../../../core/models/entities';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { LocationField } from '../../../../shared/utils/location-field';
+import { LocationQuickAdd } from '../../shared/location-quick-add.service';
 import { mapHref } from '../../../../shared/utils/links';
 import { ApprovalProblem, SubmissionsService } from '../../../doctor-submissions/submissions.service';
 import { LocationsService } from '../../../locations/locations.service';
@@ -24,7 +27,7 @@ export type ReviewResult = 'approved' | 'rejected';
  */
 @Component({
   selector: 'app-review-dialog',
-  imports: [MatDialogModule, MatButtonModule, TranslatePipe, LoadingState],
+  imports: [MatDialogModule, MatButtonModule, TranslatePipe, LoadingState, LocationPicker],
   templateUrl: './review-dialog.html',
   styleUrl: './review-dialog.css',
 })
@@ -43,6 +46,11 @@ export class ReviewDialog {
   protected readonly allowDuplicate = signal(false);
   protected readonly note = signal('');
   protected readonly busy = signal(false);
+
+  private readonly quickAdd = inject(LocationQuickAdd);
+  /** Where the doctor will be placed; starts at the visitor's choice. */
+  protected readonly location = new LocationField(this.submission);
+  private readonly chosenLocationId = signal<string | null>(null);
   /** Translation key of the last problem, if any. */
   protected readonly failure = signal<string | null>(null);
 
@@ -58,6 +66,19 @@ export class ReviewDialog {
       this.duplicates.set([]);
       this.failure.set('admin.review.duplicatesFailed');
     }
+  }
+
+  protected onLocation(location: Location | null): void {
+    this.location.select(location);
+    this.chosenLocationId.set(location?.id ?? null);
+  }
+
+  /** Creates the missing place (pre-filled with the visitor's proposal) and selects it. */
+  protected async onAddRequest(parent: Location): Promise<void> {
+    const created = await this.quickAdd.create(parent, this.submission.location_other ?? undefined);
+    if (!created) return;
+    this.location.path.set([...created.path]);
+    this.onLocation(created);
   }
 
   protected onSpecialty(event: Event): void {
@@ -82,6 +103,7 @@ export class ReviewDialog {
         this.submission.id,
         this.specialtyId(),
         this.allowDuplicate(),
+        this.chosenLocationId(),
       );
       if (problem) {
         this.failure.set('admin.review.' + problem);

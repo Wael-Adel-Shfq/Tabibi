@@ -20,6 +20,10 @@ export class LocationsService {
 
   readonly specialties = this.specialtyState.asReadonly();
 
+  private readonly versionState = signal(0);
+  /** Increments whenever cached tree data is dropped; pickers reload when it changes. */
+  readonly version = this.versionState.asReadonly();
+
   /** Loads the specialties once; safe to call from every page. */
   load(): Promise<void> {
     this.loading ??= this.fetchSpecialties().catch((error: unknown) => {
@@ -46,7 +50,14 @@ export class LocationsService {
   refresh(): Promise<void> {
     this.childCache.clear();
     this.loading = null;
+    this.versionState.update((v) => v + 1);
     return this.load();
+  }
+
+  /** Drops the cached children of one location, e.g. after an admin adds a place under it. */
+  invalidate(parentId: string | null): void {
+    this.childCache.delete(parentId ?? ROOT);
+    this.versionState.update((v) => v + 1);
   }
 
   private async fetchSpecialties(): Promise<void> {
