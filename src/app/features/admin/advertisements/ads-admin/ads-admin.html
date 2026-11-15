@@ -12,9 +12,20 @@
     <label for="ad-placement">{{ 'fields.placement' | translate }}</label>
     <select id="ad-placement" class="control" (change)="onPlacement($event)">
       <option value="">{{ 'filters.allPlacements' | translate }}</option>
-      @for (placement of placements; track placement) {
-        <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
-      }
+      <optgroup [label]="'adTypes.slot' | translate">
+        @for (placement of placements; track placement) {
+          @if (!isPopup(placement)) {
+            <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
+          }
+        }
+      </optgroup>
+      <optgroup [label]="'adTypes.popup' | translate">
+        @for (placement of placements; track placement) {
+          @if (isPopup(placement)) {
+            <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
+          }
+        }
+      </optgroup>
     </select>
   </div>
 </form>
@@ -52,7 +63,10 @@
               {{ ad.title }}
               <span class="block text-sm font-normal text-slate-700">{{ ad.advertiser_name }}</span>
             </th>
-            <td>{{ 'placements.' + ad.placement | translate }}</td>
+            <td>
+              <span class="badge" [class.badge-pending]="isPopup(ad.placement)">{{ 'adTypes.' + (isPopup(ad.placement) ? 'popup' : 'slot') | translate }}</span>
+              <span class="block text-sm">{{ 'placements.' + ad.placement | translate }}</span>
+            </td>
             <td>{{ ad.display_order }}</td>
             <td dir="ltr" class="whitespace-nowrap text-start text-sm">
               {{ ad.starts_at ? (ad.starts_at | date: 'yyyy-MM-dd') : '…' }} →

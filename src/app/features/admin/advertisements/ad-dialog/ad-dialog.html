@@ -5,6 +5,27 @@
 } @else {
   <form novalidate (submit)="onSubmit($event)">
     <mat-dialog-content>
+      <fieldset class="mb-4">
+        <legend class="mb-1 text-sm font-bold text-slate-900">{{ 'fields.adType' | translate }}</legend>
+        <div class="ad-types">
+          @for (type of adTypes; track type) {
+            <label class="ad-type" [class.ad-type-selected]="(type === 'popup') === isPopup()">
+              <input
+                type="radio"
+                name="ad-type"
+                [value]="type"
+                [checked]="(type === 'popup') === isPopup()"
+                (change)="setType(type)"
+              />
+              <span>
+                <span class="block font-semibold">{{ 'adTypes.' + type | translate }}</span>
+                <span class="block text-xs text-slate-600">{{ 'adTypes.' + type + 'Hint' | translate }}</span>
+              </span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
       <app-form-field label="fields.title" for="a-title" [field]="ad.title" [required]="true">
         <input id="a-title" class="control" type="text" autocomplete="off" [formField]="ad.title" />
       </app-form-field>
@@ -41,8 +62,8 @@
       <div class="grid gap-x-3 sm:grid-cols-2">
         <app-form-field label="fields.placement" for="a-placement" [field]="ad.placement" [required]="true">
           <select id="a-placement" class="control" [formField]="ad.placement">
-            @for (placement of placements; track placement) {
-              <option [value]="placement">{{ 'placements.' + placement | translate }}</option>
+            @for (placement of placements(); track placement) {
+              <option [value]="placement" [selected]="placement === model().placement">{{ 'placements.' + placement | translate }}</option>
             }
           </select>
         </app-form-field>

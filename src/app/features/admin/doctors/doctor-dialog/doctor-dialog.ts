@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import {
   form,
   FormField,
@@ -15,7 +15,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import type { Doctor, Location } from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
+import { ImageRejectedError } from '../../../../core/storage/image-storage.service';
 import { FieldGroup } from '../../../../shared/components/field-group/field-group';
+import { ImageField } from '../../../../shared/components/image-field/image-field';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
 import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
 import { LocationField } from '../../../../shared/utils/location-field';
@@ -41,6 +43,7 @@ export interface DoctorDialogData {
     TranslatePipe,
     FormFieldWrapper,
     FieldGroup,
+    ImageField,
     LocationPicker,
     LoadingState,
   ],
@@ -55,6 +58,9 @@ export class DoctorDialog {
   protected readonly language = inject(LanguageService);
 
   private readonly quickAdd = inject(LocationQuickAdd);
+  private readonly imageField = viewChild(ImageField);
+  /** URL of the saved image, shown as the starting preview. */
+  protected readonly currentImage = this.doctors.imageUrl(this.data.doctor?.image_path);
   protected readonly location = new LocationField(this.data.doctor);
   /** False until the dropdown options for the record being edited are loaded. */
   protected readonly ready = signal(false);
@@ -134,11 +140,18 @@ export class DoctorDialog {
             longitude: toCoordinate(value.longitude),
             is_active: value.is_active,
           },
-          this.data.doctor?.id,
+          this.imageField()?.change() ?? { action: 'keep' },
+          this.data.doctor,
         );
         this.ref.close(true);
       } catch (error) {
-        this.failure.set(adminErrorKey(error));
+        this.failure.set(
+          error instanceof ImageRejectedError
+            ? error.reason === 'size'
+              ? 'image.tooLarge'
+              : 'image.badType'
+            : adminErrorKey(error),
+        );
       }
       return undefined;
     });

@@ -26,9 +26,10 @@ import { FormFieldWrapper } from '../../../../shared/components/form-field/form-
 import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
 import { LocationField } from '../../../../shared/utils/location-field';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
-import { AD_IMAGE_TYPES } from '../../../../shared/utils/image';
+import { IMAGE_TYPES } from '../../../../shared/utils/image';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation';
-import { AdsService, ImageRejectedError } from '../../../advertisements/ads.service';
+import { ImageRejectedError } from '../../../../core/storage/image-storage.service';
+import { AdsService } from '../../../advertisements/ads.service';
 import { LocationsService } from '../../../locations/locations.service';
 import { adminErrorKey } from '../../shared/admin-errors';
 
@@ -70,8 +71,8 @@ export class AdDialog {
   protected readonly locations = inject(LocationsService);
   protected readonly language = inject(LanguageService);
 
-  protected readonly placements = AD_PLACEMENTS;
-  protected readonly accept = AD_IMAGE_TYPES.join(',');
+  protected readonly adTypes = ['slot', 'popup'] as const;
+  protected readonly accept = IMAGE_TYPES.join(',');
   /** Optional targeting; any level, or none for everywhere. */
   protected readonly location = new LocationField(this.data.ad);
   protected readonly ready = signal(false);
@@ -104,6 +105,16 @@ export class AdDialog {
 
   /** Popup settings only apply to popup placements. */
   protected readonly isPopup = computed(() => isPopupPlacement(this.model().placement));
+  /** Placements of the chosen type only. */
+  protected readonly placements = computed(() =>
+    AD_PLACEMENTS.filter((placement) => isPopupPlacement(placement) === this.isPopup()),
+  );
+
+  /** Switching between a fixed slot and a floating popup picks that type's first placement. */
+  protected setType(type: 'slot' | 'popup'): void {
+    if ((type === 'popup') === this.isPopup()) return;
+    this.model.update((value) => ({ ...value, placement: type === 'popup' ? 'popup_home' : 'home_top' }));
+  }
 
   protected readonly ad = form(this.model, (path) => {
     // Popup timing; the ranges match the database checks.
@@ -157,7 +168,7 @@ export class AdDialog {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
     this.failure.set(null);
     this.revokePreview();
-    if (file && !AD_IMAGE_TYPES.includes(file.type)) {
+    if (file && !IMAGE_TYPES.includes(file.type)) {
       this.file.set(null);
       this.failure.set('admin.ads.imageType');
       return;

@@ -123,7 +123,7 @@ export class FacilitiesAdmin {
     });
     if (!confirmed) return;
     try {
-      await this.facilities.remove(facility.id);
+      await this.facilities.remove(facility);
       await this.toast.success('common.deleted');
     } catch (error) {
       await this.toast.error(adminErrorKey(error));

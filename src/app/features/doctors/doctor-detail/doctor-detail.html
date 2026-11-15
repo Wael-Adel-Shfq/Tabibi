@@ -9,6 +9,12 @@
     } @else {
       @if (doctor(); as doctor) {
         <article class="card p-4">
+          <app-listing-photo
+            class="mb-3"
+            size="large"
+            [src]="doctors.imageUrl(doctor.image_path)"
+            [alt]="doctor.full_name"
+          />
           <h1 class="text-xl font-bold text-slate-900">{{ doctor.full_name }}</h1>
           <p class="font-semibold text-brand-800">{{ language.name(doctor.specialty) }}</p>
 

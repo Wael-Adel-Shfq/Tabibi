@@ -76,8 +76,11 @@ begin
 end;
 $$;
 
-select plan(83);
+select plan(87);
 select pg_temp.fixtures();
+
+select is((select file_size_limit from storage.buckets where id = 'listing-images'), 1048576::bigint,
+  'doctor and facility images are limited to 1 MB');
 
 -- ===========================================================================
 -- 0. Location tree rules (as the table owner)
@@ -188,6 +191,9 @@ select throws_ok($$ select public.admin_dashboard_stats() $$, '42501', null, 'an
 select throws_ok(
   $$ insert into storage.objects (bucket_id, name) values ('ad-images', 'anon.webp') $$,
   '42501', null, 'anon cannot upload advertisement images');
+select throws_ok(
+  $$ insert into storage.objects (bucket_id, name) values ('listing-images', 'anon.webp') $$,
+  '42501', null, 'anon cannot upload doctor or facility images');
 
 -- ===========================================================================
 -- 2. Signed-in user without the admin role
@@ -224,6 +230,9 @@ select throws_ok($$ select public.admin_dashboard_stats() $$, '42501', 'not_auth
 select throws_ok(
   $$ insert into storage.objects (bucket_id, name) values ('ad-images', 'user.webp') $$,
   '42501', null, 'user cannot upload advertisement images');
+select throws_ok(
+  $$ insert into storage.objects (bucket_id, name) values ('listing-images', 'user.webp') $$,
+  '42501', null, 'user cannot upload doctor or facility images');
 
 reset role;
 select is((select count(*) from public.doctors where full_name like 'اختبار%'), 4::bigint,
@@ -254,6 +263,8 @@ select throws_ok($$ update public.profiles set role = 'admin' where id = '000000
   '42501', null, 'even an admin cannot change roles through the API');
 select lives_ok($$ insert into storage.objects (bucket_id, name) values ('ad-images', 'admin.webp') $$,
   'admin can upload advertisement images');
+select lives_ok($$ insert into storage.objects (bucket_id, name) values ('listing-images', 'admin.webp') $$,
+  'admin can upload doctor and facility images');
 
 -- Moving a district re-roots its areas and the doctors under it.
 select lives_ok(

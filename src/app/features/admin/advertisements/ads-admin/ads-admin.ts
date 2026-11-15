@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AD_PLACEMENTS, AdPlacement, Advertisement, PAGE_SIZE } from '../../../../core/models/entities';
+import { AD_PLACEMENTS, AdPlacement, Advertisement, isPopupPlacement, PAGE_SIZE } from '../../../../core/models/entities';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../../shared/components/error-state/error-state';
@@ -39,6 +39,7 @@ export class AdsAdmin {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly term = signal('');
   protected readonly placement = signal<AdPlacement | ''>('');
+  protected readonly isPopup = isPopupPlacement;
 
   protected readonly list = new PagedList<Advertisement>((page) =>
     this.ads.list({ term: this.term(), placement: this.placement(), page }),

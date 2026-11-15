@@ -1,19 +1,24 @@
 <article class="card p-4">
-  <h3 class="text-base font-bold text-slate-900">{{ facility().name }}</h3>
-  <p class="text-sm font-semibold text-brand-800">
-    {{ 'facilityTypes.' + facility().type | translate }}
-  </p>
-  <p class="mt-1 text-sm text-slate-700">
-    {{ language.chain(facility().location_chain) }}
-  </p>
-  <p class="text-sm text-slate-700">{{ facility().address }}</p>
-  @if (facility().phone; as phone) {
-    <p class="text-sm text-slate-700">
-      <span class="sr-only">{{ 'fields.phone' | translate }}: </span>
-      <span dir="ltr">{{ phone }}</span>
-    </p>
-  }
+  <div class="flex gap-3">
+    <app-listing-photo [src]="photo()" kind="facility" />
+    <div class="min-w-0 flex-1">
+      <h3 class="text-base font-bold text-slate-900">{{ facility().name }}</h3>
+      <p class="text-sm font-semibold text-brand-800">
+        {{ 'facilityTypes.' + facility().type | translate }}
+      </p>
+      <p class="mt-1 text-sm text-slate-700">
+        {{ language.chain(facility().location_chain) }}
+      </p>
+      <p class="text-sm text-slate-700">{{ facility().address }}</p>
+      @if (facility().phone; as phone) {
+        <p class="text-sm text-slate-700">
+          <span class="sr-only">{{ 'fields.phone' | translate }}: </span>
+          <span dir="ltr">{{ phone }}</span>
+        </p>
+      }
 
+    </div>
+  </div>
   <div class="mt-3 flex flex-wrap gap-2">
     <app-contact-actions [phone]="facility().phone" [place]="facility()" [name]="facility().name" />
   </div>

@@ -11,6 +11,8 @@
         <input id="f-name" class="control" type="text" autocomplete="off" [formField]="facility.name" />
       </app-form-field>
 
+      <app-image-field inputId="f-image" [currentUrl]="currentImage" [alt]="model().name" />
+
       <div class="grid gap-x-3 sm:grid-cols-2">
         <app-form-field label="fields.facilityType" for="f-type" [field]="facility.type" [required]="true">
           <select id="f-type" class="control" [formField]="facility.type">

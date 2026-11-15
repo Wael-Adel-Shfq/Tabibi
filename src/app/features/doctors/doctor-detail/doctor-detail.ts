@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
 import type { Doctor } from '../../../core/models/entities';
 import { ContactActions } from '../../../shared/components/contact-actions/contact-actions';
+import { ListingPhoto } from '../../../shared/components/listing-photo/listing-photo';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
@@ -17,6 +18,7 @@ import { DoctorsService } from '../doctors.service';
     TranslatePipe,
     PublicHeader,
     ContactActions,
+    ListingPhoto,
     LoadingState,
     ErrorState,
     EmptyState,
@@ -25,7 +27,7 @@ import { DoctorsService } from '../doctors.service';
   styleUrl: './doctor-detail.css',
 })
 export class DoctorDetail {
-  private readonly doctors = inject(DoctorsService);
+  protected readonly doctors = inject(DoctorsService);
   protected readonly language = inject(LanguageService);
 
   /** Route parameter. */

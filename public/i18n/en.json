@@ -96,9 +96,9 @@
     "home_middle": "Home – middle",
     "doctors_list": "Doctors list",
     "facilities_list": "Facilities list",
-    "popup_home": "Popup – Home",
-    "popup_doctors": "Popup – Doctors",
-    "popup_facilities": "Popup – Facilities"
+    "popup_home": "Over the home page",
+    "popup_doctors": "Over the doctors page",
+    "popup_facilities": "Over the facilities page"
   },
   "suggest": {
     "title": "Suggest a doctor",
@@ -156,7 +156,8 @@
     "popupDuration": "Close automatically after (seconds)",
     "popupRepeat": "Don't repeat for a visitor within (hours)",
     "popupSettings": "Popup settings",
-    "newPlace": "Name of the missing place"
+    "newPlace": "Name of the missing place",
+    "adType": "Ad type"
   },
   "hints": {
     "mapUrl": "Copy the place link from Google Maps.",
@@ -169,7 +170,8 @@
     "popupDelay": "0 to 120 seconds after the page opens.",
     "popupDuration": "3 to 300 seconds. Leave empty to keep it until the visitor closes it.",
     "popupRepeat": "0 = every visit. Up to 720 hours (30 days).",
-    "newPlace": "For example the district, village or area name. The team will review it and add it to the list."
+    "newPlace": "For example the district, village or area name. The team will review it and add it to the list.",
+    "listingImage": "Optional. WebP, JPEG or PNG. Resized automatically; the stored image is at most 1 MB."
   },
   "errors": {
     "required": "This field is required.",
@@ -317,5 +319,16 @@
     "noneYetHint": "No places have been added under this level yet.",
     "noneYetAdd": "No places here yet. Choose \"Add a new place\" if yours is missing.",
     "addNew": "+ Add a new place…"
+  },
+  "adTypes": {
+    "slot": "Fixed in page",
+    "slotHint": "Shown in a set place within the page content.",
+    "popup": "Floating (popup)",
+    "popupHint": "Shown over the page with a close button and a display time."
+  },
+  "image": {
+    "remove": "Remove image",
+    "badType": "Unsupported file type. Use WebP, JPEG or PNG.",
+    "tooLarge": "The image is over 1 MB even after compression. Choose a smaller image."
   }
 }

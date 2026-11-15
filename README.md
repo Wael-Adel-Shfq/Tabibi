@@ -25,7 +25,7 @@ Every rule is enforced by the database. The Angular route guard only improves na
 - **No one can grant themself admin.** No client role can insert or update `profiles`. Roles are changed only by SQL run as the database owner.
 - **The service role key never reaches the app.** It exists only as an Edge Function secret. The app uses the publishable key.
 
-The SQL tests in `supabase/tests/security.test.sql` (83 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
+The SQL tests in `supabase/tests/security.test.sql` (87 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
 
 ## Locations
 
@@ -206,6 +206,7 @@ npx cap open android
 
 ## Advertisements
 
+- The admin form starts with **Ad type**: *Fixed in page* or *Floating (popup)*. The placement list then shows only that type's placements.
 - Slot placements (inside the page): `home_top`, `home_middle`, `doctors_list`, `facilities_list`.
 - Popup placements (a card over the page, with a close button): `popup_home`, `popup_doctors`, `popup_facilities`. Each popup ad has:
   - **Show after**: seconds after the page opens (0–120).
@@ -214,6 +215,13 @@ npx cap open android
   - One popup at most per page visit; it never carries over to another page.
 - An ad shows only while it is active and the current time is inside its optional start and end dates. Ads with a governorate show only when the visitor filters by that governorate or by none.
 - Images are resized in the browser to a maximum width of 1200 px and saved as WebP under a random file name. The bucket accepts WebP, JPEG or PNG up to 2 MB. Replacing or deleting an ad deletes its old image.
+
+## Doctor and facility images
+
+- Optional; added, replaced or removed in the admin doctor and facility forms.
+- Stored in the public `listing-images` bucket, which has a hard 1 MB limit and accepts WebP, JPEG and PNG. Only admins can upload or delete.
+- Photos are resized in the browser to 800 px wide and saved as WebP (lowering quality if needed), so typical phone photos stay well under 1 MB.
+- Replacing or removing an image, or deleting the doctor or facility, deletes the old file.
 
 ## Out of scope
 

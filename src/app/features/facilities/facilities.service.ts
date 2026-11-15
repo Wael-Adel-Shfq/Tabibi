@@ -1,5 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { Facility, FacilityType, Page, PAGE_SIZE } from '../../core/models/entities';
+import { ImageChange, ImageStorageService } from '../../core/storage/image-storage.service';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
 import { normalizeArabic } from '../../shared/utils/arabic';
@@ -29,9 +30,17 @@ export interface FacilityInput {
   is_active: boolean;
 }
 
+const IMAGES = 'listing-images' as const;
+
 @Service()
 export class FacilitiesService {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly images = inject(ImageStorageService);
+
+  /** Public URL of a record's image, or null when it has none. */
+  imageUrl(path: string | null | undefined): string | null {
+    return path ? this.images.publicUrl(IMAGES, path) : null;
+  }
 
   async search(query: FacilityQuery = {}): Promise<Page<Facility>> {
     const pageSize = query.pageSize ?? PAGE_SIZE;
@@ -53,18 +62,24 @@ export class FacilitiesService {
 
   // --- Admin operations (allowed by RLS for administrators only) ---
 
-  async save(input: FacilityInput, id?: string): Promise<void> {
-    const request = id
-      ? this.supabase.from('facilities').update(input).eq('id', id)
-      : this.supabase.from('facilities').insert(input);
-    unwrap(await request);
+  /** Saves the record and applies the image change (upload, replace or remove). */
+  async save(input: FacilityInput, image: ImageChange, existing?: Facility): Promise<void> {
+    await this.images.saveWithImage(IMAGES, image, existing?.image_path ?? null, async (image_path) => {
+      const values = { ...input, image_path };
+      const request = existing
+        ? this.supabase.from('facilities').update(values).eq('id', existing.id)
+        : this.supabase.from('facilities').insert(values);
+      unwrap(await request);
+    });
   }
 
   async setActive(id: string, isActive: boolean): Promise<void> {
     unwrap(await this.supabase.from('facilities').update({ is_active: isActive }).eq('id', id));
   }
 
-  async remove(id: string): Promise<void> {
-    unwrap(await this.supabase.from('facilities').delete().eq('id', id));
+  /** Deletes the record, then its image, which nothing references any more. */
+  async remove(record: Facility): Promise<void> {
+    unwrap(await this.supabase.from('facilities').delete().eq('id', record.id));
+    await this.images.remove(IMAGES, record.image_path);
   }
 }

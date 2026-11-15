@@ -1,5 +1,6 @@
 import { inject, Service } from '@angular/core';
 import { Doctor, Page, PAGE_SIZE } from '../../core/models/entities';
+import { ImageChange, ImageStorageService } from '../../core/storage/image-storage.service';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
 import { normalizeArabic } from '../../shared/utils/arabic';
@@ -30,9 +31,17 @@ export interface DoctorInput {
   is_active: boolean;
 }
 
+const IMAGES = 'listing-images' as const;
+
 @Service()
 export class DoctorsService {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly images = inject(ImageStorageService);
+
+  /** Public URL of a record's image, or null when it has none. */
+  imageUrl(path: string | null | undefined): string | null {
+    return path ? this.images.publicUrl(IMAGES, path) : null;
+  }
 
   /** Searches doctors by name or specialty, combined with location filters. */
   async search(query: DoctorQuery = {}): Promise<Page<Doctor>> {
@@ -71,18 +80,24 @@ export class DoctorsService {
 
   // --- Admin operations (allowed by RLS for administrators only) ---
 
-  async save(input: DoctorInput, id?: string): Promise<void> {
-    const request = id
-      ? this.supabase.from('doctors').update(input).eq('id', id)
-      : this.supabase.from('doctors').insert(input);
-    unwrap(await request);
+  /** Saves the record and applies the image change (upload, replace or remove). */
+  async save(input: DoctorInput, image: ImageChange, existing?: Doctor): Promise<void> {
+    await this.images.saveWithImage(IMAGES, image, existing?.image_path ?? null, async (image_path) => {
+      const values = { ...input, image_path };
+      const request = existing
+        ? this.supabase.from('doctors').update(values).eq('id', existing.id)
+        : this.supabase.from('doctors').insert(values);
+      unwrap(await request);
+    });
   }
 
   async setActive(id: string, isActive: boolean): Promise<void> {
     unwrap(await this.supabase.from('doctors').update({ is_active: isActive }).eq('id', id));
   }
 
-  async remove(id: string): Promise<void> {
-    unwrap(await this.supabase.from('doctors').delete().eq('id', id));
+  /** Deletes the record, then its image, which nothing references any more. */
+  async remove(record: Doctor): Promise<void> {
+    unwrap(await this.supabase.from('doctors').delete().eq('id', record.id));
+    await this.images.remove(IMAGES, record.image_path);
   }
 }

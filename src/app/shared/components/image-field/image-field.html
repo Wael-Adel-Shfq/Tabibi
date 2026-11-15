@@ -1,0 +1,37 @@
+<div class="mb-4">
+  <label class="mb-1 block text-sm font-semibold text-slate-800" [attr.for]="inputId()">
+    {{ label() | translate }}
+  </label>
+  <div class="flex items-center gap-3">
+    @if (shown(); as src) {
+      <img class="preview" [src]="src" [alt]="alt()" width="96" height="96" decoding="async" />
+    } @else {
+      <span class="preview preview-empty" aria-hidden="true"></span>
+    }
+    <div class="min-w-0 flex-1">
+      <input
+        #fileInput
+        class="control"
+        type="file"
+        [id]="inputId()"
+        [accept]="accept"
+        [attr.aria-describedby]="inputId() + '-hint'"
+        [attr.aria-invalid]="typeError()"
+        (change)="onFile($event)"
+      />
+      @if (shown()) {
+        <button
+          type="button"
+          class="remove focus-ring mt-1"
+          (click)="clear(fileInput)"
+        >
+          {{ 'image.remove' | translate }}
+        </button>
+      }
+    </div>
+  </div>
+  <p class="mt-1 text-xs text-slate-600" [id]="inputId() + '-hint'">{{ (hint() || 'hints.listingImage') | translate }}</p>
+  @if (typeError()) {
+    <p class="mt-1 text-sm font-semibold text-red-700" role="alert">{{ 'image.badType' | translate }}</p>
+  }
+</div>

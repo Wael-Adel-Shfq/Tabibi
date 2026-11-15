@@ -98,6 +98,8 @@ export interface Doctor extends Located, Placed {
   clinic_phone: string | null;
   location_id: string;
   address: string;
+  /** Optional photo in the `listing-images` bucket (max 1 MB). */
+  image_path: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -145,6 +147,8 @@ export interface Facility extends Located, Placed {
   location_id: string;
   address: string;
   phone: string | null;
+  /** Optional photo in the `listing-images` bucket (max 1 MB). */
+  image_path: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;

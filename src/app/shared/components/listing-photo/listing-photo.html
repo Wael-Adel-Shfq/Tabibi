@@ -1,0 +1,7 @@
+@if (src(); as url) {
+  <img [src]="url" [alt]="alt()" width="160" height="160" loading="lazy" decoding="async" />
+} @else {
+  <span class="placeholder" aria-hidden="true">
+    <ion-icon [name]="kind() === 'doctor' ? 'person-outline' : 'business-outline'" />
+  </span>
+}

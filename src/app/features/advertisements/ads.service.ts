@@ -2,9 +2,9 @@ import { inject, Service } from '@angular/core';
 import { AdPlacement, Advertisement, Page, PAGE_SIZE } from '../../core/models/entities';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
-import { AD_IMAGE_MAX_BYTES, AD_IMAGE_TYPES, resizeToWebp } from '../../shared/utils/image';
+import { ImageStorageService } from '../../core/storage/image-storage.service';
 
-const BUCKET = 'ad-images';
+const BUCKET = 'ad-images' as const;
 const AD_SELECT = '*, location_chain';
 
 export interface AdInput {
@@ -32,16 +32,10 @@ export interface AdQuery {
   page?: number;
 }
 
-/** Thrown when a picked file is not an acceptable advertisement image. */
-export class ImageRejectedError extends Error {
-  constructor(readonly reason: 'type' | 'size') {
-    super('image_rejected_' + reason);
-  }
-}
-
 @Service()
 export class AdsService {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly images = inject(ImageStorageService);
 
   /**
    * Advertisements to show in one placement right now. The period filter is
@@ -67,7 +61,7 @@ export class AdsService {
   }
 
   imageUrl(path: string): string {
-    return this.supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    return this.images.publicUrl(BUCKET, path);
   }
 
   // --- Admin operations ---
@@ -105,26 +99,13 @@ export class AdsService {
     await this.removeImage(ad.image_path);
   }
 
-  /**
-   * Validates, resizes and uploads an image under a random name. Returns the
-   * storage path to save on the advertisement.
-   */
-  async uploadImage(file: File): Promise<string> {
-    if (!AD_IMAGE_TYPES.includes(file.type)) throw new ImageRejectedError('type');
-    const blob = await resizeToWebp(file);
-    if (blob.size > AD_IMAGE_MAX_BYTES) throw new ImageRejectedError('size');
-
-    const path = crypto.randomUUID() + '.webp';
-    const { error } = await this.supabase.storage
-      .from(BUCKET)
-      .upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000', upsert: false });
-    if (error) throw error;
-    return path;
+  /** Resizes and uploads an advertisement image; returns its storage path. */
+  uploadImage(file: File): Promise<string> {
+    return this.images.upload(BUCKET, file);
   }
 
   /** Best-effort removal of an image that is no longer referenced. */
-  async removeImage(path: string | null | undefined): Promise<void> {
-    if (!path) return;
-    await this.supabase.storage.from(BUCKET).remove([path]);
+  removeImage(path: string | null | undefined): Promise<void> {
+    return this.images.remove(BUCKET, path);
   }
 }

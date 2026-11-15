@@ -118,7 +118,7 @@ export class DoctorsAdmin {
     });
     if (!confirmed) return;
     try {
-      await this.doctors.remove(doctor.id);
+      await this.doctors.remove(doctor);
       await this.toast.success('common.deleted');
     } catch (error) {
       await this.toast.error(adminErrorKey(error));

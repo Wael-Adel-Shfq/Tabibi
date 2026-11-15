@@ -9,3 +9,36 @@
   border-radius: 0.5rem;
   background: #e2e8f0;
 }
+
+.ad-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.5rem;
+}
+
+.ad-type {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.ad-type input {
+  margin-top: 0.25rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: #0f766e;
+}
+
+.ad-type-selected {
+  border-color: #0f766e;
+  background: #f0fdfa;
+}
+
+.ad-type:focus-within {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+}
