@@ -199,3 +199,21 @@ textarea.control {
   --mat-button-text-label-text-color: #b91c1c;
   --mat-button-filled-container-color: #b91c1c;
 }
+
+/* Popup advertisement card (app-ad-popup). Ionic renders the modal outside the
+   component, so its size lives here; the height follows the content. */
+ion-modal.ad-popup {
+  --width: min(92vw, 26rem);
+  --height: auto;
+  --max-height: 90vh;
+  --border-radius: 1rem;
+  --box-shadow: 0 20px 40px rgb(15 23 42 / 0.3);
+}
+
+ion-modal.ad-popup .ion-page {
+  position: relative;
+  display: block;
+  contain: content;
+  max-height: 90vh;
+  overflow-y: auto;
+}

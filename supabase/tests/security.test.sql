@@ -76,7 +76,7 @@ begin
 end;
 $$;
 
-select plan(76);
+select plan(78);
 select pg_temp.fixtures();
 
 -- ===========================================================================
@@ -316,6 +316,17 @@ select results_eq(
   'rejection records status, note and reviewer without creating a doctor');
 select throws_ok($$ select public.approve_submission('00000000-0000-0000-0000-0000000000c7') $$,
   'P0001', 'specialty_required', 'an unlisted specialty must be resolved before approval');
+
+-- Popup advertisements -----------------------------------------------------
+select lives_ok(
+  $$ insert into public.advertisements
+       (title, advertiser_name, image_path, placement, popup_delay_seconds, popup_duration_seconds, popup_repeat_hours)
+     values ('اعلان منبثق', 'معلن', 'p.webp', 'popup_doctors', 3, 10, 12) $$,
+  'admin can create a popup advertisement with timing');
+select throws_ok(
+  $$ insert into public.advertisements (title, advertiser_name, image_path, placement, popup_duration_seconds)
+     values ('اعلان منبثق قصير', 'معلن', 'q.webp', 'popup_home', 1) $$,
+  '23514', null, 'popup duration must be at least 3 seconds');
 
 -- Search normalisation ------------------------------------------------------
 reset role;

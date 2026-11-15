@@ -78,6 +78,40 @@
         <app-location-picker idPrefix="a-location" mode="filter" [(path)]="location.path" (selection)="onLocation($event)" />
       </app-field-group>
 
+      @if (isPopup()) {
+        <fieldset class="card mb-4 p-3">
+          <legend class="px-1 text-sm font-bold text-slate-900">{{ 'fields.popupSettings' | translate }}</legend>
+          <div class="grid gap-x-3 sm:grid-cols-3">
+            <app-form-field
+              label="fields.popupDelay"
+              for="a-popup-delay"
+              [field]="ad.popup_delay_seconds"
+              [required]="true"
+              hint="hints.popupDelay"
+            >
+              <input id="a-popup-delay" class="control" type="text" inputmode="numeric" dir="ltr" [formField]="ad.popup_delay_seconds" />
+            </app-form-field>
+            <app-form-field
+              label="fields.popupDuration"
+              for="a-popup-duration"
+              [field]="ad.popup_duration_seconds"
+              hint="hints.popupDuration"
+            >
+              <input id="a-popup-duration" class="control" type="text" inputmode="numeric" dir="ltr" [formField]="ad.popup_duration_seconds" />
+            </app-form-field>
+            <app-form-field
+              label="fields.popupRepeat"
+              for="a-popup-repeat"
+              [field]="ad.popup_repeat_hours"
+              [required]="true"
+              hint="hints.popupRepeat"
+            >
+              <input id="a-popup-repeat" class="control" type="text" inputmode="numeric" dir="ltr" [formField]="ad.popup_repeat_hours" />
+            </app-form-field>
+          </div>
+        </fieldset>
+      }
+
       <app-form-field label="fields.address" for="a-address" [field]="ad.address">
         <textarea id="a-address" class="control" rows="2" [formField]="ad.address"></textarea>
       </app-form-field>

@@ -4,6 +4,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
 import type { Doctor } from '../../../core/models/entities';
 import { AdSlot } from '../../../shared/components/ad-slot/ad-slot';
+import { AdPopup } from '../../../shared/components/ad-popup/ad-popup';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
@@ -25,6 +26,7 @@ import { DoctorsService } from '../doctors.service';
     PublicHeader,
     LocationFilter,
     AdSlot,
+    AdPopup,
     DoctorCard,
     LoadingState,
     ErrorState,

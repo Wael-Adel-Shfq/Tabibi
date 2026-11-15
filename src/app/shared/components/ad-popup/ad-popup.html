@@ -1,0 +1,58 @@
+<ion-modal
+  class="ad-popup"
+  [isOpen]="open()"
+  (didDismiss)="close()"
+  [attr.aria-label]="ad()?.title ?? ''"
+>
+  <ng-template>
+    @if (ad(); as ad) {
+      <div
+        class="popup"
+        (pointerenter)="setPaused(true)"
+        (pointerleave)="setPaused(false)"
+        (focusin)="setPaused(true)"
+        (focusout)="setPaused(false)"
+      >
+        <div class="popup-head">
+          <span class="sponsored">{{ 'ads.sponsored' | translate }}</span>
+          <button
+            type="button"
+            class="close focus-ring"
+            (click)="close()"
+            [attr.aria-label]="'ads.close' | translate"
+          >
+            <ion-icon name="close-outline" aria-hidden="true" />
+          </button>
+        </div>
+
+        <img class="popup-image" [src]="image()" [alt]="ad.title" width="600" height="250" decoding="async" />
+
+        <div class="popup-body">
+          <h2 class="text-lg font-bold text-slate-900">{{ ad.title }}</h2>
+          <p class="text-sm text-slate-700">{{ ad.advertiser_name }}</p>
+          @if (ad.address) {
+            <p class="text-sm text-slate-600">{{ ad.address }}</p>
+          }
+          <div class="mt-3 flex flex-wrap gap-2">
+            <app-contact-actions [phone]="ad.phone" [place]="place()" [name]="ad.title" />
+          </div>
+
+          @if (hasTimer()) {
+            <div class="countdown">
+              <div class="bar" aria-hidden="true">
+                <div class="bar-fill" [style.width.%]="percentLeft()"></div>
+              </div>
+              <p class="text-xs text-slate-600">
+                @if (paused()) {
+                  {{ 'ads.paused' | translate }}
+                } @else {
+                  {{ 'ads.closesIn' | translate: { seconds: secondsLeft() } }}
+                }
+              </p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </ng-template>
+</ion-modal>

@@ -13,7 +13,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import { AD_PLACEMENTS, AdPlacement, Advertisement, Location } from '../../../../core/models/entities';
+import {
+  AD_PLACEMENTS,
+  AdPlacement,
+  Advertisement,
+  isPopupPlacement,
+  Location,
+} from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
 import { FieldGroup } from '../../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
@@ -91,9 +97,29 @@ export class AdDialog {
     starts_at: toLocalInput(this.data.ad?.starts_at),
     ends_at: toLocalInput(this.data.ad?.ends_at),
     is_active: this.data.ad?.is_active ?? true,
+    popup_delay_seconds: String(this.data.ad?.popup_delay_seconds ?? 2),
+    popup_duration_seconds: this.data.ad ? (this.data.ad.popup_duration_seconds?.toString() ?? '') : '10',
+    popup_repeat_hours: String(this.data.ad?.popup_repeat_hours ?? 24),
   });
 
+  /** Popup settings only apply to popup placements. */
+  protected readonly isPopup = computed(() => isPopupPlacement(this.model().placement));
+
   protected readonly ad = form(this.model, (path) => {
+    // Popup timing; the ranges match the database checks.
+    const whole = (min: number, max: number, optional: boolean) =>
+      ({ value }: { value: () => string }) => {
+        const raw = value().trim();
+        if (raw === '' && optional) return null;
+        const n = Number(raw);
+        return /^\d+$/.test(raw) && n >= min && n <= max ? null : { kind: 'range' };
+      };
+    required(path.popup_delay_seconds, { when: () => this.isPopup() });
+    validate(path.popup_delay_seconds, (ctx) => (this.isPopup() ? whole(0, 120, false)(ctx) : null));
+    validate(path.popup_duration_seconds, (ctx) => (this.isPopup() ? whole(3, 300, true)(ctx) : null));
+    required(path.popup_repeat_hours, { when: () => this.isPopup() });
+    validate(path.popup_repeat_hours, (ctx) => (this.isPopup() ? whole(0, 720, false)(ctx) : null));
+
     required(path.title);
     minLength(path.title, 2);
     maxLength(path.title, 120);
@@ -175,6 +201,12 @@ export class AdDialog {
           map_url: orNull(value.map_url),
           starts_at: fromLocalInput(value.starts_at),
           ends_at: fromLocalInput(value.ends_at),
+          popup_delay_seconds: this.isPopup() ? Number(value.popup_delay_seconds) : 2,
+          popup_duration_seconds:
+            this.isPopup() && value.popup_duration_seconds.trim() !== ''
+              ? Number(value.popup_duration_seconds)
+              : null,
+          popup_repeat_hours: this.isPopup() ? Number(value.popup_repeat_hours) : 24,
           is_active: value.is_active,
         },
         this.data.ad?.id,

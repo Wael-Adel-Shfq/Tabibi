@@ -1,0 +1,70 @@
+/* The modal shell is styled globally (styles.css, `ion-modal.ad-popup`) because
+   Ionic renders it outside this component. These rules style its content. */
+.popup {
+  background: #ffffff;
+}
+
+.popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+}
+
+.sponsored {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  color: #0f172a;
+  font-size: 1.5rem;
+}
+
+.close:hover {
+  background: #f1f5f9;
+}
+
+.popup-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 12 / 5;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.popup-body {
+  padding: 0.75rem 1rem 1rem;
+}
+
+.countdown {
+  margin-top: 0.75rem;
+}
+
+.bar {
+  height: 0.25rem;
+  margin-bottom: 0.25rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #0f766e;
+  transition: width 0.2s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar-fill {
+    transition: none;
+  }
+}

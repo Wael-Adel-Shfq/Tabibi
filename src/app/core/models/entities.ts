@@ -1,6 +1,8 @@
 export type FacilityType = 'lab' | 'pharmacy' | 'medical_center';
 export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
-export type AdPlacement = 'home_top' | 'home_middle' | 'doctors_list' | 'facilities_list';
+export type SlotPlacement = 'home_top' | 'home_middle' | 'doctors_list' | 'facilities_list';
+export type PopupPlacement = 'popup_home' | 'popup_doctors' | 'popup_facilities';
+export type AdPlacement = SlotPlacement | PopupPlacement;
 export type UserRole = 'user' | 'admin';
 
 export const FACILITY_TYPES: readonly FacilityType[] = ['lab', 'pharmacy', 'medical_center'];
@@ -9,7 +11,14 @@ export const AD_PLACEMENTS: readonly AdPlacement[] = [
   'home_middle',
   'doctors_list',
   'facilities_list',
+  'popup_home',
+  'popup_doctors',
+  'popup_facilities',
 ];
+
+export function isPopupPlacement(placement: string): placement is PopupPlacement {
+  return placement.startsWith('popup_');
+}
 
 /** Anything with a bilingual name; English may be missing. */
 export interface Named {
@@ -152,6 +161,12 @@ export interface Advertisement extends Placed {
   is_active: boolean;
   starts_at: string | null;
   ends_at: string | null;
+  /** Popup placements only: seconds after the page opens before it appears. */
+  popup_delay_seconds: number;
+  /** Popup placements only: seconds before it closes itself; null = until closed. */
+  popup_duration_seconds: number | null;
+  /** Popup placements only: hours before the same visitor sees it again (0 = every visit). */
+  popup_repeat_hours: number;
   created_at: string;
   updated_at: string;
 }

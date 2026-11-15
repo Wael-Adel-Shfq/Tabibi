@@ -200,7 +200,12 @@ npx cap open android
 
 ## Advertisements
 
-- Placements: `home_top`, `home_middle`, `doctors_list`, `facilities_list`.
+- Slot placements (inside the page): `home_top`, `home_middle`, `doctors_list`, `facilities_list`.
+- Popup placements (a card over the page, with a close button): `popup_home`, `popup_doctors`, `popup_facilities`. Each popup ad has:
+  - **Show after**: seconds after the page opens (0–120).
+  - **Close automatically after**: seconds (3–300), shown as a countdown that pauses while the visitor hovers over or focuses the card. Leave it empty to keep the popup until it is closed.
+  - **Don't repeat within**: hours before the same visitor sees that ad again (0 = every visit). This is remembered on the visitor's device only.
+  - One popup at most per page visit; it never carries over to another page.
 - An ad shows only while it is active and the current time is inside its optional start and end dates. Ads with a governorate show only when the visitor filters by that governorate or by none.
 - Images are resized in the browser to a maximum width of 1200 px and saved as WebP under a random file name. The bucket accepts WebP, JPEG or PNG up to 2 MB. Replacing or deleting an ad deletes its old image.
 

@@ -86,13 +86,19 @@
   },
   "ads": {
     "sponsored": "Sponsored",
-    "sectionLabel": "Advertisements"
+    "sectionLabel": "Advertisements",
+    "close": "Close advertisement",
+    "closesIn": "Closes automatically in {{seconds}}s",
+    "paused": "Paused — the countdown resumes when you move away"
   },
   "placements": {
     "home_top": "Home – top",
     "home_middle": "Home – middle",
     "doctors_list": "Doctors list",
-    "facilities_list": "Facilities list"
+    "facilities_list": "Facilities list",
+    "popup_home": "Popup – Home",
+    "popup_doctors": "Popup – Doctors",
+    "popup_facilities": "Popup – Facilities"
   },
   "suggest": {
     "title": "Suggest a doctor",
@@ -143,7 +149,11 @@
     "password": "Password",
     "kind": "Type",
     "parent": "Belongs to",
-    "adLocation": "Location targeting"
+    "adLocation": "Location targeting",
+    "popupDelay": "Show after (seconds)",
+    "popupDuration": "Close automatically after (seconds)",
+    "popupRepeat": "Don't repeat for a visitor within (hours)",
+    "popupSettings": "Popup settings"
   },
   "hints": {
     "mapUrl": "Copy the place link from Google Maps.",
@@ -152,7 +162,10 @@
     "adImage": "WebP, JPEG or PNG. Images are resized to 1200 px wide automatically.",
     "location": "Choose at least the district, center or city, and the area if you know it.",
     "adLocation": "Leave on \"All\" to show the ad everywhere, or pick any level to target it.",
-    "moveLocation": "Change it to move this place, and everything under it, within the same governorate."
+    "moveLocation": "Change it to move this place, and everything under it, within the same governorate.",
+    "popupDelay": "0 to 120 seconds after the page opens.",
+    "popupDuration": "3 to 300 seconds. Leave empty to keep it until the visitor closes it.",
+    "popupRepeat": "0 = every visit. Up to 720 hours (30 days)."
   },
   "errors": {
     "required": "This field is required.",
@@ -162,7 +175,8 @@
     "email": "Enter a valid email address.",
     "coordinatesPair": "Enter both latitude and longitude, or leave both empty.",
     "endBeforeStart": "The end date must be after the start date.",
-    "locationTooBroad": "Choose a more specific place: at least a district, center or city."
+    "locationTooBroad": "Choose a more specific place: at least a district, center or city.",
+    "range": "The value is outside the allowed range."
   },
   "status": {
     "all": "All",

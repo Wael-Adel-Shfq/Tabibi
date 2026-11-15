@@ -3,6 +3,7 @@ import { IonContent, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/
 import { TranslatePipe } from '@ngx-translate/core';
 import { FACILITY_TYPES, Facility, FacilityType } from '../../../core/models/entities';
 import { AdSlot } from '../../../shared/components/ad-slot/ad-slot';
+import { AdPopup } from '../../../shared/components/ad-popup/ad-popup';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
@@ -24,6 +25,7 @@ import { FacilityCard } from '../facility-card/facility-card';
     PublicHeader,
     LocationFilter,
     AdSlot,
+    AdPopup,
     FacilityCard,
     LoadingState,
     ErrorState,

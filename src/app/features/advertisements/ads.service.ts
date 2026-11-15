@@ -21,6 +21,9 @@ export interface AdInput {
   is_active: boolean;
   starts_at: string | null;
   ends_at: string | null;
+  popup_delay_seconds: number;
+  popup_duration_seconds: number | null;
+  popup_repeat_hours: number;
 }
 
 export interface AdQuery {
