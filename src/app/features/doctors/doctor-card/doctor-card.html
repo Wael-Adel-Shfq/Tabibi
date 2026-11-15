@@ -2,7 +2,7 @@
   <h3 class="text-base font-bold text-slate-900">{{ doctor().full_name }}</h3>
   <p class="text-sm font-semibold text-brand-800">{{ language.name(doctor().specialty) }}</p>
   <p class="mt-1 text-sm text-slate-700">
-    {{ language.name(doctor().governorate) }} · {{ language.name(doctor().area) }}
+    {{ language.chain(doctor().location_chain) }}
   </p>
   <p class="text-sm text-slate-700">{{ doctor().address }}</p>
 

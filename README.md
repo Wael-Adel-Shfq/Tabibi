@@ -12,8 +12,9 @@ Every rule is enforced by the database. The Angular route guard only improves na
 
 | Data | Visitors (`anon`) and signed-in non-admins | Admins (`profiles.role = 'admin'`) |
 |---|---|---|
-| Governorates, areas, specialties, doctors, facilities | Read active rows only | Full management |
-| Advertisements | Read active rows inside their display period | Full management |
+| Locations, specialties | Read active rows only | Full management |
+| Doctors, facilities | Read active rows whose whole location chain is active | Full management |
+| Advertisements | Read active rows inside their display period and active location | Full management |
 | Doctor submissions | No access at all | Read, review, delete |
 | Profiles | Read own row | Read all |
 | Ad images (Storage) | Public download only | Upload, replace, delete |
@@ -24,7 +25,27 @@ Every rule is enforced by the database. The Angular route guard only improves na
 - **No one can grant themself admin.** No client role can insert or update `profiles`. Roles are changed only by SQL run as the database owner.
 - **The service role key never reaches the app.** It exists only as an Edge Function secret. The app uses the publishable key.
 
-The SQL tests in `supabase/tests/security.test.sql` (62 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
+The SQL tests in `supabase/tests/security.test.sql` (76 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
+
+## Locations
+
+Locations form one tree in the `locations` table:
+
+| Governorate | Under it | Under that | Under that |
+|---|---|---|---|
+| Cairo | Region (Eastern, Northern, Southern, Western, New Urban Cities) | District or city | Area |
+| Other governorates | District, center or city | Area (a center may also contain cities) | |
+
+For example, Cairo → Southern Region → Helwan → Hadayek Helwan, or Minya → Mallawi → Tuna El Gebel.
+
+- The database enforces which kinds may sit under which.
+- Doctors, facilities and suggestions must be placed at least at a district, center or city level; the area is optional.
+- Advertisements can target any level, or none for everywhere.
+- Every record stores its ancestor chain (`location_path`), so filtering by any level also returns everything beneath it.
+- Moving a location in the admin moves everything under it, including the records placed there.
+- Deactivating a location hides it and everything under it from visitors.
+
+The 27 governorates and Cairo's 5 regions are seeded. Districts, centers, cities and areas are added in **Admin → Locations**. Areas created before this structure existed were converted to districts directly under their governorate; move them under the right Cairo region from the same page.
 
 ## Project layout
 
@@ -34,7 +55,7 @@ src/app/
   shared/        loading/error/empty states, form field, location filter, ad slot, utils
   features/
     home/ doctors/ facilities/ doctor-submissions/ advertisements/ locations/ shell/
-    admin/       login, shell, dashboard, lookups (governorates/areas/specialties),
+    admin/       login, shell, dashboard, locations (tree), lookups (specialties),
                  doctors, facilities, submissions, advertisements
 public/i18n/     ar.json, en.json
 supabase/
@@ -79,7 +100,7 @@ This creates the local test admin from `LOCAL_ADMIN_EMAIL` / `LOCAL_ADMIN_PASSWO
 npm run start:local
 ```
 
-The app runs against the local stack at http://localhost:4200, and the admin area is at `/admin`. Before adding doctors or facilities, add some **areas** under a governorate in the admin.
+The app runs against the local stack at http://localhost:4200, and the admin area is at `/admin`. Before adding doctors or facilities, add districts, centers or cities under a governorate in **Admin → Locations**.
 
 `npm start` uses `src/environments/environment.ts` (the hosted development project) instead.
 

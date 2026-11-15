@@ -13,15 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import type { Doctor } from '../../../../core/models/entities';
+import type { Doctor, Location } from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
+import { FieldGroup } from '../../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { LocationField } from '../../../../shared/utils/location-field';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation';
 import { DoctorsService } from '../../../doctors/doctors.service';
 import { LocationsService } from '../../../locations/locations.service';
 import { adminErrorKey } from '../../shared/admin-errors';
-import { AreaOptions, COORDINATE_PATTERN, toCoordinate } from '../../shared/area-options';
+import { COORDINATE_PATTERN, toCoordinate } from '../../shared/coordinates';
 
 export interface DoctorDialogData {
   /** Doctor to edit; omitted when adding. */
@@ -36,6 +39,8 @@ export interface DoctorDialogData {
     MatButtonModule,
     TranslatePipe,
     FormFieldWrapper,
+    FieldGroup,
+    LocationPicker,
     LoadingState,
   ],
   templateUrl: './doctor-dialog.html',
@@ -48,7 +53,7 @@ export class DoctorDialog {
   protected readonly locations = inject(LocationsService);
   protected readonly language = inject(LanguageService);
 
-  protected readonly areaOptions = new AreaOptions(this.locations);
+  protected readonly location = new LocationField(this.data.doctor);
   /** False until the dropdown options for the record being edited are loaded. */
   protected readonly ready = signal(false);
   protected readonly failure = signal<string | null>(null);
@@ -57,8 +62,7 @@ export class DoctorDialog {
     full_name: this.data.doctor?.full_name ?? '',
     specialty_id: this.data.doctor?.specialty_id ?? '',
     clinic_phone: this.data.doctor?.clinic_phone ?? '',
-    governorate_id: this.data.doctor?.governorate_id ?? '',
-    area_id: this.data.doctor?.area_id ?? '',
+    location_id: this.data.doctor?.location_id ?? '',
     address: this.data.doctor?.address ?? '',
     map_url: this.data.doctor?.map_url ?? '',
     latitude: this.data.doctor?.latitude?.toString() ?? '',
@@ -72,8 +76,8 @@ export class DoctorDialog {
     maxLength(path.full_name, 150);
     required(path.specialty_id);
     pattern(path.clinic_phone, PHONE_PATTERN);
-    required(path.governorate_id);
-    required(path.area_id);
+    required(path.location_id);
+    validate(path.location_id, () => (this.location.tooBroad() ? { kind: 'locationTooBroad' } : null));
     required(path.address);
     minLength(path.address, 3);
     maxLength(path.address, 300);
@@ -93,13 +97,13 @@ export class DoctorDialog {
 
   private async prepare(): Promise<void> {
     await this.locations.load().catch(() => undefined);
-    await this.areaOptions.load(this.model().governorate_id);
     this.ready.set(true);
   }
 
-  protected async onGovernorateChange(): Promise<void> {
-    this.model.update((value) => ({ ...value, area_id: '' }));
-    await this.areaOptions.load(this.model().governorate_id);
+  protected onLocation(location: Location | null): void {
+    const locationId = this.location.select(location);
+    this.model.update((value) => ({ ...value, location_id: locationId }));
+    this.doctor.location_id().markAsTouched();
   }
 
   protected async onSubmit(event: Event): Promise<void> {
@@ -113,8 +117,7 @@ export class DoctorDialog {
             full_name: value.full_name.trim(),
             specialty_id: value.specialty_id,
             clinic_phone: orNull(value.clinic_phone),
-            governorate_id: value.governorate_id,
-            area_id: value.area_id,
+            location_id: value.location_id,
             address: value.address.trim(),
             map_url: orNull(value.map_url),
             latitude: toCoordinate(value.latitude),

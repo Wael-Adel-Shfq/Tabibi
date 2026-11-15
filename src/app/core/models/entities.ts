@@ -21,20 +21,60 @@ export interface NamedRef extends Named {
   id: string;
 }
 
-/** Shape shared by governorates, areas and specialties. */
+/** Shape shared by lookup rows (specialties, locations). */
 export interface Lookup extends NamedRef {
   is_active: boolean;
   sort_order: number;
   created_at: string;
 }
 
-export type Governorate = Lookup;
 export type Specialty = Lookup;
 
-export interface Area extends Lookup {
-  governorate_id: string;
-  governorate?: NamedRef | null;
+// ---------------------------------------------------------------------------
+// Location tree
+// ---------------------------------------------------------------------------
+
+export type LocationKind = 'governorate' | 'region' | 'district' | 'center' | 'city' | 'area';
+
+/** Kinds allowed directly under each kind ('root' = top level). Mirrors the database rule. */
+export const CHILD_KINDS: Readonly<Record<LocationKind | 'root', readonly LocationKind[]>> = {
+  root: ['governorate'],
+  governorate: ['region', 'district', 'center', 'city'],
+  region: ['district', 'city'],
+  center: ['city', 'area'],
+  district: ['area'],
+  city: ['area'],
+  area: [],
+};
+
+/** Too broad to place a doctor, facility or suggestion at. */
+export function isTooBroad(kind: LocationKind | null | undefined): boolean {
+  return kind === 'governorate' || kind === 'region';
 }
+
+/** A node of the location tree. */
+export interface Location extends Lookup {
+  parent_id: string | null;
+  kind: LocationKind;
+  /** Ancestor ids from the governorate down to this location (inclusive). */
+  path: string[];
+}
+
+/** One step of a record's location chain, as returned by the `location_chain` computed column. */
+export interface ChainItem extends NamedRef {
+  kind: LocationKind;
+}
+
+/** Location fields shared by doctors, facilities, submissions and advertisements. */
+export interface Placed {
+  location_id: string | null;
+  location_path: string[];
+  location_chain?: ChainItem[];
+}
+
+// ---------------------------------------------------------------------------
+// Directory records
+// ---------------------------------------------------------------------------
 
 export interface Located {
   map_url: string | null;
@@ -42,30 +82,26 @@ export interface Located {
   longitude: number | null;
 }
 
-export interface Doctor extends Located {
+export interface Doctor extends Located, Placed {
   id: string;
   full_name: string;
   specialty_id: string;
   clinic_phone: string | null;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
   specialty?: NamedRef | null;
-  governorate?: NamedRef | null;
-  area?: NamedRef | null;
 }
 
-export interface DoctorSubmission extends Located {
+export interface DoctorSubmission extends Located, Placed {
   id: string;
   full_name: string;
   specialty_id: string | null;
   specialty_other: string | null;
   clinic_phone: string | null;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   submitter_name: string | null;
   submitter_contact: string | null;
@@ -76,8 +112,6 @@ export interface DoctorSubmission extends Located {
   admin_note: string | null;
   created_at: string;
   specialty?: NamedRef | null;
-  governorate?: NamedRef | null;
-  area?: NamedRef | null;
 }
 
 export interface DuplicateDoctor {
@@ -87,34 +121,29 @@ export interface DuplicateDoctor {
   specialty_name_en: string;
   clinic_phone: string | null;
   address: string;
-  area_name_ar: string;
+  location_chain: ChainItem[];
   is_active: boolean;
   name_similarity: number;
   phone_match: boolean;
 }
 
-export interface Facility extends Located {
+export interface Facility extends Located, Placed {
   id: string;
   name: string;
   type: FacilityType;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   phone: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  governorate?: NamedRef | null;
-  area?: NamedRef | null;
 }
 
-export interface Advertisement {
+export interface Advertisement extends Placed {
   id: string;
   title: string;
   advertiser_name: string;
   image_path: string;
-  governorate_id: string | null;
-  area_id: string | null;
   address: string | null;
   map_url: string | null;
   phone: string | null;
@@ -125,8 +154,6 @@ export interface Advertisement {
   ends_at: string | null;
   created_at: string;
   updated_at: string;
-  governorate?: NamedRef | null;
-  area?: NamedRef | null;
 }
 
 export interface DashboardStats {

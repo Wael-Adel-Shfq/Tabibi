@@ -1,4 +1,4 @@
-import { Service, signal } from '@angular/core';
+import { computed, Service, signal } from '@angular/core';
 import type { FacilityType } from '../../core/models/entities';
 
 /**
@@ -9,25 +9,13 @@ import type { FacilityType } from '../../core/models/entities';
  */
 @Service()
 export class DirectoryFilterStore {
-  private readonly governorateState = signal('');
-  private readonly areaState = signal('');
-
-  readonly governorateId = this.governorateState.asReadonly();
-  readonly areaId = this.areaState.asReadonly();
+  /** Chosen location chain, from the governorate down to the most specific level picked. */
+  readonly locationPath = signal<string[]>([]);
+  /** The most specific location picked, or '' for "everywhere". */
+  readonly locationId = computed(() => this.locationPath().at(-1) ?? '');
 
   readonly doctorTerm = signal('');
   readonly specialtyId = signal('');
   readonly facilityTerm = signal('');
   readonly facilityType = signal<FacilityType>('lab');
-
-  setGovernorate(id: string): void {
-    if (id === this.governorateState()) return;
-    this.governorateState.set(id);
-    // An area only makes sense inside its governorate.
-    this.areaState.set('');
-  }
-
-  setArea(id: string): void {
-    this.areaState.set(id);
-  }
 }

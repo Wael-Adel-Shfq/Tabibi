@@ -65,24 +65,6 @@
           <input id="a-end" class="control" type="datetime-local" dir="ltr" [formField]="ad.ends_at" />
         </app-form-field>
 
-        <app-form-field label="fields.governorate" for="a-governorate" [field]="ad.governorate_id" hint="hints.adGovernorate">
-          <select id="a-governorate" class="control" [formField]="ad.governorate_id" (change)="onGovernorateChange()">
-            <option value="">{{ 'filters.allGovernorates' | translate }}</option>
-            @for (governorate of locations.governorates(); track governorate.id) {
-              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-            }
-          </select>
-        </app-form-field>
-
-        <app-form-field label="fields.area" for="a-area" [field]="ad.area_id">
-          <select id="a-area" class="control" [formField]="ad.area_id">
-            <option value="">{{ 'filters.allAreas' | translate }}</option>
-            @for (area of areaOptions.areas(); track area.id) {
-              <option [value]="area.id">{{ language.name(area) }}</option>
-            }
-          </select>
-        </app-form-field>
-
         <app-form-field label="fields.phone" for="a-phone" [field]="ad.phone">
           <input id="a-phone" class="control" type="tel" dir="ltr" autocomplete="off" [formField]="ad.phone" />
         </app-form-field>
@@ -91,6 +73,10 @@
           <input id="a-map" class="control" type="url" dir="ltr" autocomplete="off" [formField]="ad.map_url" />
         </app-form-field>
       </div>
+
+      <app-field-group legend="fields.adLocation" [field]="ad.location_id" hint="hints.adLocation">
+        <app-location-picker idPrefix="a-location" mode="filter" [(path)]="location.path" (selection)="onLocation($event)" />
+      </app-field-group>
 
       <app-form-field label="fields.address" for="a-address" [field]="ad.address">
         <textarea id="a-address" class="control" rows="2" [formField]="ad.address"></textarea>

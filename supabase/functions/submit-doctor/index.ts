@@ -78,17 +78,24 @@ Deno.serve(async (req) => {
   if (countError) return json(500, { error: 'server_error' });
   if ((count ?? 0) >= MAX_PER_HOUR) return json(429, { error: 'rate_limited' });
 
-  // The area must be active and belong to an active governorate.
-  const { data: area, error: areaError } = await admin
-    .from('areas')
-    .select('id, governorates!inner(id, is_active)')
-    .eq('id', input.area_id)
-    .eq('governorate_id', input.governorate_id)
-    .eq('is_active', true)
-    .eq('governorates.is_active', true)
+  // The location must be specific enough (district, center, city or area)
+  // and it and every ancestor must be active.
+  const { data: location, error: locationError } = await admin
+    .from('locations')
+    .select('id, kind, path')
+    .eq('id', input.location_id)
     .maybeSingle();
-  if (areaError) return json(500, { error: 'server_error' });
-  if (!area) return json(400, { error: 'validation_failed', fields: { area_id: 'invalid' } });
+  if (locationError) return json(500, { error: 'server_error' });
+  const invalidLocation = json(400, { error: 'validation_failed', fields: { location_id: 'invalid' } });
+  if (!location || location.kind === 'governorate' || location.kind === 'region') return invalidLocation;
+
+  const { count: inactive, error: chainError } = await admin
+    .from('locations')
+    .select('id', { count: 'exact', head: true })
+    .in('id', location.path as string[])
+    .eq('is_active', false);
+  if (chainError) return json(500, { error: 'server_error' });
+  if ((inactive ?? 0) > 0) return invalidLocation;
 
   if (input.specialty_id) {
     const { data: specialty, error: specialtyError } = await admin

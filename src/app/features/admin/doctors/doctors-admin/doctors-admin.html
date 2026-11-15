@@ -18,21 +18,15 @@
     </select>
   </div>
   <div>
-    <label for="da-governorate">{{ 'fields.governorate' | translate }}</label>
-    <select id="da-governorate" class="control" (change)="onGovernorate($event)">
-      <option value="">{{ 'filters.allGovernorates' | translate }}</option>
-      @for (governorate of locations.governorates(); track governorate.id) {
-        <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-      }
-    </select>
-  </div>
-  <div>
     <label for="da-status">{{ 'fields.status' | translate }}</label>
     <select id="da-status" class="control" (change)="onStatus($event)">
       <option value="all">{{ 'status.all' | translate }}</option>
       <option value="active">{{ 'status.active' | translate }}</option>
       <option value="inactive">{{ 'status.inactive' | translate }}</option>
     </select>
+  </div>
+  <div class="col-span-full">
+    <app-location-picker idPrefix="da-location" mode="filter" [(path)]="locationPath" />
   </div>
 </form>
 
@@ -63,7 +57,7 @@
           <tr>
             <th scope="row">{{ doctor.full_name }}</th>
             <td>{{ language.name(doctor.specialty) }}</td>
-            <td>{{ language.name(doctor.governorate) }} · {{ language.name(doctor.area) }}</td>
+            <td>{{ language.chain(doctor.location_chain) }}</td>
             <td dir="ltr" class="text-start">{{ doctor.clinic_phone }}</td>
             <td>
               <mat-slide-toggle

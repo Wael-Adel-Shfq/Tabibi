@@ -59,41 +59,20 @@
           />
         </app-form-field>
 
-        <div class="grid gap-x-3 sm:grid-cols-2">
-          <app-form-field
-            label="fields.governorate"
-            for="s-governorate"
-            [field]="suggestion.governorate_id"
-            [required]="true"
-          >
-            <select
-              id="s-governorate"
-              class="control"
-              [formField]="suggestion.governorate_id"
-              (change)="onGovernorateChange()"
-            >
-              <option value="">{{ 'common.choose' | translate }}</option>
-              @for (governorate of locations.governorates(); track governorate.id) {
-                <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-              }
-            </select>
-          </app-form-field>
-
-          <app-form-field
-            label="fields.area"
-            for="s-area"
-            [field]="suggestion.area_id"
-            [required]="true"
-            [hint]="model().governorate_id && areas().length === 0 ? 'suggest.noAreas' : ''"
-          >
-            <select id="s-area" class="control" [formField]="suggestion.area_id">
-              <option value="">{{ 'common.choose' | translate }}</option>
-              @for (area of areas(); track area.id) {
-                <option [value]="area.id">{{ language.name(area) }}</option>
-              }
-            </select>
-          </app-form-field>
-        </div>
+        <app-field-group
+          legend="fields.location"
+          [field]="suggestion.location_id"
+          [required]="true"
+          hint="hints.location"
+        >
+          <app-location-picker
+            idPrefix="s-location"
+            mode="form"
+            [(path)]="location.path"
+            [invalid]="suggestion.location_id().touched() && suggestion.location_id().invalid()"
+            (selection)="onLocation($event)"
+          />
+        </app-field-group>
 
         <app-form-field label="fields.address" for="s-address" [field]="suggestion.address" [required]="true">
           <textarea id="s-address" class="control" rows="2" [formField]="suggestion.address"></textarea>

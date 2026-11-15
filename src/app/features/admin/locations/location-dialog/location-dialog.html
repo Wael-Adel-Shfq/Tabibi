@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>
+  {{ (data.item ? 'admin.locations.edit' : 'admin.locations.add') | translate }}
+</h2>
+
+<form novalidate (submit)="onSubmit($event)">
+  <mat-dialog-content>
+    @if (data.parent && !data.item) {
+      <p class="mb-3 text-sm text-slate-700">
+        {{ 'admin.locations.addingUnder' | translate }} <strong>{{ language.name(data.parent) }}</strong>
+      </p>
+    }
+
+    @if (!isGovernorate) {
+      <app-form-field label="fields.kind" for="loc-kind" [field]="location.kind" [required]="true">
+        <select id="loc-kind" class="control" [formField]="location.kind">
+          @for (kind of data.item ? [data.item.kind] : kinds; track kind) {
+            <option [value]="kind">{{ 'locationKinds.' + kind | translate }}</option>
+          }
+        </select>
+      </app-form-field>
+    }
+
+    @if (data.item && !isGovernorate) {
+      <app-form-field label="fields.parent" for="loc-parent" [field]="location.parent_id" hint="hints.moveLocation">
+        <select id="loc-parent" class="control" [formField]="location.parent_id">
+          @if (parents().length === 0) {
+            <option [value]="model().parent_id">{{ 'common.loading' | translate }}</option>
+          }
+          @for (parent of parents(); track parent.id) {
+            <option [value]="parent.id" [selected]="parent.id === model().parent_id">
+              {{ language.name(parent) }} ({{ 'locationKinds.' + parent.kind | translate }})
+            </option>
+          }
+        </select>
+      </app-form-field>
+    }
+
+    <app-form-field label="fields.nameAr" for="loc-ar" [field]="location.name_ar" [required]="true">
+      <input id="loc-ar" class="control" type="text" lang="ar" dir="rtl" [formField]="location.name_ar" />
+    </app-form-field>
+
+    <app-form-field label="fields.nameEn" for="loc-en" [field]="location.name_en" [required]="isGovernorate">
+      <input id="loc-en" class="control" type="text" lang="en" dir="ltr" [formField]="location.name_en" />
+    </app-form-field>
+
+    <app-form-field
+      label="fields.sortOrder"
+      for="loc-order"
+      [field]="location.sort_order"
+      [required]="true"
+      hint="hints.sortOrder"
+    >
+      <input id="loc-order" class="control" type="text" inputmode="numeric" dir="ltr" [formField]="location.sort_order" />
+    </app-form-field>
+
+    <label class="check">
+      <input type="checkbox" [formField]="location.is_active" />
+      <span>{{ 'fields.active' | translate }}</span>
+    </label>
+
+    @if (failure(); as key) {
+      <p class="mt-3 font-semibold text-red-700" role="alert">{{ key | translate }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button matButton type="button" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+    <button matButton="filled" type="submit" [disabled]="location().submitting()">
+      {{ 'common.save' | translate }}
+    </button>
+  </mat-dialog-actions>
+</form>

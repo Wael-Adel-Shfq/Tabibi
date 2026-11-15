@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.trail li + li::before {
+  content: '›';
+  margin-inline-end: 0.5rem;
+  color: #475569;
+}
+
+:host-context([dir='rtl']) .trail li + li::before {
+  content: '‹';
+}
+
+.trail a {
+  color: #115e59;
+  text-decoration: underline;
+}
+
+.trail [aria-current] {
+  font-weight: 700;
+  color: #0f172a;
+}

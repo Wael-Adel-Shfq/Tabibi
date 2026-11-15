@@ -1,0 +1,26 @@
+<div class="grid grid-cols-2 gap-3">
+  @for (level of levels(); track level.index) {
+    <div>
+      <label class="mb-1 block text-sm font-semibold text-slate-800" [attr.for]="idPrefix() + '-' + level.index">
+        @for (kind of level.kinds; track kind) {
+          {{ 'locationKinds.' + kind | translate }}@if (!$last) { / }
+        }
+      </label>
+      <select
+        class="control"
+        [id]="idPrefix() + '-' + level.index"
+        [attr.aria-invalid]="invalid()"
+        (change)="onSelect(level, $event)"
+      >
+        <option value="" [selected]="!level.selected">
+          {{ (mode() === 'filter' ? 'filters.all' : 'common.choose') | translate }}
+        </option>
+        @for (option of level.options; track option.id) {
+          <option [value]="option.id" [selected]="option.id === level.selected">
+            {{ language.name(option) }}
+          </option>
+        }
+      </select>
+    </div>
+  }
+</div>

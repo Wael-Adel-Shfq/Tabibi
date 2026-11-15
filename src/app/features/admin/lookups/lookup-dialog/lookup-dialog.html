@@ -5,27 +5,11 @@
 
 <form novalidate (submit)="onSubmit($event)">
   <mat-dialog-content>
-    @if (isArea) {
-      <app-form-field
-        label="fields.governorate"
-        for="lookup-gov"
-        [field]="lookup.governorate_id"
-        [required]="true"
-      >
-        <select id="lookup-gov" class="control" [formField]="lookup.governorate_id">
-          <option value="">{{ 'common.choose' | translate }}</option>
-          @for (governorate of locations.governorates(); track governorate.id) {
-            <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-          }
-        </select>
-      </app-form-field>
-    }
-
     <app-form-field label="fields.nameAr" for="lookup-ar" [field]="lookup.name_ar" [required]="true">
       <input id="lookup-ar" class="control" type="text" lang="ar" dir="rtl" [formField]="lookup.name_ar" />
     </app-form-field>
 
-    <app-form-field label="fields.nameEn" for="lookup-en" [field]="lookup.name_en" [required]="!isArea">
+    <app-form-field label="fields.nameEn" for="lookup-en" [field]="lookup.name_en" [required]="true">
       <input id="lookup-en" class="control" type="text" lang="en" dir="ltr" [formField]="lookup.name_en" />
     </app-form-field>
 

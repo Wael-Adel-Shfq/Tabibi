@@ -49,7 +49,8 @@
     "allAreas": "All areas",
     "allSpecialties": "All specialties",
     "allTypes": "All types",
-    "allPlacements": "All placements"
+    "allPlacements": "All placements",
+    "all": "All"
   },
   "home": {
     "searchLabel": "Find a doctor",
@@ -97,7 +98,6 @@
     "title": "Suggest a doctor",
     "intro": "Help us complete the directory. Our team reviews every suggestion before it is published.",
     "otherSpecialty": "Specialty not in the list",
-    "noAreas": "No areas have been added for this governorate yet.",
     "aboutYou": "About you (optional)",
     "submit": "Send suggestion",
     "successTitle": "Thank you!",
@@ -140,14 +140,19 @@
     "period": "Display period",
     "adminNote": "Reviewer note",
     "email": "Email",
-    "password": "Password"
+    "password": "Password",
+    "kind": "Type",
+    "parent": "Belongs to",
+    "adLocation": "Location targeting"
   },
   "hints": {
     "mapUrl": "Copy the place link from Google Maps.",
     "sortOrder": "Lower numbers are shown first.",
     "optional": "Optional",
     "adImage": "WebP, JPEG or PNG. Images are resized to 1200 px wide automatically.",
-    "adGovernorate": "Leave empty to show the ad in every governorate."
+    "location": "Choose at least the district, center or city, and the area if you know it.",
+    "adLocation": "Leave on \"All\" to show the ad everywhere, or pick any level to target it.",
+    "moveLocation": "Change it to move this place, and everything under it, within the same governorate."
   },
   "errors": {
     "required": "This field is required.",
@@ -156,7 +161,8 @@
     "pattern": "The format is not valid.",
     "email": "Enter a valid email address.",
     "coordinatesPair": "Enter both latitude and longitude, or leave both empty.",
-    "endBeforeStart": "The end date must be after the start date."
+    "endBeforeStart": "The end date must be after the start date.",
+    "locationTooBroad": "Choose a more specific place: at least a district, center or city."
   },
   "status": {
     "all": "All",
@@ -179,7 +185,10 @@
     "duplicate": "A record with this name already exists.",
     "inUse": "This record is used by other data. Deactivate it instead of deleting it.",
     "invalid": "Some values are not accepted. Check the details.",
-    "notAllowed": "You are not allowed to do this."
+    "notAllowed": "You are not allowed to do this.",
+    "location_kind_not_allowed": "This type cannot be placed under the chosen location.",
+    "location_cycle": "A location cannot be moved under one of its own sub-locations.",
+    "location_too_broad": "The type cannot change because doctors or facilities are placed here."
   },
   "admin": {
     "title": "Tabibi admin",
@@ -194,13 +203,10 @@
       "doctors": "Doctors",
       "facilities": "Facilities",
       "advertisements": "Advertisements",
-      "governorates": "Governorates",
-      "areas": "Areas",
-      "specialties": "Specialties"
+      "specialties": "Specialties",
+      "locations": "Locations"
     },
     "singular": {
-      "governorates": "Governorate",
-      "areas": "Area",
       "specialties": "Specialty"
     },
     "login": {
@@ -261,6 +267,25 @@
       "possible_duplicate": "A similar doctor exists. Check the list and confirm if this is a different doctor.",
       "specialty_required": "Choose a specialty before approving.",
       "submission_not_pending": "This suggestion was already reviewed."
+    },
+    "locations": {
+      "root": "All governorates",
+      "breadcrumb": "Location path",
+      "add": "Add location",
+      "edit": "Edit location",
+      "addingUnder": "Adding under:",
+      "open": "Show places under",
+      "none": "Nothing has been added under this place yet.",
+      "deleteTitle": "Delete this location?",
+      "deleteWarning": "A location that has places under it, or doctors or facilities placed in it, cannot be deleted. Deactivate it instead."
     }
+  },
+  "locationKinds": {
+    "governorate": "Governorate",
+    "region": "Region",
+    "district": "District",
+    "center": "Center",
+    "city": "City",
+    "area": "Area / village"
   }
 }

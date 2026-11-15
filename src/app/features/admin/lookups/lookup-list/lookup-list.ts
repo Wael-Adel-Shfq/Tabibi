@@ -2,8 +2,7 @@ import { Component, effect, inject, input, signal, untracked } from '@angular/co
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LanguageService } from '../../../../core/i18n/language.service';
-import type { Area, Lookup, NamedRef } from '../../../../core/models/entities';
+import type { Lookup } from '../../../../core/models/entities';
 import { ToastService } from '../../../../core/ui/toast.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../../shared/components/error-state/error-state';
@@ -17,7 +16,7 @@ import { LookupDialog, LookupDialogData } from '../lookup-dialog/lookup-dialog';
 type StatusFilter = 'all' | 'active' | 'inactive';
 
 /**
- * Management page shared by governorates, areas and specialties. The table
+ * Management page for a flat lookup table (currently specialties). The table
  * to manage comes from the route (`data: { table }`).
  */
 @Component({
@@ -37,17 +36,15 @@ export class LookupList {
   private readonly lookups = inject(LookupsAdminService);
   private readonly dialogs = inject(AdminDialogs);
   private readonly toast = inject(ToastService);
-  protected readonly locations = inject(LocationsService);
-  protected readonly language = inject(LanguageService);
+  private readonly locations = inject(LocationsService);
 
   /** Route data. */
   readonly table = input.required<LookupTable>();
 
   protected readonly term = signal('');
   protected readonly status = signal<StatusFilter>('all');
-  protected readonly governorateId = signal('');
 
-  protected readonly rows = signal<(Lookup | Area)[]>([]);
+  protected readonly rows = signal<Lookup[]>([]);
   protected readonly loading = signal(true);
   protected readonly failed = signal(false);
 
@@ -55,13 +52,10 @@ export class LookupList {
   private debounce: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
-    void this.locations.load().catch(() => undefined);
-
     effect(() => {
       this.table();
       this.term();
       this.status();
-      this.governorateId();
       untracked(() => void this.load());
     });
   }
@@ -71,11 +65,7 @@ export class LookupList {
     this.loading.set(true);
     this.failed.set(false);
     try {
-      const rows = await this.lookups.list(this.table(), {
-        term: this.term(),
-        status: this.status(),
-        governorateId: this.governorateId(),
-      });
+      const rows = await this.lookups.list(this.table(), { term: this.term(), status: this.status() });
       if (id !== this.requestId) return;
       this.rows.set(rows);
     } catch {
@@ -95,24 +85,15 @@ export class LookupList {
     this.status.set((event.target as HTMLSelectElement).value as StatusFilter);
   }
 
-  protected onGovernorate(event: Event): void {
-    this.governorateId.set((event.target as HTMLSelectElement).value);
-  }
-
-  protected governorateOf(row: Lookup | Area): NamedRef | null {
-    return (row as Area).governorate ?? null;
-  }
-
-  protected async edit(item?: Lookup | Area): Promise<void> {
+  protected async edit(item?: Lookup): Promise<void> {
     const saved = await this.dialogs.open<LookupDialogData, boolean>(LookupDialog, {
       table: this.table(),
       item,
-      governorateId: this.governorateId(),
     });
     if (saved) await this.afterChange('common.saved');
   }
 
-  protected async toggle(row: Lookup | Area, isActive: boolean): Promise<void> {
+  protected async toggle(row: Lookup, isActive: boolean): Promise<void> {
     try {
       await this.lookups.setActive(this.table(), row.id, isActive);
       await this.afterChange(isActive ? 'common.activated' : 'common.deactivated');

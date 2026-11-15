@@ -4,14 +4,13 @@ import { SupabaseService } from '../../core/supabase/supabase.service';
 import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
 import { normalizeArabic } from '../../shared/utils/arabic';
 
-const DOCTOR_SELECT =
-  '*, specialty:specialties(id, name_ar, name_en), governorate:governorates(id, name_ar, name_en), area:areas(id, name_ar, name_en)';
+const DOCTOR_SELECT = '*, specialty:specialties(id, name_ar, name_en), location_chain';
 
 export interface DoctorQuery {
   term?: string;
   specialtyId?: string;
-  governorateId?: string;
-  areaId?: string;
+  /** Any level of the location tree; matches everything underneath it. */
+  locationId?: string;
   /** Admin only: 'all' includes inactive doctors. Public callers leave it unset. */
   status?: 'active' | 'inactive' | 'all';
   page?: number;
@@ -23,8 +22,7 @@ export interface DoctorInput {
   full_name: string;
   specialty_id: string;
   clinic_phone: string | null;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   map_url: string | null;
   latitude: number | null;
@@ -49,8 +47,7 @@ export class DoctorsService {
     const term = normalizeArabic(query.term);
     if (term) request = request.ilike('search_text', likePattern(term));
     if (query.specialtyId) request = request.eq('specialty_id', query.specialtyId);
-    if (query.governorateId) request = request.eq('governorate_id', query.governorateId);
-    if (query.areaId) request = request.eq('area_id', query.areaId);
+    if (query.locationId) request = request.contains('location_path', [query.locationId]);
 
     const result = await request
       .order('created_at', { ascending: false })

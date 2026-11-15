@@ -5,14 +5,14 @@ import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
 import { AD_IMAGE_MAX_BYTES, AD_IMAGE_TYPES, resizeToWebp } from '../../shared/utils/image';
 
 const BUCKET = 'ad-images';
-const AD_SELECT = '*, governorate:governorates(id, name_ar, name_en), area:areas(id, name_ar, name_en)';
+const AD_SELECT = '*, location_chain';
 
 export interface AdInput {
   title: string;
   advertiser_name: string;
   image_path: string;
-  governorate_id: string | null;
-  area_id: string | null;
+  /** Optional targeting: any level of the location tree, or null for everywhere. */
+  location_id: string | null;
   address: string | null;
   map_url: string | null;
   phone: string | null;
@@ -44,8 +44,11 @@ export class AdsService {
    * Advertisements to show in one placement right now. The period filter is
    * repeated here (RLS already applies it to visitors) so a signed-in admin
    * browsing the public pages sees exactly what visitors see.
+   *
+   * With a chosen location chain, only ads targeted at no location or at one
+   * of the chosen places (or their ancestors) are shown.
    */
-  async listForPlacement(placement: AdPlacement, governorateId = ''): Promise<Advertisement[]> {
+  async listForPlacement(placement: AdPlacement, locationPath: readonly string[] = []): Promise<Advertisement[]> {
     const now = '"' + new Date().toISOString() + '"';
     let request = this.supabase
       .from('advertisements')
@@ -54,8 +57,8 @@ export class AdsService {
       .eq('is_active', true)
       .or('starts_at.is.null,starts_at.lte.' + now)
       .or('ends_at.is.null,ends_at.gt.' + now);
-    if (governorateId) {
-      request = request.or('governorate_id.is.null,governorate_id.eq.' + governorateId);
+    if (locationPath.length > 0) {
+      request = request.or('location_id.is.null,location_id.in.(' + locationPath.join(',') + ')');
     }
     return unwrap<Advertisement[]>(await request.order('display_order').order('created_at')) ?? [];
   }

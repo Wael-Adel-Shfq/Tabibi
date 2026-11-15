@@ -1,41 +1,32 @@
 import { inject, Service } from '@angular/core';
-import type { Area, Lookup } from '../../../core/models/entities';
+import type { Lookup } from '../../../core/models/entities';
 import { SupabaseService } from '../../../core/supabase/supabase.service';
 import { likePattern, unwrap } from '../../../core/supabase/unwrap';
 
-export type LookupTable = 'governorates' | 'areas' | 'specialties';
+/** Flat lookup tables managed from the admin. Locations have their own tree page. */
+export type LookupTable = 'specialties';
 
 export interface LookupInput {
   name_ar: string;
-  name_en: string | null;
+  name_en: string;
   sort_order: number;
   is_active: boolean;
-  /** Areas only. */
-  governorate_id?: string;
 }
 
 export interface LookupQuery {
   term?: string;
   status?: 'active' | 'inactive' | 'all';
-  /** Areas only. */
-  governorateId?: string;
 }
 
-/** Admin management of the three lookup tables, which share one shape. */
 @Service()
 export class LookupsAdminService {
   private readonly supabase = inject(SupabaseService).client;
 
-  async list(table: LookupTable, query: LookupQuery = {}): Promise<(Lookup | Area)[]> {
-    const columns =
-      table === 'areas' ? '*, governorate:governorates(id, name_ar, name_en)' : '*';
-    let request = this.supabase.from(table).select(columns);
+  async list(table: LookupTable, query: LookupQuery = {}): Promise<Lookup[]> {
+    let request = this.supabase.from(table).select('*');
 
     const status = query.status ?? 'all';
     if (status !== 'all') request = request.eq('is_active', status === 'active');
-    if (table === 'areas' && query.governorateId) {
-      request = request.eq('governorate_id', query.governorateId);
-    }
     const term = query.term?.trim();
     if (term) {
       const pattern = '"' + likePattern(term).replace(/"/g, '') + '"';
@@ -43,7 +34,7 @@ export class LookupsAdminService {
     }
 
     const result = await request.order('sort_order').order('name_ar').limit(500);
-    return (unwrap<unknown[]>(result) ?? []) as (Lookup | Area)[];
+    return unwrap<Lookup[]>(result) ?? [];
   }
 
   async save(table: LookupTable, input: LookupInput, id?: string): Promise<void> {

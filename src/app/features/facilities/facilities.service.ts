@@ -4,14 +4,13 @@ import { SupabaseService } from '../../core/supabase/supabase.service';
 import { likePattern, unwrap, unwrapPage } from '../../core/supabase/unwrap';
 import { normalizeArabic } from '../../shared/utils/arabic';
 
-const FACILITY_SELECT =
-  '*, governorate:governorates(id, name_ar, name_en), area:areas(id, name_ar, name_en)';
+const FACILITY_SELECT = '*, location_chain';
 
 export interface FacilityQuery {
   type?: FacilityType | '';
   term?: string;
-  governorateId?: string;
-  areaId?: string;
+  /** Any level of the location tree; matches everything underneath it. */
+  locationId?: string;
   /** Admin only: 'all' includes inactive facilities. */
   status?: 'active' | 'inactive' | 'all';
   page?: number;
@@ -21,8 +20,7 @@ export interface FacilityQuery {
 export interface FacilityInput {
   name: string;
   type: FacilityType;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   phone: string | null;
   map_url: string | null;
@@ -47,8 +45,7 @@ export class FacilitiesService {
     if (query.type) request = request.eq('type', query.type);
     const term = normalizeArabic(query.term);
     if (term) request = request.ilike('search_text', likePattern(term));
-    if (query.governorateId) request = request.eq('governorate_id', query.governorateId);
-    if (query.areaId) request = request.eq('area_id', query.areaId);
+    if (query.locationId) request = request.contains('location_path', [query.locationId]);
 
     const result = await request.order('name').order('id').range(from, from + pageSize - 1);
     return unwrapPage<Facility>(result);

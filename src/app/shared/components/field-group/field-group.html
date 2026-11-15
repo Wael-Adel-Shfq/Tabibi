@@ -1,0 +1,18 @@
+<fieldset class="mb-4">
+  <legend class="mb-1 text-sm font-bold text-slate-900">
+    {{ legend() | translate }}
+    @if (required()) {
+      <span class="text-red-700" aria-hidden="true">*</span>
+      <span class="sr-only">({{ 'common.required' | translate }})</span>
+    }
+  </legend>
+  <ng-content />
+  @if (hint()) {
+    <p class="mt-1 text-xs text-slate-600">{{ hint() | translate }}</p>
+  }
+  @if (errorKind(); as kind) {
+    <p class="mt-1 text-sm font-semibold text-red-700" role="alert">
+      {{ 'errors.' + kind | translate }}
+    </p>
+  }
+</fieldset>

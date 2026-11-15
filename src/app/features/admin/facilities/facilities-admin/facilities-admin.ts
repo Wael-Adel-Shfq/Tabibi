@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -9,6 +9,7 @@ import { ToastService } from '../../../../core/ui/toast.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
 import { PagedList } from '../../../../shared/utils/paged-list';
 import { FacilitiesService } from '../../../facilities/facilities.service';
 import { LocationsService } from '../../../locations/locations.service';
@@ -29,6 +30,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
     LoadingState,
     ErrorState,
     EmptyState,
+    LocationPicker,
   ],
   templateUrl: './facilities-admin.html',
   styleUrl: './facilities-admin.css',
@@ -44,14 +46,15 @@ export class FacilitiesAdmin {
   protected readonly pageSize = PAGE_SIZE;
   protected readonly term = signal('');
   protected readonly type = signal<FacilityType | ''>('');
-  protected readonly governorateId = signal('');
+  protected readonly locationPath = signal<string[]>([]);
+  private readonly locationId = computed(() => this.locationPath().at(-1) ?? '');
   protected readonly status = signal<StatusFilter>('all');
 
   protected readonly list = new PagedList<Facility>((page) =>
     this.facilities.search({
       term: this.term(),
       type: this.type(),
-      governorateId: this.governorateId(),
+      locationId: this.locationId(),
       status: this.status(),
       page,
     }),
@@ -65,7 +68,7 @@ export class FacilitiesAdmin {
     effect(() => {
       this.term();
       this.type();
-      this.governorateId();
+      this.locationId();
       this.status();
       untracked(() => void this.list.reload());
     });
@@ -79,10 +82,6 @@ export class FacilitiesAdmin {
 
   protected onType(event: Event): void {
     this.type.set((event.target as HTMLSelectElement).value as FacilityType | '');
-  }
-
-  protected onGovernorate(event: Event): void {
-    this.governorateId.set((event.target as HTMLSelectElement).value);
   }
 
   protected onStatus(event: Event): void {

@@ -13,15 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import { FACILITY_TYPES, Facility, FacilityType } from '../../../../core/models/entities';
+import { FACILITY_TYPES, Facility, FacilityType, Location } from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
+import { FieldGroup } from '../../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { LocationField } from '../../../../shared/utils/location-field';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation';
 import { FacilitiesService } from '../../../facilities/facilities.service';
 import { LocationsService } from '../../../locations/locations.service';
 import { adminErrorKey } from '../../shared/admin-errors';
-import { AreaOptions, COORDINATE_PATTERN, toCoordinate } from '../../shared/area-options';
+import { COORDINATE_PATTERN, toCoordinate } from '../../shared/coordinates';
 
 export interface FacilityDialogData {
   /** Facility to edit; omitted when adding. */
@@ -38,6 +41,8 @@ export interface FacilityDialogData {
     MatButtonModule,
     TranslatePipe,
     FormFieldWrapper,
+    FieldGroup,
+    LocationPicker,
     LoadingState,
   ],
   templateUrl: './facility-dialog.html',
@@ -51,15 +56,14 @@ export class FacilityDialog {
   protected readonly language = inject(LanguageService);
 
   protected readonly types = FACILITY_TYPES;
-  protected readonly areaOptions = new AreaOptions(this.locations);
+  protected readonly location = new LocationField(this.data.facility);
   protected readonly ready = signal(false);
   protected readonly failure = signal<string | null>(null);
 
   protected readonly model = signal({
     name: this.data.facility?.name ?? '',
     type: (this.data.facility?.type ?? this.data.type ?? 'lab') as string,
-    governorate_id: this.data.facility?.governorate_id ?? '',
-    area_id: this.data.facility?.area_id ?? '',
+    location_id: this.data.facility?.location_id ?? '',
     address: this.data.facility?.address ?? '',
     phone: this.data.facility?.phone ?? '',
     map_url: this.data.facility?.map_url ?? '',
@@ -73,8 +77,8 @@ export class FacilityDialog {
     minLength(path.name, 2);
     maxLength(path.name, 150);
     required(path.type);
-    required(path.governorate_id);
-    required(path.area_id);
+    required(path.location_id);
+    validate(path.location_id, () => (this.location.tooBroad() ? { kind: 'locationTooBroad' } : null));
     required(path.address);
     minLength(path.address, 3);
     maxLength(path.address, 300);
@@ -95,13 +99,13 @@ export class FacilityDialog {
 
   private async prepare(): Promise<void> {
     await this.locations.load().catch(() => undefined);
-    await this.areaOptions.load(this.model().governorate_id);
     this.ready.set(true);
   }
 
-  protected async onGovernorateChange(): Promise<void> {
-    this.model.update((value) => ({ ...value, area_id: '' }));
-    await this.areaOptions.load(this.model().governorate_id);
+  protected onLocation(location: Location | null): void {
+    const locationId = this.location.select(location);
+    this.model.update((value) => ({ ...value, location_id: locationId }));
+    this.facility.location_id().markAsTouched();
   }
 
   protected async onSubmit(event: Event): Promise<void> {
@@ -114,8 +118,7 @@ export class FacilityDialog {
           {
             name: value.name.trim(),
             type: value.type as FacilityType,
-            governorate_id: value.governorate_id,
-            area_id: value.area_id,
+            location_id: value.location_id,
             address: value.address.trim(),
             phone: orNull(value.phone),
             map_url: orNull(value.map_url),

@@ -32,34 +32,17 @@
           />
         </app-form-field>
 
-        <app-form-field
-          label="fields.governorate"
-          for="d-governorate"
-          [field]="doctor.governorate_id"
-          [required]="true"
-        >
-          <select
-            id="d-governorate"
-            class="control"
-            [formField]="doctor.governorate_id"
-            (change)="onGovernorateChange()"
-          >
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (governorate of locations.governorates(); track governorate.id) {
-              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-            }
-          </select>
-        </app-form-field>
-
-        <app-form-field label="fields.area" for="d-area" [field]="doctor.area_id" [required]="true">
-          <select id="d-area" class="control" [formField]="doctor.area_id">
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (area of areaOptions.areas(); track area.id) {
-              <option [value]="area.id">{{ language.name(area) }}</option>
-            }
-          </select>
-        </app-form-field>
       </div>
+
+      <app-field-group legend="fields.location" [field]="doctor.location_id" [required]="true" hint="hints.location">
+        <app-location-picker
+          idPrefix="d-location"
+          mode="form"
+          [(path)]="location.path"
+          [invalid]="doctor.location_id().touched() && doctor.location_id().invalid()"
+          (selection)="onLocation($event)"
+        />
+      </app-field-group>
 
       <app-form-field label="fields.address" for="d-address" [field]="doctor.address" [required]="true">
         <textarea id="d-address" class="control" rows="2" [formField]="doctor.address"></textarea>

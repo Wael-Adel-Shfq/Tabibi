@@ -32,12 +32,12 @@ export class AdSlot {
   constructor() {
     effect((onCleanup) => {
       const placement = this.placement();
-      const governorateId = this.filter.governorateId();
+      const locationPath = this.filter.locationPath();
       let cancelled = false;
       onCleanup(() => (cancelled = true));
 
       this.ads
-        .listForPlacement(placement, governorateId)
+        .listForPlacement(placement, locationPath)
         .then((ads) => {
           if (cancelled) return;
           this.items.set(

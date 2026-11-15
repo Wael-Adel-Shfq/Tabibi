@@ -32,8 +32,7 @@ export class AdminShell {
     { path: '/admin/doctors', label: 'admin.nav.doctors', exact: false },
     { path: '/admin/facilities', label: 'admin.nav.facilities', exact: false },
     { path: '/admin/advertisements', label: 'admin.nav.advertisements', exact: false },
-    { path: '/admin/governorates', label: 'admin.nav.governorates', exact: false },
-    { path: '/admin/areas', label: 'admin.nav.areas', exact: false },
+    { path: '/admin/locations', label: 'admin.nav.locations', exact: false },
     { path: '/admin/specialties', label: 'admin.nav.specialties', exact: false },
   ];
 

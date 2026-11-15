@@ -1,0 +1,123 @@
+<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-xl font-bold text-slate-900">{{ 'admin.nav.locations' | translate }}</h1>
+  @if (canAdd()) {
+    <button matButton="filled" type="button" (click)="edit()">{{ 'admin.locations.add' | translate }}</button>
+  }
+</div>
+
+<nav class="mb-4" [attr.aria-label]="'admin.locations.breadcrumb' | translate">
+  <ol class="trail">
+    <li>
+      @if (current()) {
+        <a class="focus-ring" routerLink="/admin/locations">{{ 'admin.locations.root' | translate }}</a>
+      } @else {
+        <span aria-current="page">{{ 'admin.locations.root' | translate }}</span>
+      }
+    </li>
+    @for (step of trail(); track step.id; let last = $last) {
+      <li>
+        @if (last) {
+          <span aria-current="page">{{ language.name(step) }}</span>
+        } @else {
+          <a class="focus-ring" routerLink="/admin/locations" [queryParams]="{ parent: step.id }">
+            {{ language.name(step) }}
+          </a>
+        }
+      </li>
+    }
+  </ol>
+</nav>
+
+<form class="admin-filters" role="search" (submit)="$event.preventDefault()">
+  <div>
+    <label for="loc-search">{{ 'common.search' | translate }}</label>
+    <input id="loc-search" class="control" type="search" autocomplete="off" (input)="onTerm($event)" />
+  </div>
+  <div>
+    <label for="loc-status">{{ 'fields.status' | translate }}</label>
+    <select id="loc-status" class="control" (change)="onStatus($event)">
+      <option value="all">{{ 'status.all' | translate }}</option>
+      <option value="active">{{ 'status.active' | translate }}</option>
+      <option value="inactive">{{ 'status.inactive' | translate }}</option>
+    </select>
+  </div>
+</form>
+
+@if (failed()) {
+  <app-error-state (retry)="load()" />
+} @else if (loading() && rows().length === 0) {
+  <app-loading-state />
+} @else if (rows().length === 0) {
+  <app-empty-state message="admin.locations.none" />
+} @else {
+  <div class="table-wrap card">
+    <table class="admin-table">
+      <caption class="sr-only">
+        {{ 'admin.nav.locations' | translate }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'fields.nameAr' | translate }}</th>
+          <th scope="col">{{ 'fields.nameEn' | translate }}</th>
+          <th scope="col">{{ 'fields.kind' | translate }}</th>
+          <th scope="col">{{ 'fields.sortOrder' | translate }}</th>
+          <th scope="col">{{ 'fields.active' | translate }}</th>
+          <th scope="col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr>
+            <th scope="row" lang="ar">
+              @if (hasChildren(row)) {
+                <a
+                  class="focus-ring text-brand-800 underline"
+                  routerLink="/admin/locations"
+                  [queryParams]="{ parent: row.id }"
+                  [attr.aria-label]="('admin.locations.open' | translate) + ': ' + row.name_ar"
+                >
+                  {{ row.name_ar }}
+                </a>
+              } @else {
+                {{ row.name_ar }}
+              }
+            </th>
+            <td lang="en" dir="ltr" class="text-start">{{ row.name_en }}</td>
+            <td>
+              <span class="badge">{{ 'locationKinds.' + row.kind | translate }}</span>
+            </td>
+            <td>{{ row.sort_order }}</td>
+            <td>
+              <mat-slide-toggle
+                [checked]="row.is_active"
+                (change)="toggle(row, $event.checked)"
+                [aria-label]="('fields.active' | translate) + ': ' + row.name_ar"
+              />
+            </td>
+            <td class="whitespace-nowrap">
+              <button
+                matButton
+                type="button"
+                (click)="edit(row)"
+                [attr.aria-label]="('common.edit' | translate) + ': ' + row.name_ar"
+              >
+                {{ 'common.edit' | translate }}
+              </button>
+              @if (row.kind !== 'governorate') {
+                <button
+                  matButton
+                  type="button"
+                  class="danger-button"
+                  (click)="remove(row)"
+                  [attr.aria-label]="('common.delete' | translate) + ': ' + row.name_ar"
+                >
+                  {{ 'common.delete' | translate }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

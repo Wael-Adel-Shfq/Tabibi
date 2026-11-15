@@ -43,6 +43,11 @@ export class LanguageService {
     return this.langState() === 'en' ? item.name_en || item.name_ar : item.name_ar;
   }
 
+  /** A location chain as one line, e.g. "القاهرة · المنطقة الجنوبية · حلوان · حدائق حلوان". */
+  chain(items: readonly Named[] | null | undefined): string {
+    return (items ?? []).map((item) => this.name(item)).join(' · ');
+  }
+
   private stored(): Lang {
     try {
       return this.document.defaultView?.localStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'ar';

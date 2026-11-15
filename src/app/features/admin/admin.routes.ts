@@ -40,14 +40,9 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./advertisements/ads-admin/ads-admin').then((m) => m.AdsAdmin),
       },
       {
-        path: 'governorates',
-        data: { table: 'governorates' },
-        loadComponent: () => import('./lookups/lookup-list/lookup-list').then((m) => m.LookupList),
-      },
-      {
-        path: 'areas',
-        data: { table: 'areas' },
-        loadComponent: () => import('./lookups/lookup-list/lookup-list').then((m) => m.LookupList),
+        path: 'locations',
+        loadComponent: () =>
+          import('./locations/locations-admin/locations-admin').then((m) => m.LocationsAdmin),
       },
       {
         path: 'specialties',

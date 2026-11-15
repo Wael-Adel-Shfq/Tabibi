@@ -7,13 +7,17 @@ import {
   pattern,
   required,
   submit,
+  validate,
 } from '@angular/forms/signals';
 import { IonContent } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
-import type { Area } from '../../../core/models/entities';
+import type { Location } from '../../../core/models/entities';
 import { orNull } from '../../../core/supabase/unwrap';
+import { FieldGroup } from '../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../shared/components/form-field/form-field';
+import { LocationPicker } from '../../../shared/components/location-picker/location-picker';
+import { LocationField } from '../../../shared/utils/location-field';
 import { PublicHeader } from '../../../shared/components/public-header/public-header';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../shared/utils/validation';
 import { LocationsService } from '../../locations/locations.service';
@@ -27,8 +31,7 @@ interface SuggestionModel {
   specialty_id: string;
   specialty_other: string;
   clinic_phone: string;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   map_url: string;
   submitter_name: string;
@@ -43,8 +46,7 @@ function emptyModel(): SuggestionModel {
     specialty_id: '',
     specialty_other: '',
     clinic_phone: '',
-    governorate_id: '',
-    area_id: '',
+    location_id: '',
     address: '',
     map_url: '',
     submitter_name: '',
@@ -56,7 +58,15 @@ function emptyModel(): SuggestionModel {
 /** Public "suggest a doctor" form. Stored as pending until an admin reviews it. */
 @Component({
   selector: 'app-submission-form',
-  imports: [IonContent, FormField, TranslatePipe, PublicHeader, FormFieldWrapper],
+  imports: [
+    IonContent,
+    FormField,
+    TranslatePipe,
+    PublicHeader,
+    FormFieldWrapper,
+    FieldGroup,
+    LocationPicker,
+  ],
   templateUrl: './submission-form.html',
   styleUrl: './submission-form.css',
 })
@@ -67,7 +77,7 @@ export class SubmissionForm {
 
   protected readonly other = OTHER;
   protected readonly model = signal<SuggestionModel>(emptyModel());
-  protected readonly areas = signal<Area[]>([]);
+  protected readonly location = new LocationField();
   /** Result of the last attempt; `null` while the form is being filled. */
   protected readonly outcome = signal<SubmitOutcome | null>(null);
 
@@ -81,8 +91,8 @@ export class SubmissionForm {
     });
     maxLength(path.specialty_other, 80);
     pattern(path.clinic_phone, PHONE_PATTERN);
-    required(path.governorate_id);
-    required(path.area_id);
+    required(path.location_id);
+    validate(path.location_id, () => (this.location.tooBroad() ? { kind: 'locationTooBroad' } : null));
     required(path.address);
     minLength(path.address, 3);
     maxLength(path.address, 300);
@@ -95,17 +105,10 @@ export class SubmissionForm {
     void this.locations.load().catch(() => undefined);
   }
 
-  /** The area list follows the governorate, and a stale area is cleared. */
-  protected async onGovernorateChange(): Promise<void> {
-    this.model.update((value) => ({ ...value, area_id: '' }));
-    this.areas.set([]);
-    const governorateId = this.model().governorate_id;
-    try {
-      const areas = await this.locations.areasOf(governorateId);
-      if (this.model().governorate_id === governorateId) this.areas.set(areas);
-    } catch {
-      this.areas.set([]);
-    }
+  protected onLocation(location: Location | null): void {
+    const locationId = this.location.select(location);
+    this.model.update((value) => ({ ...value, location_id: locationId }));
+    this.suggestion.location_id().markAsTouched();
   }
 
   protected async onSubmit(event: Event): Promise<void> {
@@ -119,8 +122,7 @@ export class SubmissionForm {
         specialty_id: listed ? value.specialty_id : null,
         specialty_other: listed ? null : orNull(value.specialty_other),
         clinic_phone: orNull(value.clinic_phone),
-        governorate_id: value.governorate_id,
-        area_id: value.area_id,
+        location_id: value.location_id,
         address: value.address.trim(),
         map_url: orNull(value.map_url),
         submitter_name: orNull(value.submitter_name),
@@ -134,7 +136,7 @@ export class SubmissionForm {
 
   protected startOver(): void {
     this.suggestion().reset(emptyModel());
-    this.areas.set([]);
+    this.location.reset();
     this.outcome.set(null);
   }
 }

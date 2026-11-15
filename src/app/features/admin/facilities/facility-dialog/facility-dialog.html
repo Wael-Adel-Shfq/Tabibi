@@ -24,34 +24,17 @@
           <input id="f-phone" class="control" type="tel" dir="ltr" autocomplete="off" [formField]="facility.phone" />
         </app-form-field>
 
-        <app-form-field
-          label="fields.governorate"
-          for="f-governorate"
-          [field]="facility.governorate_id"
-          [required]="true"
-        >
-          <select
-            id="f-governorate"
-            class="control"
-            [formField]="facility.governorate_id"
-            (change)="onGovernorateChange()"
-          >
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (governorate of locations.governorates(); track governorate.id) {
-              <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-            }
-          </select>
-        </app-form-field>
-
-        <app-form-field label="fields.area" for="f-area" [field]="facility.area_id" [required]="true">
-          <select id="f-area" class="control" [formField]="facility.area_id">
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (area of areaOptions.areas(); track area.id) {
-              <option [value]="area.id">{{ language.name(area) }}</option>
-            }
-          </select>
-        </app-form-field>
       </div>
+
+      <app-field-group legend="fields.location" [field]="facility.location_id" [required]="true" hint="hints.location">
+        <app-location-picker
+          idPrefix="f-location"
+          mode="form"
+          [(path)]="location.path"
+          [invalid]="facility.location_id().touched() && facility.location_id().invalid()"
+          (selection)="onLocation($event)"
+        />
+      </app-field-group>
 
       <app-form-field label="fields.address" for="f-address" [field]="facility.address" [required]="true">
         <textarea id="f-address" class="control" rows="2" [formField]="facility.address"></textarea>

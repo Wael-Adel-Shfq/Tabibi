@@ -4,7 +4,7 @@
     {{ 'facilityTypes.' + facility().type | translate }}
   </p>
   <p class="mt-1 text-sm text-slate-700">
-    {{ language.name(facility().governorate) }} · {{ language.name(facility().area) }}
+    {{ language.chain(facility().location_chain) }}
   </p>
   <p class="text-sm text-slate-700">{{ facility().address }}</p>
   @if (facility().phone; as phone) {

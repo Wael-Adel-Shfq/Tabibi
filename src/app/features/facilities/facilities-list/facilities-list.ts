@@ -42,8 +42,7 @@ export class FacilitiesList {
     this.facilities.search({
       type: this.filter.facilityType(),
       term: this.filter.facilityTerm(),
-      governorateId: this.filter.governorateId(),
-      areaId: this.filter.areaId(),
+      locationId: this.filter.locationId(),
       page,
     }),
   );
@@ -54,8 +53,7 @@ export class FacilitiesList {
     effect(() => {
       this.filter.facilityType();
       this.filter.facilityTerm();
-      this.filter.governorateId();
-      this.filter.areaId();
+      this.filter.locationId();
       untracked(() => void this.list.reload());
     });
   }

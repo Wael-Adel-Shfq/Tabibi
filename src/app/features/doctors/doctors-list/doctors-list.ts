@@ -43,8 +43,7 @@ export class DoctorsList {
     this.doctors.search({
       term: this.filter.doctorTerm(),
       specialtyId: this.filter.specialtyId(),
-      governorateId: this.filter.governorateId(),
-      areaId: this.filter.areaId(),
+      locationId: this.filter.locationId(),
       page,
     }),
   );
@@ -58,8 +57,7 @@ export class DoctorsList {
     effect(() => {
       this.filter.doctorTerm();
       this.filter.specialtyId();
-      this.filter.governorateId();
-      this.filter.areaId();
+      this.filter.locationId();
       untracked(() => void this.list.reload());
     });
   }

@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -9,6 +9,7 @@ import { ToastService } from '../../../../core/ui/toast.service';
 import { EmptyState } from '../../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
 import { PagedList } from '../../../../shared/utils/paged-list';
 import { DoctorsService } from '../../../doctors/doctors.service';
 import { LocationsService } from '../../../locations/locations.service';
@@ -28,6 +29,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
     LoadingState,
     ErrorState,
     EmptyState,
+    LocationPicker,
   ],
   templateUrl: './doctors-admin.html',
   styleUrl: './doctors-admin.css',
@@ -41,14 +43,15 @@ export class DoctorsAdmin {
 
   protected readonly pageSize = PAGE_SIZE;
   protected readonly term = signal('');
-  protected readonly governorateId = signal('');
+  protected readonly locationPath = signal<string[]>([]);
+  private readonly locationId = computed(() => this.locationPath().at(-1) ?? '');
   protected readonly specialtyId = signal('');
   protected readonly status = signal<StatusFilter>('all');
 
   protected readonly list = new PagedList<Doctor>((page) =>
     this.doctors.search({
       term: this.term(),
-      governorateId: this.governorateId(),
+      locationId: this.locationId(),
       specialtyId: this.specialtyId(),
       status: this.status(),
       page,
@@ -62,7 +65,7 @@ export class DoctorsAdmin {
 
     effect(() => {
       this.term();
-      this.governorateId();
+      this.locationId();
       this.specialtyId();
       this.status();
       untracked(() => void this.list.reload());
@@ -73,10 +76,6 @@ export class DoctorsAdmin {
     const value = (event.target as HTMLInputElement).value;
     clearTimeout(this.debounce);
     this.debounce = setTimeout(() => this.term.set(value.trim()), 300);
-  }
-
-  protected onGovernorate(event: Event): void {
-    this.governorateId.set((event.target as HTMLSelectElement).value);
   }
 
   protected onSpecialty(event: Event): void {

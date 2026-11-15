@@ -8,17 +8,6 @@
     <label for="lookup-search">{{ 'common.search' | translate }}</label>
     <input id="lookup-search" class="control" type="search" autocomplete="off" (input)="onTerm($event)" />
   </div>
-  @if (table() === 'areas') {
-    <div>
-      <label for="lookup-governorate">{{ 'fields.governorate' | translate }}</label>
-      <select id="lookup-governorate" class="control" (change)="onGovernorate($event)">
-        <option value="">{{ 'filters.allGovernorates' | translate }}</option>
-        @for (governorate of locations.governorates(); track governorate.id) {
-          <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-        }
-      </select>
-    </div>
-  }
   <div>
     <label for="lookup-status">{{ 'fields.status' | translate }}</label>
     <select id="lookup-status" class="control" (change)="onStatus($event)">
@@ -45,9 +34,6 @@
         <tr>
           <th scope="col">{{ 'fields.nameAr' | translate }}</th>
           <th scope="col">{{ 'fields.nameEn' | translate }}</th>
-          @if (table() === 'areas') {
-            <th scope="col">{{ 'fields.governorate' | translate }}</th>
-          }
           <th scope="col">{{ 'fields.sortOrder' | translate }}</th>
           <th scope="col">{{ 'fields.active' | translate }}</th>
           <th scope="col">{{ 'common.actions' | translate }}</th>
@@ -58,9 +44,6 @@
           <tr>
             <th scope="row" lang="ar">{{ row.name_ar }}</th>
             <td lang="en" dir="ltr" class="text-start">{{ row.name_en }}</td>
-            @if (table() === 'areas') {
-              <td>{{ language.name(governorateOf(row)) }}</td>
-            }
             <td>{{ row.sort_order }}</td>
             <td>
               <mat-slide-toggle

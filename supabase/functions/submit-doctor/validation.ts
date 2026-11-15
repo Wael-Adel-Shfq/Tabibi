@@ -6,8 +6,7 @@ export interface SubmissionInput {
   specialty_id: string | null;
   specialty_other: string | null;
   clinic_phone: string | null;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   map_url: string | null;
   submitter_name: string | null;
@@ -59,8 +58,7 @@ export function validateSubmission(body: unknown): ValidationResult {
   };
 
   const full_name = requiredText('full_name', 2, 150);
-  const governorate_id = requiredUuid('governorate_id');
-  const area_id = requiredUuid('area_id');
+  const location_id = requiredUuid('location_id');
   const address = requiredText('address', 3, 300);
 
   const specialty_id = text(raw['specialty_id']);
@@ -86,8 +84,7 @@ export function validateSubmission(body: unknown): ValidationResult {
       specialty_id,
       specialty_other,
       clinic_phone,
-      governorate_id,
-      area_id,
+      location_id,
       address,
       map_url,
       submitter_name,

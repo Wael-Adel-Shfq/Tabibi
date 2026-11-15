@@ -20,21 +20,15 @@
     </select>
   </div>
   <div>
-    <label for="fa-governorate">{{ 'fields.governorate' | translate }}</label>
-    <select id="fa-governorate" class="control" (change)="onGovernorate($event)">
-      <option value="">{{ 'filters.allGovernorates' | translate }}</option>
-      @for (governorate of locations.governorates(); track governorate.id) {
-        <option [value]="governorate.id">{{ language.name(governorate) }}</option>
-      }
-    </select>
-  </div>
-  <div>
     <label for="fa-status">{{ 'fields.status' | translate }}</label>
     <select id="fa-status" class="control" (change)="onStatus($event)">
       <option value="all">{{ 'status.all' | translate }}</option>
       <option value="active">{{ 'status.active' | translate }}</option>
       <option value="inactive">{{ 'status.inactive' | translate }}</option>
     </select>
+  </div>
+  <div class="col-span-full">
+    <app-location-picker idPrefix="fa-location" mode="filter" [(path)]="locationPath" />
   </div>
 </form>
 
@@ -65,7 +59,7 @@
           <tr>
             <th scope="row">{{ facility.name }}</th>
             <td>{{ 'facilityTypes.' + facility.type | translate }}</td>
-            <td>{{ language.name(facility.governorate) }} · {{ language.name(facility.area) }}</td>
+            <td>{{ language.chain(facility.location_chain) }}</td>
             <td dir="ltr" class="text-start">{{ facility.phone }}</td>
             <td>
               <mat-slide-toggle

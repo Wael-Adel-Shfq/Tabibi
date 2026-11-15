@@ -13,16 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
-import { AD_PLACEMENTS, AdPlacement, Advertisement } from '../../../../core/models/entities';
+import { AD_PLACEMENTS, AdPlacement, Advertisement, Location } from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
+import { FieldGroup } from '../../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
+import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { LocationField } from '../../../../shared/utils/location-field';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { AD_IMAGE_TYPES } from '../../../../shared/utils/image';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation';
 import { AdsService, ImageRejectedError } from '../../../advertisements/ads.service';
 import { LocationsService } from '../../../locations/locations.service';
 import { adminErrorKey } from '../../shared/admin-errors';
-import { AreaOptions } from '../../shared/area-options';
 
 export interface AdDialogData {
   ad?: Advertisement;
@@ -48,6 +50,8 @@ function fromLocalInput(value: string): string | null {
     MatButtonModule,
     TranslatePipe,
     FormFieldWrapper,
+    FieldGroup,
+    LocationPicker,
     LoadingState,
   ],
   templateUrl: './ad-dialog.html',
@@ -62,7 +66,8 @@ export class AdDialog {
 
   protected readonly placements = AD_PLACEMENTS;
   protected readonly accept = AD_IMAGE_TYPES.join(',');
-  protected readonly areaOptions = new AreaOptions(this.locations);
+  /** Optional targeting; any level, or none for everywhere. */
+  protected readonly location = new LocationField(this.data.ad);
   protected readonly ready = signal(false);
   protected readonly failure = signal<string | null>(null);
 
@@ -79,8 +84,7 @@ export class AdDialog {
     advertiser_name: this.data.ad?.advertiser_name ?? '',
     placement: (this.data.ad?.placement ?? 'home_top') as string,
     display_order: String(this.data.ad?.display_order ?? 0),
-    governorate_id: this.data.ad?.governorate_id ?? '',
-    area_id: this.data.ad?.area_id ?? '',
+    location_id: this.data.ad?.location_id ?? '',
     address: this.data.ad?.address ?? '',
     phone: this.data.ad?.phone ?? '',
     map_url: this.data.ad?.map_url ?? '',
@@ -115,13 +119,12 @@ export class AdDialog {
 
   private async prepare(): Promise<void> {
     await this.locations.load().catch(() => undefined);
-    await this.areaOptions.load(this.model().governorate_id);
     this.ready.set(true);
   }
 
-  protected async onGovernorateChange(): Promise<void> {
-    this.model.update((value) => ({ ...value, area_id: '' }));
-    await this.areaOptions.load(this.model().governorate_id);
+  protected onLocation(location: Location | null): void {
+    const locationId = this.location.select(location);
+    this.model.update((value) => ({ ...value, location_id: locationId }));
   }
 
   protected onFile(event: Event): void {
@@ -166,8 +169,7 @@ export class AdDialog {
           image_path: uploadedPath ?? previousPath ?? '',
           placement: value.placement as AdPlacement,
           display_order: Number(value.display_order),
-          governorate_id: orNull(value.governorate_id),
-          area_id: value.governorate_id ? orNull(value.area_id) : null,
+          location_id: orNull(value.location_id),
           address: orNull(value.address),
           phone: orNull(value.phone),
           map_url: orNull(value.map_url),

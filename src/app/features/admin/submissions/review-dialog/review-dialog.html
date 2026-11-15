@@ -16,7 +16,7 @@
     </dd>
 
     <dt>{{ 'fields.location' | translate }}</dt>
-    <dd>{{ language.name(submission.governorate) }} · {{ language.name(submission.area) }}</dd>
+    <dd>{{ language.chain(submission.location_chain) }}</dd>
 
     <dt>{{ 'fields.address' | translate }}</dt>
     <dd>{{ submission.address }}</dd>
@@ -59,7 +59,7 @@
             <li class="dup">
               <p class="font-semibold">{{ dup.full_name }}</p>
               <p class="text-sm text-slate-700">
-                {{ dup.specialty_name_ar }} · {{ dup.area_name_ar }} · {{ dup.address }}
+                {{ dup.specialty_name_ar }} · {{ language.chain(dup.location_chain) }} · {{ dup.address }}
               </p>
               <p class="text-sm">
                 @if (dup.phone_match) {

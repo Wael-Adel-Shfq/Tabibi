@@ -10,8 +10,7 @@ import {
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { unwrap, unwrapPage } from '../../core/supabase/unwrap';
 
-const SUBMISSION_SELECT =
-  '*, specialty:specialties(id, name_ar, name_en), governorate:governorates(id, name_ar, name_en), area:areas(id, name_ar, name_en)';
+const SUBMISSION_SELECT = '*, specialty:specialties(id, name_ar, name_en), location_chain';
 
 /** Payload accepted by the `submit-doctor` Edge Function. */
 export interface SubmissionPayload {
@@ -19,8 +18,7 @@ export interface SubmissionPayload {
   specialty_id: string | null;
   specialty_other: string | null;
   clinic_phone: string | null;
-  governorate_id: string;
-  area_id: string;
+  location_id: string;
   address: string;
   map_url: string | null;
   submitter_name: string | null;
