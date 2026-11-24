@@ -1,7 +1,7 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
-import type { Facility } from '../../../core/models/entities';
+import { type Facility, withoutRegions } from '../../../core/models/entities';
 import { ContactActions } from '../../../shared/components/contact-actions/contact-actions';
 import { ListingPhoto } from '../../../shared/components/listing-photo/listing-photo';
 import { FacilitiesService } from '../facilities.service';
@@ -19,5 +19,6 @@ export class FacilityCard {
 
   readonly facility = input.required<Facility>();
 
+  protected readonly place = computed(() => withoutRegions(this.facility().location_chain));
   protected readonly photo = computed(() => this.service.imageUrl(this.facility().image_path));
 }

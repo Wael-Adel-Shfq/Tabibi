@@ -12,12 +12,15 @@ import { mapHref, telHref } from '../../utils/links';
   imports: [IonIcon, TranslatePipe],
   templateUrl: './contact-actions.html',
   styleUrl: './contact-actions.css',
+  host: { '[class.compact]': 'compact()' },
 })
 export class ContactActions {
   readonly phone = input<string | null>(null);
   readonly place = input.required<Located>();
   /** Name of the record, used to give each link a distinct accessible name. */
   readonly name = input.required<string>();
+  /** Round icon-only buttons, for small cards; the accessible name stays the same. */
+  readonly compact = input(false);
 
   protected readonly tel = computed(() => telHref(this.phone()));
   protected readonly map = computed(() => mapHref(this.place()));

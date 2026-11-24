@@ -24,7 +24,8 @@ interface Level {
  * Cascading location dropdowns. Starts with the governorates and, after each
  * choice, shows the next level whenever one is possible, so Cairo shows
  * governorate → region → district → area and Minya shows
- * governorate → center → area. A level with nothing added yet is shown
+ * governorate → center → area (with `skipRegions`, Cairo shows
+ * governorate → district / city → area). A level with nothing added yet is shown
  * disabled with a note; with `allowAdd`, every level below the governorates
  * also offers "+ Add a new place", reported through `addRequest`.
  *
@@ -49,6 +50,12 @@ export class LocationPicker {
   readonly invalid = input(false);
   /** Offer "+ Add a new place" below the governorate level. */
   readonly allowAdd = input(false);
+  /**
+   * Hide the region level: a governorate with regions (Cairo) lists the
+   * districts and cities of all its regions directly. Used on the public
+   * pages; the admin keeps the full tree.
+   */
+  readonly skipRegions = input(false);
   /** Emits the most specific chosen location after the visitor changes a level. */
   readonly selection = output<Location | null>();
   /** Emits the parent under which the visitor wants to add a missing place. */
@@ -126,8 +133,11 @@ export class LocationPicker {
   private ensure(key: string): void {
     if (this.requested.has(key)) return;
     this.requested.add(key);
-    this.locations
-      .children(key === ROOT ? null : key)
+    const parentId = key === ROOT ? null : key;
+    const load = this.skipRegions()
+      ? this.locations.childrenSkippingRegions(parentId)
+      : this.locations.children(parentId);
+    load
       .then((list) => this.options.update((current) => new Map(current).set(key, list)))
       .catch(() => this.requested.delete(key));
   }

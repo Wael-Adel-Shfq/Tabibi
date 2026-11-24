@@ -47,6 +47,23 @@ export class LocationsService {
     return pending;
   }
 
+  /**
+   * Like `children`, but any region in the list is replaced by what is under
+   * it. Visitors then pick Cairo and go straight to its districts and cities,
+   * without the regions the admin uses to organise them.
+   */
+  async childrenSkippingRegions(parentId: string | null): Promise<Location[]> {
+    const list = await this.children(parentId);
+    if (!list.some((location) => location.kind === 'region')) return list;
+    const groups = await Promise.all(
+      list.map((location) =>
+        location.kind === 'region' ? this.children(location.id) : Promise.resolve([location]),
+      ),
+    );
+    // Sort orders are per region, so mixing them means nothing; go by name.
+    return groups.flat().sort((a, b) => a.name_ar.localeCompare(b.name_ar, 'ar'));
+  }
+
   refresh(): Promise<void> {
     this.childCache.clear();
     this.loading = null;

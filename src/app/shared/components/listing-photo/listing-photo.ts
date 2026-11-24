@@ -9,14 +9,15 @@ import { businessOutline, personOutline } from 'ionicons/icons';
   imports: [IonIcon],
   templateUrl: './listing-photo.html',
   styleUrl: './listing-photo.css',
-  host: { '[class.large]': "size() === 'large'" },
+  host: { '[class.large]': "size() === 'large'", '[class.fill]': "size() === 'fill'" },
 })
 export class ListingPhoto {
   readonly src = input<string | null>(null);
   /** Alt text; next to the name the photo is decorative, so this is usually ''. */
   readonly alt = input('');
   readonly kind = input<'doctor' | 'facility'>('doctor');
-  readonly size = input<'small' | 'large'>('small');
+  /** small: 4rem square; large: 7.5rem square; fill: as wide as its container. */
+  readonly size = input<'small' | 'large' | 'fill'>('small');
 
   constructor() {
     addIcons({ personOutline, businessOutline });

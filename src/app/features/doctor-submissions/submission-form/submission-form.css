@@ -3,12 +3,13 @@
 }
 
 .primary {
-  min-height: 2.75rem;
-  padding: 0 1.25rem;
-  border-radius: 0.5rem;
-  background: #0f766e;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: #087f5b;
   color: #ffffff;
   font-weight: 700;
+  margin-bottom: 3.75rem;
 }
 
 .primary:disabled {
@@ -17,15 +18,15 @@
 
 .honeypot {
   position: absolute;
-  inset-inline-start: -9999px;
-  width: 1px;
-  height: 1px;
+  inset-inline-start: -624.9375rem;
+  width: .0625rem;
+  height: .0625rem;
   overflow: hidden;
 }
 
 .propose {
-  padding: 0.75rem;
-  border: 1px dashed #0f766e;
-  border-radius: 0.5rem;
-  background: #f0fdfa;
+  padding: 12px;
+  border: .0625rem dashed #087f5b;
+  border-radius: 8px;
+  background: #e6fcf5;
 }

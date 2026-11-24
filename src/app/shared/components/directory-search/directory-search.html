@@ -1,0 +1,93 @@
+<form class="search" role="search" (submit)="onSubmit($event)">
+  <label class="sr-only" [for]="inputId()">{{ label() | translate }}</label>
+  <div class="field">
+    <ion-icon class="field-icon" name="search-outline" aria-hidden="true" />
+    <input
+      class="field-input"
+      type="search"
+      autocomplete="off"
+      enterkeyhint="search"
+      [id]="inputId()"
+      [value]="value()"
+      [placeholder]="placeholder() | translate"
+      (input)="onInput($event)"
+    />
+  </div>
+  <button
+    type="button"
+    class="filter-button"
+    aria-haspopup="dialog"
+    [attr.aria-label]="(activeCount() > 0 ? 'search.filtersButton' : 'search.filters') | translate: { count: activeCount() }"
+    (click)="sheetOpen.set(true)"
+  >
+    <ion-icon name="options-outline" aria-hidden="true" />
+    @if (activeCount() > 0) {
+      <span class="badge" aria-hidden="true">{{ activeCount() }}</span>
+    }
+  </button>
+</form>
+
+@if (activeCount() > 0) {
+  <p class="active">
+    <span>{{ 'search.filtersActive' | translate: { count: activeCount() } }}</span>
+    <button type="button" class="link-button" (click)="clear()">{{ 'search.clear' | translate }}</button>
+  </p>
+}
+
+<ion-modal
+  class="filter-sheet"
+  [isOpen]="sheetOpen()"
+  [initialBreakpoint]="1"
+  [breakpoints]="[0, 1]"
+  [attr.aria-label]="'search.filtersTitle' | translate"
+  (didDismiss)="sheetOpen.set(false)"
+>
+  <ng-template>
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2 class="text-lg font-bold text-slate-900">{{ 'search.filtersTitle' | translate }}</h2>
+        <button
+          type="button"
+          class="icon-button"
+          [attr.aria-label]="'common.close' | translate"
+          (click)="sheetOpen.set(false)"
+        >
+          <ion-icon name="close-outline" aria-hidden="true" />
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        @if (kind() === 'doctors') {
+          <div>
+            <label class="mb-1 block text-sm font-semibold text-slate-800" [for]="inputId() + '-specialty'">
+              {{ 'filters.specialty' | translate }}
+            </label>
+            <select
+              class="control"
+              [id]="inputId() + '-specialty'"
+              [value]="filter.specialtyId()"
+              (change)="onSpecialty($event)"
+            >
+              <option value="">{{ 'filters.allSpecialties' | translate }}</option>
+              @for (specialty of locations.specialties(); track specialty.id) {
+                <option [value]="specialty.id" [selected]="specialty.id === filter.specialtyId()">
+                  {{ language.name(specialty) }}
+                </option>
+              }
+            </select>
+          </div>
+        }
+        <app-location-filter [idPrefix]="inputId() + '-location'" />
+      </div>
+
+      <div class="sheet-foot">
+        <button type="button" class="secondary" [disabled]="activeCount() === 0" (click)="clear()">
+          {{ 'search.clear' | translate }}
+        </button>
+        <button type="button" class="primary" (click)="showResults()">
+          {{ 'search.showResults' | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</ion-modal>

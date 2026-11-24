@@ -30,15 +30,15 @@
   margin-top: 0.25rem;
   width: 1.125rem;
   height: 1.125rem;
-  accent-color: #0f766e;
+  accent-color: #087f5b;
 }
 
 .ad-type-selected {
-  border-color: #0f766e;
-  background: #f0fdfa;
+  border-color: #087f5b;
+  background: #e6fcf5;
 }
 
 .ad-type:focus-within {
-  outline: 2px solid #0f766e;
+  outline: 2px solid #087f5b;
   outline-offset: 2px;
 }

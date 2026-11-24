@@ -5,7 +5,9 @@
     [attr.aria-label]="('actions.call' | translate) + ': ' + name()"
   >
     <ion-icon name="call-outline" aria-hidden="true" />
-    <span>{{ 'actions.call' | translate }}</span>
+    @if (!compact()) {
+      <span>{{ 'actions.call' | translate }}</span>
+    }
   </a>
 }
 @if (map(); as href) {
@@ -17,6 +19,8 @@
     [attr.aria-label]="('actions.map' | translate) + ': ' + name()"
   >
     <ion-icon name="location-outline" aria-hidden="true" />
-    <span>{{ 'actions.map' | translate }}</span>
+    @if (!compact()) {
+      <span>{{ 'actions.map' | translate }}</span>
+    }
   </a>
 }

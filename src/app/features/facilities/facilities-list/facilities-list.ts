@@ -7,7 +7,7 @@ import { AdPopup } from '../../../shared/components/ad-popup/ad-popup';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
-import { LocationFilter } from '../../../shared/components/location-filter/location-filter';
+import { DirectorySearch } from '../../../shared/components/directory-search/directory-search';
 import { PublicHeader } from '../../../shared/components/public-header/public-header';
 import { PagedList } from '../../../shared/utils/paged-list';
 import { DirectoryFilterStore } from '../../locations/location-filter.store';
@@ -23,7 +23,7 @@ import { FacilityCard } from '../facility-card/facility-card';
     IonInfiniteScrollContent,
     TranslatePipe,
     PublicHeader,
-    LocationFilter,
+    DirectorySearch,
     AdSlot,
     AdPopup,
     FacilityCard,
@@ -64,8 +64,7 @@ export class FacilitiesList {
     this.filter.facilityType.set(type);
   }
 
-  protected onTerm(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  protected onTerm(value: string): void {
     clearTimeout(this.debounce);
     this.debounce = setTimeout(() => this.filter.facilityTerm.set(value.trim()), 350);
   }

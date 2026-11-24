@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { DirectoryFilterStore } from '../../../features/locations/location-filter.store';
 import { LocationPicker } from '../location-picker/location-picker';
 
@@ -11,4 +11,7 @@ import { LocationPicker } from '../location-picker/location-picker';
 })
 export class LocationFilter {
   protected readonly filter = inject(DirectoryFilterStore);
+
+  /** Prefix for the dropdown ids; must be unique on the page. */
+  readonly idPrefix = input('filter-location');
 }

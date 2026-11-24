@@ -71,6 +71,7 @@
             [(path)]="location.path"
             [invalid]="suggestion.location_id().touched() && suggestion.location_id().invalid()"
             [allowAdd]="true"
+            [skipRegions]="true"
             (selection)="onLocation($event)"
             (addRequest)="onAddRequest($event)"
           />

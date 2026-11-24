@@ -1,8 +1,8 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
-import type { Doctor } from '../../../core/models/entities';
+import { type Doctor, withoutRegions } from '../../../core/models/entities';
 import { ContactActions } from '../../../shared/components/contact-actions/contact-actions';
 import { ListingPhoto } from '../../../shared/components/listing-photo/listing-photo';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
@@ -34,6 +34,8 @@ export class DoctorDetail {
   readonly id = input.required<string>();
 
   protected readonly doctor = signal<Doctor | null>(null);
+  /** Location steps shown to visitors (no Cairo regions). */
+  protected readonly steps = computed(() => withoutRegions(this.doctor()?.location_chain));
   protected readonly loading = signal(true);
   protected readonly failed = signal(false);
 

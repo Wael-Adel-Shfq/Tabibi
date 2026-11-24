@@ -44,6 +44,7 @@ For example, Cairo → Southern Region → Helwan → Hadayek Helwan, or Minya �
 - Every record stores its ancestor chain (`location_path`), so filtering by any level also returns everything beneath it.
 - Moving a location in the admin moves everything under it, including the records placed there.
 - Deactivating a location hides it and everything under it from visitors.
+- Regions are only for the admin. Visitors never see them: the public filters and the suggestion form go straight from Cairo to its districts and cities (all regions merged), and the public pages leave regions out of the location text.
 
 Adding places:
 

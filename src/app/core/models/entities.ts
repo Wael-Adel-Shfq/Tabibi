@@ -74,6 +74,14 @@ export interface ChainItem extends NamedRef {
   kind: LocationKind;
 }
 
+/**
+ * The chain as visitors see it: regions only organise Cairo for the admin, so
+ * the public pages leave them out ("القاهرة · مدينة نصر").
+ */
+export function withoutRegions(chain: readonly ChainItem[] | null | undefined): ChainItem[] {
+  return (chain ?? []).filter((step) => step.kind !== 'region');
+}
+
 /** Location fields shared by doctors, facilities, submissions and advertisements. */
 export interface Placed {
   location_id: string | null;

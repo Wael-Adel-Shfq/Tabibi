@@ -54,9 +54,13 @@
   },
   "home": {
     "searchLabel": "Find a doctor",
-    "searchPlaceholder": "Doctor name or specialty",
+    "searchPlaceholder": "Search for a doctor or specialty",
     "categories": "Browse",
-    "recentDoctors": "Recently added doctors"
+    "recentDoctors": "Recently added doctors",
+    "greeting": "Welcome to Tabibi",
+    "services": "Services",
+    "specialties": "Specialties",
+    "seeAll": "See all"
   },
   "categories": {
     "doctors": "Doctors",
@@ -75,7 +79,8 @@
     "searchLabel": "Search by name or specialty",
     "searchPlaceholder": "e.g. Ahmed or Pediatrics",
     "none": "No doctors match your search.",
-    "notFound": "This doctor is not available."
+    "notFound": "This doctor is not available.",
+    "info": "Clinic information"
   },
   "facilities": {
     "title": "Medical facilities",
@@ -330,5 +335,25 @@
     "remove": "Remove image",
     "badType": "Unsupported file type. Use WebP, JPEG or PNG.",
     "tooLarge": "The image is over 1 MB even after compression. Choose a smaller image."
+  },
+  "search": {
+    "filters": "Filters",
+    "filtersActive": "{{count}} filter(s) on",
+    "filtersTitle": "Filter results",
+    "clear": "Clear filters",
+    "showResults": "Show results",
+    "filtersButton": "Filters ({{count}} on)"
+  },
+  "tips": {
+    "title": "Tip of the day",
+    "items": {
+      "0": "Drink enough water through the day, especially when it is hot.",
+      "1": "Wash your hands with soap and water for at least 20 seconds before eating and after using the toilet.",
+      "2": "Only take antibiotics prescribed by a doctor, and finish the course as prescribed.",
+      "3": "Keep a list of your current medicines and bring it to every doctor visit.",
+      "4": "Walking for half an hour on most days is good for your heart and mood.",
+      "5": "Enough sleep at night helps your body recover and supports your immunity.",
+      "6": "Check your blood pressure regularly; high blood pressure often has no symptoms."
+    }
   }
 }

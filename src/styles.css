@@ -1,30 +1,49 @@
-/* Ionic core styles (public application shell) */
+/* Ionic core styles (public application shell). normalize and typography sit
+   in the base layer so Tailwind utilities (mt-4, text-lg, …) win over them. */
 @import '@ionic/angular/css/core.css';
-@import '@ionic/angular/css/normalize.css';
 @import '@ionic/angular/css/structure.css';
-@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/normalize.css' layer(base);
+@import '@ionic/angular/css/typography.css' layer(base);
 
 @import 'tailwindcss';
 
+/* Spacing comes from utilities, not Ionic's default heading margins. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+  }
+}
+
 @theme {
   --font-sans: 'Cairo', 'Segoe UI', Tahoma, system-ui, sans-serif;
-  --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
+  /* Green brand. 500/600 are decorative only; text on a brand fill uses 700+
+     (white on 700 is 5.5:1). */
+  --color-brand-50: #e6fcf5;
+  --color-brand-100: #c3fae8;
+  --color-brand-200: #96f2d7;
+  --color-brand-500: #12b886;
+  --color-brand-600: #0ca678;
+  --color-brand-700: #087f5b;
+  --color-brand-800: #066649;
+  --color-brand-900: #04503a;
+  --color-tip-50: #fff9db;
+  --color-tip-900: #5c3d00;
 }
 
 :root {
   --ion-font-family: 'Cairo', 'Segoe UI', Tahoma, system-ui, sans-serif;
 
-  --ion-color-primary: #0f766e;
-  --ion-color-primary-rgb: 15, 118, 110;
+  --ion-color-primary: #087f5b;
+  --ion-color-primary-rgb: 8, 127, 91;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0d6861;
-  --ion-color-primary-tint: #27847d;
+  --ion-color-primary-shade: #077050;
+  --ion-color-primary-tint: #218c6b;
 
   --ion-color-secondary: #1d4ed8;
   --ion-color-secondary-rgb: 29, 78, 216;
@@ -40,18 +59,20 @@
   --ion-color-danger-shade: #a31919;
   --ion-color-danger-tint: #c03333;
 
-  --ion-background-color: #f8fafc;
+  --ion-background-color: #f5f7f6;
   --ion-text-color: #0f172a;
-  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-background: #087f5b;
+  --ion-toolbar-color: #ffffff;
+  --ion-toolbar-border-color: transparent;
   --ion-tab-bar-background: #ffffff;
   --ion-tab-bar-color: #475569;
-  --ion-tab-bar-color-selected: #0f766e;
+  --ion-tab-bar-color-selected: #087f5b;
 
   /* Angular Material (admin area) follows the same brand colour. */
-  --mat-sys-primary: #0f766e;
+  --mat-sys-primary: #087f5b;
   --mat-sys-on-primary: #ffffff;
-  --mat-sys-primary-container: #ccfbf1;
-  --mat-sys-on-primary-container: #134e4a;
+  --mat-sys-primary-container: #c3fae8;
+  --mat-sys-on-primary-container: #04503a;
   --mat-sys-surface: #ffffff;
   --mat-sys-surface-container: #f1f5f9;
   --mat-sys-surface-container-high: #ffffff;
@@ -81,7 +102,7 @@ body {
 
 .control:focus-visible,
 .focus-ring:focus-visible {
-  outline: 2px solid #0f766e;
+  outline: 2px solid #087f5b;
   outline-offset: 2px;
 }
 
@@ -100,8 +121,45 @@ textarea.control {
 
 .card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.75rem;
+  border: 1px solid #e3e9e6;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+}
+
+/* Section heading with an optional "see more" link at the other end. */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.see-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  color: #066649;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Horizontal scroller used for doctor tiles and specialty chips. */
+.h-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding: 0.125rem 0.125rem 0.5rem;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.h-scroll > * {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 
 /* Material dialogs sit above the Ionic app shell. */
@@ -171,8 +229,8 @@ textarea.control {
 }
 
 .badge-approved {
-  background: #ccfbf1;
-  color: #134e4a;
+  background: #c3fae8;
+  color: #04503a;
 }
 
 .badge-rejected {
@@ -192,7 +250,7 @@ textarea.control {
 .check input {
   width: 1.25rem;
   height: 1.25rem;
-  accent-color: #0f766e;
+  accent-color: #087f5b;
 }
 
 .danger-button {
@@ -216,4 +274,23 @@ ion-modal.ad-popup .ion-page {
   contain: content;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+/* Filter bottom sheet (DirectorySearch): grows with its content. */
+ion-modal.filter-sheet {
+  --height: auto;
+  --border-radius: 1.25rem;
+}
+
+ion-modal.filter-sheet .ion-page {
+  position: relative;
+  display: block;
+  contain: content;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Arrow icons that point "forward" in the reading direction. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
 }

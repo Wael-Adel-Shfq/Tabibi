@@ -10,6 +10,12 @@
   height: 7.5rem;
 }
 
+:host(.fill) {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
 img,
 .placeholder {
   display: flex;
@@ -17,13 +23,17 @@ img,
   justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 0.75rem;
+  border-radius: 0.875rem;
   object-fit: cover;
-  background: #f0fdfa;
-  color: #0f766e;
+  background: #e6fcf5;
+  color: #087f5b;
   font-size: 1.75rem;
 }
 
 :host(.large) .placeholder {
   font-size: 3rem;
+}
+
+:host(.fill) .placeholder {
+  font-size: 3.5rem;
 }

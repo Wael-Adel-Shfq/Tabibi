@@ -7,7 +7,7 @@
 
 .bar {
   flex: 0 0 auto;
-  background: #115e59;
+  background: #066649;
 }
 
 .bar-button {
@@ -46,7 +46,7 @@
 
 .tab-active {
   background: #f8fafc;
-  color: #134e4a;
+  color: #04503a;
 }
 
 .content {
@@ -63,7 +63,7 @@
   position: absolute;
   inset-inline-start: -9999px;
   background: #ffffff;
-  color: #134e4a;
+  color: #04503a;
   padding: 0.5rem 1rem;
   z-index: 10;
 }

@@ -4,6 +4,15 @@
   <main class="mx-auto max-w-3xl space-y-4 p-4">
     <h1 class="sr-only">{{ 'facilities.title' | translate }}</h1>
 
+    <app-directory-search
+      inputId="facility-search"
+      kind="facilities"
+      label="facilities.searchLabel"
+      placeholder="facilities.searchPlaceholder"
+      [value]="filter.facilityTerm()"
+      (valueChange)="onTerm($event)"
+    />
+
     <div class="types" role="group" [attr.aria-label]="'facilities.typeLabel' | translate">
       @for (type of types; track type) {
         <button
@@ -17,24 +26,6 @@
         </button>
       }
     </div>
-
-    <form class="space-y-3" role="search" (submit)="$event.preventDefault()">
-      <div>
-        <label class="mb-1 block text-sm font-semibold text-slate-800" for="facility-search">
-          {{ 'facilities.searchLabel' | translate }}
-        </label>
-        <input
-          id="facility-search"
-          class="control"
-          type="search"
-          autocomplete="off"
-          [value]="filter.facilityTerm()"
-          (input)="onTerm($event)"
-          [placeholder]="'facilities.searchPlaceholder' | translate"
-        />
-      </div>
-      <app-location-filter />
-    </form>
 
     <app-ad-slot placement="facilities_list" />
 

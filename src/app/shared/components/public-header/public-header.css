@@ -2,13 +2,31 @@
   display: block;
 }
 
+ion-toolbar {
+  --min-height: 3.5rem;
+}
+
+ion-title {
+  font-weight: 700;
+}
+
+ion-back-button {
+  --color: #ffffff;
+}
+
 .lang {
   min-height: 2.75rem;
   margin-inline-end: 0.5rem;
-  padding: 0 0.75rem;
-  border: 1px solid #0f766e;
-  border-radius: 0.5rem;
-  background: #ffffff;
-  color: #115e59;
+  padding: 0 0.875rem;
+  border: 1px solid rgb(255 255 255 / 0.85);
+  border-radius: 999px;
+  background: transparent;
+  color: #ffffff;
   font-weight: 600;
+}
+
+/* The brand-coloured outline would vanish on the green bar. */
+.lang:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }

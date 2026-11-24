@@ -1,28 +1,18 @@
-<article class="card p-4">
-  <div class="flex gap-3">
-    <app-listing-photo [src]="photo()" kind="doctor" />
-    <div class="min-w-0 flex-1">
-      <h3 class="text-base font-bold text-slate-900">{{ doctor().full_name }}</h3>
-      <p class="text-sm font-semibold text-brand-800">{{ language.name(doctor().specialty) }}</p>
-      <p class="mt-1 text-sm text-slate-700">
-        {{ language.chain(doctor().location_chain) }}
-      </p>
-      <p class="text-sm text-slate-700">{{ doctor().address }}</p>
-
-    </div>
+<article class="tile card">
+  <app-listing-photo size="fill" [src]="photo()" kind="doctor" />
+  <div class="body">
+    <h3 class="name">
+      <a class="stretched" [routerLink]="['/doctors', doctor().id]">{{ doctor().full_name }}</a>
+    </h3>
+    <p class="specialty">{{ language.name(doctor().specialty) }}</p>
+    <p class="place">{{ language.chain(place()) }}</p>
   </div>
-  <div class="mt-3 flex flex-wrap gap-2">
+  <div class="actions">
     <app-contact-actions
+      [compact]="true"
       [phone]="doctor().clinic_phone"
       [place]="doctor()"
       [name]="doctor().full_name"
     />
-    <a
-      class="details focus-ring"
-      [routerLink]="['/doctors', doctor().id]"
-      [attr.aria-label]="('actions.details' | translate) + ': ' + doctor().full_name"
-    >
-      {{ 'actions.details' | translate }}
-    </a>
   </div>
 </article>

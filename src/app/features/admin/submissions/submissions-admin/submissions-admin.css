@@ -5,15 +5,15 @@
 .chip {
   min-height: 2.75rem;
   padding: 0 1rem;
-  border: 1px solid #0f766e;
+  border: 1px solid #087f5b;
   border-radius: 999px;
   background: #ffffff;
-  color: #115e59;
+  color: #066649;
   font-weight: 600;
 }
 
 .chip-selected {
-  background: #0f766e;
+  background: #087f5b;
   color: #ffffff;
 }
 

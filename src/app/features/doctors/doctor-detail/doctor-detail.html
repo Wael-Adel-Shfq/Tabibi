@@ -1,43 +1,25 @@
 <app-public-header title="doctors.detailTitle" backHref="/doctors" />
 
 <ion-content>
-  <main class="mx-auto max-w-3xl p-4">
-    @if (loading()) {
-      <app-loading-state />
-    } @else if (failed()) {
-      <app-error-state (retry)="load(id())" />
-    } @else {
-      @if (doctor(); as doctor) {
-        <article class="card p-4">
+  @if (loading()) {
+    <main class="mx-auto max-w-3xl p-4"><app-loading-state /></main>
+  } @else if (failed()) {
+    <main class="mx-auto max-w-3xl p-4"><app-error-state (retry)="load(id())" /></main>
+  } @else {
+    @if (doctor(); as doctor) {
+      <div class="hero" aria-hidden="true"></div>
+      <main class="mx-auto max-w-3xl px-4 pb-6">
+        <article class="profile card">
           <app-listing-photo
-            class="mb-3"
+            class="photo"
             size="large"
             [src]="doctors.imageUrl(doctor.image_path)"
             [alt]="doctor.full_name"
           />
-          <h1 class="text-xl font-bold text-slate-900">{{ doctor.full_name }}</h1>
+          <h1 class="mt-3 text-xl font-bold text-slate-900">{{ doctor.full_name }}</h1>
           <p class="font-semibold text-brand-800">{{ language.name(doctor.specialty) }}</p>
 
-          <dl class="mt-4 space-y-3 text-slate-800">
-            @for (step of doctor.location_chain ?? []; track step.id) {
-              <div>
-                <dt class="text-sm font-semibold text-slate-600">{{ 'locationKinds.' + step.kind | translate }}</dt>
-                <dd>{{ language.name(step) }}</dd>
-              </div>
-            }
-            <div>
-              <dt class="text-sm font-semibold text-slate-600">{{ 'fields.address' | translate }}</dt>
-              <dd>{{ doctor.address }}</dd>
-            </div>
-            @if (doctor.clinic_phone) {
-              <div>
-                <dt class="text-sm font-semibold text-slate-600">{{ 'fields.clinicPhone' | translate }}</dt>
-                <dd dir="ltr" class="text-start">{{ doctor.clinic_phone }}</dd>
-              </div>
-            }
-          </dl>
-
-          <div class="mt-4 flex flex-wrap gap-2">
+          <div class="mt-4 flex flex-wrap justify-center gap-2">
             <app-contact-actions
               [phone]="doctor.clinic_phone"
               [place]="doctor"
@@ -45,9 +27,33 @@
             />
           </div>
         </article>
-      } @else {
-        <app-empty-state message="doctors.notFound" />
-      }
+
+        <section class="card mt-4 p-4" aria-labelledby="doctor-info">
+          <h2 id="doctor-info" class="mb-3 text-base font-bold text-slate-900">
+            {{ 'doctors.info' | translate }}
+          </h2>
+          <dl class="space-y-3 text-slate-800">
+            @for (step of steps(); track step.id) {
+              <div class="row">
+                <dt>{{ 'locationKinds.' + step.kind | translate }}</dt>
+                <dd>{{ language.name(step) }}</dd>
+              </div>
+            }
+            <div class="row">
+              <dt>{{ 'fields.address' | translate }}</dt>
+              <dd>{{ doctor.address }}</dd>
+            </div>
+            @if (doctor.clinic_phone) {
+              <div class="row">
+                <dt>{{ 'fields.clinicPhone' | translate }}</dt>
+                <dd dir="ltr" class="text-start">{{ doctor.clinic_phone }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+      </main>
+    } @else {
+      <main class="mx-auto max-w-3xl p-4"><app-empty-state message="doctors.notFound" /></main>
     }
-  </main>
+  }
 </ion-content>

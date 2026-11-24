@@ -1,14 +1,13 @@
 import { Component, effect, inject, untracked } from '@angular/core';
 import { IonContent, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LanguageService } from '../../../core/i18n/language.service';
 import type { Doctor } from '../../../core/models/entities';
 import { AdSlot } from '../../../shared/components/ad-slot/ad-slot';
 import { AdPopup } from '../../../shared/components/ad-popup/ad-popup';
 import { EmptyState } from '../../../shared/components/empty-state/empty-state';
 import { ErrorState } from '../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../shared/components/loading-state/loading-state';
-import { LocationFilter } from '../../../shared/components/location-filter/location-filter';
+import { DirectorySearch } from '../../../shared/components/directory-search/directory-search';
 import { PublicHeader } from '../../../shared/components/public-header/public-header';
 import { PagedList } from '../../../shared/utils/paged-list';
 import { DirectoryFilterStore } from '../../locations/location-filter.store';
@@ -24,7 +23,7 @@ import { DoctorsService } from '../doctors.service';
     IonInfiniteScrollContent,
     TranslatePipe,
     PublicHeader,
-    LocationFilter,
+    DirectorySearch,
     AdSlot,
     AdPopup,
     DoctorCard,
@@ -37,9 +36,8 @@ import { DoctorsService } from '../doctors.service';
 })
 export class DoctorsList {
   private readonly doctors = inject(DoctorsService);
-  protected readonly locations = inject(LocationsService);
+  private readonly locations = inject(LocationsService);
   protected readonly filter = inject(DirectoryFilterStore);
-  protected readonly language = inject(LanguageService);
 
   protected readonly list = new PagedList<Doctor>((page) =>
     this.doctors.search({
@@ -64,14 +62,9 @@ export class DoctorsList {
     });
   }
 
-  protected onTerm(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  protected onTerm(value: string): void {
     clearTimeout(this.debounce);
     this.debounce = setTimeout(() => this.filter.doctorTerm.set(value.trim()), 350);
-  }
-
-  protected onSpecialty(event: Event): void {
-    this.filter.specialtyId.set((event.target as HTMLSelectElement).value);
   }
 
   protected async onInfinite(event: Event): Promise<void> {
