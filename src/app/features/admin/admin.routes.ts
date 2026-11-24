@@ -45,6 +45,10 @@ export const ADMIN_ROUTES: Routes = [
           import('./locations/locations-admin/locations-admin').then((m) => m.LocationsAdmin),
       },
       {
+        path: 'tips',
+        loadComponent: () => import('./health-tips/tips-admin/tips-admin').then((m) => m.TipsAdmin),
+      },
+      {
         path: 'specialties',
         data: { table: 'specialties' },
         loadComponent: () => import('./lookups/lookup-list/lookup-list').then((m) => m.LookupList),

@@ -1,0 +1,80 @@
+<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-xl font-bold text-slate-900">{{ 'admin.nav.tips' | translate }}</h1>
+  <button matButton="filled" type="button" (click)="edit()">{{ 'admin.tips.add' | translate }}</button>
+</div>
+<p class="mb-4 text-sm text-slate-700">{{ 'admin.tips.intro' | translate }}</p>
+
+<form class="admin-filters" role="search" (submit)="$event.preventDefault()">
+  <div>
+    <label for="tips-search">{{ 'common.search' | translate }}</label>
+    <input id="tips-search" class="control" type="search" autocomplete="off" (input)="onTerm($event)" />
+  </div>
+  <div>
+    <label for="tips-status">{{ 'fields.status' | translate }}</label>
+    <select id="tips-status" class="control" (change)="onStatus($event)">
+      <option value="all">{{ 'status.all' | translate }}</option>
+      <option value="active">{{ 'status.active' | translate }}</option>
+      <option value="inactive">{{ 'status.inactive' | translate }}</option>
+    </select>
+  </div>
+</form>
+
+@if (failed()) {
+  <app-error-state (retry)="load()" />
+} @else if (loading() && rows().length === 0) {
+  <app-loading-state />
+} @else if (rows().length === 0) {
+  <app-empty-state message="admin.tips.none" />
+} @else {
+  <div class="table-wrap card">
+    <table class="admin-table">
+      <caption class="sr-only">
+        {{ 'admin.nav.tips' | translate }}
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">{{ 'fields.tipAr' | translate }}</th>
+          <th scope="col">{{ 'fields.tipEn' | translate }}</th>
+          <th scope="col">{{ 'fields.sortOrder' | translate }}</th>
+          <th scope="col">{{ 'fields.active' | translate }}</th>
+          <th scope="col">{{ 'common.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.id) {
+          <tr>
+            <th scope="row" class="tip-text" lang="ar">{{ row.text_ar }}</th>
+            <td class="tip-text text-start" lang="en" dir="ltr">{{ row.text_en ?? '—' }}</td>
+            <td>{{ row.sort_order }}</td>
+            <td>
+              <mat-slide-toggle
+                [checked]="row.is_active"
+                (change)="toggle(row, $event.checked)"
+                [aria-label]="('fields.active' | translate) + ': ' + row.text_ar"
+              />
+            </td>
+            <td class="whitespace-nowrap">
+              <button
+                matButton
+                type="button"
+                (click)="edit(row)"
+                [attr.aria-label]="('common.edit' | translate) + ': ' + row.text_ar"
+              >
+                {{ 'common.edit' | translate }}
+              </button>
+              <button
+                matButton
+                type="button"
+                class="danger-button"
+                (click)="remove(row)"
+                [attr.aria-label]="('common.delete' | translate) + ': ' + row.text_ar"
+              >
+                {{ 'common.delete' | translate }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

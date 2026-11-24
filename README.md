@@ -25,7 +25,7 @@ Every rule is enforced by the database. The Angular route guard only improves na
 - **No one can grant themself admin.** No client role can insert or update `profiles`. Roles are changed only by SQL run as the database owner.
 - **The service role key never reaches the app.** It exists only as an Edge Function secret. The app uses the publishable key.
 
-The SQL tests in `supabase/tests/security.test.sql` (87 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
+The SQL tests in `supabase/tests/security.test.sql` (95 assertions) cover the allowed and denied cases for visitors, a normal user, and an admin.
 
 ## Locations
 
@@ -223,6 +223,15 @@ npx cap open android
 - Stored in the public `listing-images` bucket, which has a hard 1 MB limit and accepts WebP, JPEG and PNG. Only admins can upload or delete.
 - Photos are resized in the browser to 800 px wide and saved as WebP (lowering quality if needed), so typical phone photos stay well under 1 MB.
 - Replacing or removing an image, or deleting the doctor or facility, deletes the old file.
+
+## Daily tips (كل يوم معلومة)
+
+The home page shows one general health tip a day. Admins manage the tips in **Admin → كل يوم معلومة** (Daily tips): add, edit, turn off or delete them.
+
+- The page rotates through the active tips in their display order, one per day, and starts again after the last. Every visitor sees the same tip on the same day.
+- The Arabic text is required (10–300 characters). The English text is optional; without it, the English site shows the Arabic text.
+- When no tip is active, the card is hidden.
+- Seven general starter tips are added by the migration; edit or replace them as you like.
 
 ## Out of scope
 

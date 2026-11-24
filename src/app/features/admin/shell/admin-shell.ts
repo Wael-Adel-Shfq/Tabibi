@@ -34,6 +34,7 @@ export class AdminShell {
     { path: '/admin/advertisements', label: 'admin.nav.advertisements', exact: false },
     { path: '/admin/locations', label: 'admin.nav.locations', exact: false },
     { path: '/admin/specialties', label: 'admin.nav.specialties', exact: false },
+    { path: '/admin/tips', label: 'admin.nav.tips', exact: false },
   ];
 
   protected async signOut(): Promise<void> {

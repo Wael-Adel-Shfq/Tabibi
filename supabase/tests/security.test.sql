@@ -59,6 +59,10 @@ begin
     ('00000000-0000-0000-0000-0000000000c9', 'مقترح جديد', spec, '0229999999',
      '00000000-0000-0000-0000-0000000000a1', 'عنوان مقترح');
 
+  insert into public.health_tips (id, text_ar, is_active) values
+    ('00000000-0000-0000-0000-0000000000b1', 'معلومة اختبار ظاهرة للزوار', true),
+    ('00000000-0000-0000-0000-0000000000b2', 'معلومة اختبار مخفية عن الزوار', false);
+
   insert into auth.users (id, email) values
     ('00000000-0000-0000-0000-000000000001', 'admin@test.local'),
     ('00000000-0000-0000-0000-000000000002', 'user@test.local');
@@ -76,7 +80,7 @@ begin
 end;
 $$;
 
-select plan(87);
+select plan(95);
 select pg_temp.fixtures();
 
 select is((select file_size_limit from storage.buckets where id = 'listing-images'), 1048576::bigint,
@@ -132,6 +136,12 @@ select results_eq(
 select is((select count(*) from public.facilities where id in
     ('00000000-0000-0000-0000-0000000000f1', '00000000-0000-0000-0000-0000000000f2')),
   1::bigint, 'anon sees active facilities only');
+select results_eq(
+  $$ select id from public.health_tips where id::text like '00000000-0000-0000-0000-0000000000b%' $$,
+  $$ values ('00000000-0000-0000-0000-0000000000b1'::uuid) $$,
+  'anon sees active health tips only');
+select throws_ok($$ insert into public.health_tips (text_ar) values ('معلومة من زائر مجهول') $$,
+  '42501', null, 'anon cannot add health tips');
 select results_eq(
   $$ select id from public.advertisements where id::text like '00000000-0000-0000-0000-0000000000e%' order by id $$,
   $$ values ('00000000-0000-0000-0000-0000000000e1'::uuid), ('00000000-0000-0000-0000-0000000000e5'::uuid) $$,
@@ -219,6 +229,11 @@ select is_empty($$ delete from public.locations returning id $$, 'user cannot de
 select is_empty($$ update public.locations set is_active = false returning id $$, 'user cannot update locations');
 select is_empty($$ update public.advertisements set display_order = 99 returning id $$, 'user cannot update advertisements');
 select is_empty($$ select id from public.doctor_submissions $$, 'user cannot see submissions');
+select throws_ok($$ insert into public.health_tips (text_ar) values ('معلومة من مستخدم عادي') $$,
+  '42501', null, 'user cannot add health tips (RLS)');
+select is_empty($$ update public.health_tips set text_ar = 'تعديل غير مسموح به' returning id $$,
+  'user cannot edit health tips');
+select is_empty($$ delete from public.health_tips returning id $$, 'user cannot delete health tips');
 select is_empty($$ update public.doctor_submissions set admin_note = 'x' returning id $$, 'user cannot update submissions');
 select throws_ok($$ select public.approve_submission('00000000-0000-0000-0000-0000000000c9') $$,
   '42501', 'not_authorized', 'user cannot approve submissions');
@@ -259,6 +274,12 @@ select lives_ok($$ update public.facilities set is_active = true where id = '000
   'admin can update facilities');
 select isnt_empty($$ delete from public.advertisements where id = '00000000-0000-0000-0000-0000000000e2' returning id $$,
   'admin can delete advertisements');
+select is((select count(*) from public.health_tips where id = '00000000-0000-0000-0000-0000000000b2'), 1::bigint,
+  'admin sees hidden health tips');
+select lives_ok($$ insert into public.health_tips (text_ar, text_en) values ('معلومة جديدة من المشرف', 'A new tip from the admin') $$,
+  'admin can add health tips');
+select isnt_empty($$ delete from public.health_tips where id = '00000000-0000-0000-0000-0000000000b2' returning id $$,
+  'admin can delete health tips');
 select throws_ok($$ update public.profiles set role = 'admin' where id = '00000000-0000-0000-0000-000000000002' $$,
   '42501', null, 'even an admin cannot change roles through the API');
 select lives_ok($$ insert into storage.objects (bucket_id, name) values ('ad-images', 'admin.webp') $$,

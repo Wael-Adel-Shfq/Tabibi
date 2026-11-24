@@ -62,15 +62,17 @@
         </section>
       }
 
-      <section class="tip" aria-labelledby="tip-title">
-        <span class="tip-icon" aria-hidden="true">
-          <ion-icon name="megaphone-outline" />
-        </span>
-        <div>
-          <h2 id="tip-title" class="text-base font-bold">{{ 'tips.title' | translate }}</h2>
-          <p class="mt-1 text-sm">{{ tipKey | translate }}</p>
-        </div>
-      </section>
+      @if (tipText(); as tip) {
+        <section class="tip" aria-labelledby="tip-title">
+          <span class="tip-icon" aria-hidden="true">
+            <ion-icon name="megaphone-outline" />
+          </span>
+          <div>
+            <h2 id="tip-title" class="text-base font-bold">{{ 'tips.title' | translate }}</h2>
+            <p class="mt-1 text-sm" [attr.lang]="tip.lang">{{ tip.text }}</p>
+          </div>
+        </section>
+      }
 
       <app-ad-slot placement="home_middle" />
 

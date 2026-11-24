@@ -39,6 +39,17 @@ export interface Lookup extends NamedRef {
 
 export type Specialty = Lookup;
 
+/** One "tip of the day" shown on the home page. */
+export interface HealthTip {
+  id: string;
+  text_ar: string;
+  /** Optional; the English site falls back to the Arabic text. */
+  text_en: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
 // ---------------------------------------------------------------------------
 // Location tree
 // ---------------------------------------------------------------------------

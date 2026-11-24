@@ -162,7 +162,9 @@
     "popupRepeat": "Don't repeat for a visitor within (hours)",
     "popupSettings": "Popup settings",
     "newPlace": "Name of the missing place",
-    "adType": "Ad type"
+    "adType": "Ad type",
+    "tipAr": "Tip in Arabic",
+    "tipEn": "Tip in English"
   },
   "hints": {
     "mapUrl": "Copy the place link from Google Maps.",
@@ -176,7 +178,10 @@
     "popupDuration": "3 to 300 seconds. Leave empty to keep it until the visitor closes it.",
     "popupRepeat": "0 = every visit. Up to 720 hours (30 days).",
     "newPlace": "For example the district, village or area name. The team will review it and add it to the list.",
-    "listingImage": "Optional. WebP, JPEG or PNG. Resized automatically; the stored image is at most 1 MB."
+    "listingImage": "Optional. WebP, JPEG or PNG. Resized automatically; the stored image is at most 1 MB.",
+    "tipText": "10 to 300 characters. Write a general health tip.",
+    "tipEnglish": "Optional. If left empty, the English site shows the Arabic text.",
+    "tipOrder": "Lower numbers come first in the daily rotation."
   },
   "errors": {
     "required": "This field is required.",
@@ -229,7 +234,8 @@
       "facilities": "Facilities",
       "advertisements": "Advertisements",
       "specialties": "Specialties",
-      "locations": "Locations"
+      "locations": "Locations",
+      "tips": "Daily tips"
     },
     "singular": {
       "specialties": "Specialty"
@@ -309,6 +315,14 @@
       "none": "Nothing has been added under this place yet.",
       "deleteTitle": "Delete this location?",
       "deleteWarning": "A location that has places under it, or doctors or facilities placed in it, cannot be deleted. Deactivate it instead."
+    },
+    "tips": {
+      "add": "Add tip",
+      "edit": "Edit tip",
+      "deleteTitle": "Delete this tip?",
+      "deleteWarning": "It will be deleted permanently. To hide it for now, turn it off instead.",
+      "none": "No tips yet. Add the first one to show it on the home page.",
+      "intro": "One tip shows on the home page each day, rotating through the active tips in order."
     }
   },
   "locationKinds": {
@@ -345,15 +359,6 @@
     "filtersButton": "Filters ({{count}} on)"
   },
   "tips": {
-    "title": "Tip of the day",
-    "items": {
-      "0": "Drink enough water through the day, especially when it is hot.",
-      "1": "Wash your hands with soap and water for at least 20 seconds before eating and after using the toilet.",
-      "2": "Only take antibiotics prescribed by a doctor, and finish the course as prescribed.",
-      "3": "Keep a list of your current medicines and bring it to every doctor visit.",
-      "4": "Walking for half an hour on most days is good for your heart and mood.",
-      "5": "Enough sleep at night helps your body recover and supports your immunity.",
-      "6": "Check your blood pressure regularly; high blood pressure often has no symptoms."
-    }
+    "title": "Tip of the day"
   }
 }

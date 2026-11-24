@@ -1,0 +1,8 @@
+:host {
+  display: block;
+}
+
+.tip-text {
+  min-width: 16rem;
+  font-weight: 400;
+}
