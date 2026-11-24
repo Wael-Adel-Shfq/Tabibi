@@ -10,7 +10,8 @@ ion-title {
   font-weight: 700;
 }
 
-ion-back-button {
+ion-back-button,
+ion-menu-button {
   --color: #ffffff;
 }
 

@@ -1,10 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    @if (backHref()) {
-      <ion-buttons slot="start">
+    <ion-buttons slot="start">
+      @if (backHref()) {
         <ion-back-button [defaultHref]="backHref()" [attr.aria-label]="'common.back' | translate" text="" />
-      </ion-buttons>
-    }
+      } @else {
+        <ion-menu-button menu="public-menu" [attr.aria-label]="'nav.openMenu' | translate" />
+      }
+    </ion-buttons>
     <ion-title class="p-2">{{ title() | translate }}</ion-title>
     <ion-buttons slot="end">
       <button

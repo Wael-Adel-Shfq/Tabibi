@@ -1,3 +1,32 @@
 ion-tab-button {
   font-size: 0.8125rem;
 }
+
+.menu-list {
+  padding: 0.5rem;
+}
+
+.menu-list ion-item {
+  --border-radius: 0.75rem;
+  --min-height: 3rem;
+  --color: #1e293b;
+  font-weight: 600;
+}
+
+.menu-list ion-item ion-icon {
+  margin-inline-end: 0.875rem;
+  color: #087f5b;
+  font-size: 1.375rem;
+}
+
+.menu-list ion-item.menu-active {
+  --background: #e6fcf5;
+  --color: #04503a;
+}
+
+.menu-heading {
+  margin: 1rem 1rem 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #475569;
+}

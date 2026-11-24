@@ -1,12 +1,15 @@
 import { Component, inject, input } from '@angular/core';
-import { IonBackButton, IonButtons, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonBackButton, IonButtons, IonHeader, IonMenuButton, IonTitle, IonToolbar } from '@ionic/angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
 
-/** Page header for the public app: title, optional back button, language switch. */
+/**
+ * Page header for the public app: the side-menu button (or a back button on
+ * detail pages), the title and the language switch.
+ */
 @Component({
   selector: 'app-public-header',
-  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, TranslatePipe],
+  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonMenuButton, TranslatePipe],
   templateUrl: './public-header.html',
   styleUrl: './public-header.css',
 })
