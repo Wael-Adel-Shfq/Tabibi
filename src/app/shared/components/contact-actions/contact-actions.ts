@@ -26,13 +26,39 @@ export class ContactActions {
   protected readonly map = computed(() => mapHref(this.place()));
 
 
-  whatsappUrl = computed(() => {
-    const number = (this.phone() ?? '').replace(/\D/g, '');
-    const countryCode = '+2'; // Replace with the actual country code
+  // whatsappUrl = computed(() => {
+  //   const number = (this.phone() ?? '').replace(/\D/g, '');
+  //   const countryCode = 2; // Replace with the actual country code
 
-    return number
-      ? `https://wa.me/${countryCode}/${number}`
-      : '';
+  //   return number
+  //     ? `https://wa.me/${countryCode}/${number}`
+  //     : '';
+  // });
+
+
+  whatsappUrl = computed(() => {
+    let number = (this.phone() ?? '').replace(/\D/g, '');
+
+    const countryCode = '20';
+
+    if (!number) return '';
+
+    // Remove international dialing prefix
+    if (number.startsWith('00')) {
+      number = number.slice(2);
+    }
+
+    // Already has Egypt country code
+    if (number.startsWith(countryCode)) {
+      return `https://wa.me/${number}`;
+    }
+
+    // Remove local leading zero
+    if (number.startsWith('0')) {
+      number = number.slice(1);
+    }
+
+    return `https://wa.me/${countryCode}${number}`;
   });
 
   constructor() {

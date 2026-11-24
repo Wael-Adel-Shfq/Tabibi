@@ -8,7 +8,6 @@ import {
   IonLabel,
   IonList,
   IonMenu,
-  IonMenuButton,
   IonMenuToggle,
   IonTabBar,
   IonTabButton,
@@ -62,8 +61,7 @@ interface FacilityLink {
     IonContent,
     IonList,
     IonItem,
-    TranslatePipe,
-    IonMenuButton
+    TranslatePipe
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.css',

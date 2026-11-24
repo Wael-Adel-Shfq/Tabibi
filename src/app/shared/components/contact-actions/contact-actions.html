@@ -1,15 +1,15 @@
-@if (tel(); as href) {
+<!-- @if (tel(); as href) {
   <a
     class="action action-primary focus-ring"
     [href]="href"
     [attr.aria-label]="('actions.call' | translate) + ': ' + name()"
   >
     <ion-icon name="call-outline" aria-hidden="true" />
-    <!-- @if (!compact()) {
+    @if (!compact()) {
       <span>{{ 'actions.call' | translate }}</span>
-    } -->
-  </a>
-}
+    }
+    </a>
+} -->
 @if (map(); as href) {
   <a
     class="action focus-ring"
@@ -28,14 +28,14 @@
 <div class="grid grid-cols-2 gap-2">
 
   <!-- Call -->
-  <!-- <a [href]="'tel:' + phone()" class="flex min-h-11 items-center justify-center gap-2
+  <a [href]="'tel:' + phone()" class="flex min-h-11 items-center justify-center gap-2
                      rounded-xl bg-brand-700 px-3 py-2.5
                      text-sm font-semibold text-white
                      transition-colors hover:bg-brand-800
                      active:scale-[0.98]">
     <ion-icon name="call-outline" class="text-lg"></ion-icon>
-    <span>{{ 'common.call' | translate }}</span>
-  </a> -->
+    <!-- <span>{{ 'common.call' | translate }}</span> -->
+    </a>
 
   <!-- WhatsApp -->
   <a [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" class="flex min-h-11 items-center justify-center gap-2

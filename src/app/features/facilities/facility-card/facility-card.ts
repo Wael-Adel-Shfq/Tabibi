@@ -5,11 +5,10 @@ import { type Facility, withoutRegions } from '../../../core/models/entities';
 import { ContactActions } from '../../../shared/components/contact-actions/contact-actions';
 import { ListingPhoto } from '../../../shared/components/listing-photo/listing-photo';
 import { FacilitiesService } from '../facilities.service';
-import { IonIcon } from "@ionic/angular";
 
 @Component({
   selector: 'app-facility-card',
-  imports: [IonIcon, TranslatePipe, ContactActions, ListingPhoto],
+  imports: [ TranslatePipe, ContactActions, ListingPhoto],
   templateUrl: './facility-card.html',
   styleUrl: './facility-card.css',
 })
