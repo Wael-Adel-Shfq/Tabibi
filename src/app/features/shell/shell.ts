@@ -8,6 +8,7 @@ import {
   IonLabel,
   IonList,
   IonMenu,
+  IonMenuButton,
   IonMenuToggle,
   IonTabBar,
   IonTabButton,
@@ -20,9 +21,11 @@ import { addIcons } from 'ionicons';
 import {
   addCircleOutline,
   businessOutline,
+  earthOutline,
   flaskOutline,
   homeOutline,
   languageOutline,
+  logoWhatsapp,
   medicalOutline,
   medkitOutline,
 } from 'ionicons/icons';
@@ -60,6 +63,7 @@ interface FacilityLink {
     IonList,
     IonItem,
     TranslatePipe,
+    IonMenuButton
   ],
   templateUrl: './shell.html',
   styleUrl: './shell.css',
@@ -74,6 +78,7 @@ export class Shell {
     { type: 'pharmacy', label: 'categories.pharmacy', icon: 'medical-outline' },
     { type: 'medical_center', label: 'categories.medical_center', icon: 'business-outline' },
   ];
+whatsapp: any;
 
   constructor() {
     addIcons({
@@ -84,6 +89,8 @@ export class Shell {
       flaskOutline,
       medicalOutline,
       languageOutline,
+      earthOutline,
+      logoWhatsapp
     });
   }
 

@@ -25,6 +25,16 @@ export class ContactActions {
   protected readonly tel = computed(() => telHref(this.phone()));
   protected readonly map = computed(() => mapHref(this.place()));
 
+
+  whatsappUrl = computed(() => {
+    const number = (this.phone() ?? '').replace(/\D/g, '');
+    const countryCode = '+2'; // Replace with the actual country code
+
+    return number
+      ? `https://wa.me/${countryCode}/${number}`
+      : '';
+  });
+
   constructor() {
     addIcons({ callOutline, locationOutline });
   }

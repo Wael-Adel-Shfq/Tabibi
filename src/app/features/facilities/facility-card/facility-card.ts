@@ -5,10 +5,11 @@ import { type Facility, withoutRegions } from '../../../core/models/entities';
 import { ContactActions } from '../../../shared/components/contact-actions/contact-actions';
 import { ListingPhoto } from '../../../shared/components/listing-photo/listing-photo';
 import { FacilitiesService } from '../facilities.service';
+import { IonIcon } from "@ionic/angular";
 
 @Component({
   selector: 'app-facility-card',
-  imports: [TranslatePipe, ContactActions, ListingPhoto],
+  imports: [IonIcon, TranslatePipe, ContactActions, ListingPhoto],
   templateUrl: './facility-card.html',
   styleUrl: './facility-card.css',
 })
@@ -21,4 +22,6 @@ export class FacilityCard {
 
   protected readonly place = computed(() => withoutRegions(this.facility().location_chain));
   protected readonly photo = computed(() => this.service.imageUrl(this.facility().image_path));
+
+
 }
