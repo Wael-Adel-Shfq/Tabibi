@@ -10,12 +10,12 @@
   </div>
   <div>
     <label for="da-specialty">{{ 'fields.specialty' | translate }}</label>
-    <select id="da-specialty" class="control" (change)="onSpecialty($event)">
-      <option value="">{{ 'filters.allSpecialties' | translate }}</option>
-      @for (specialty of locations.specialties(); track specialty.id) {
-        <option [value]="specialty.id">{{ language.name(specialty) }}</option>
-      }
-    </select>
+    <app-search-select
+      inputId="da-specialty"
+      [options]="locations.specialtyOptions()"
+      [(value)]="specialtyId"
+      placeholder="filters.allSpecialties"
+    />
   </div>
   <div>
     <label for="da-status">{{ 'fields.status' | translate }}</label>
@@ -26,7 +26,7 @@
     </select>
   </div>
   <div class="col-span-full">
-    <app-location-picker idPrefix="da-location" mode="filter" [(path)]="locationPath" />
+    <app-location-picker idPrefix="da-location" mode="filter" [twoLevel]="true" [(path)]="locationPath" />
   </div>
 </form>
 

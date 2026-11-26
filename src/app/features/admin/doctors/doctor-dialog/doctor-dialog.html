@@ -15,12 +15,7 @@
 
       <div class="grid gap-x-3 sm:grid-cols-2">
         <app-form-field label="fields.specialty" for="d-specialty" [field]="doctor.specialty_id" [required]="true">
-          <select id="d-specialty" class="control" [formField]="doctor.specialty_id">
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (specialty of locations.specialties(); track specialty.id) {
-              <option [value]="specialty.id">{{ language.name(specialty) }}</option>
-            }
-          </select>
+          <app-search-select inputId="d-specialty" [options]="locations.specialtyOptions()" [formField]="doctor.specialty_id" />
         </app-form-field>
 
         <app-form-field label="fields.clinicPhone" for="d-phone" [field]="doctor.clinic_phone">
@@ -43,6 +38,7 @@
           [(path)]="location.path"
           [invalid]="doctor.location_id().touched() && doctor.location_id().invalid()"
           [allowAdd]="true"
+          [twoLevel]="true"
           (selection)="onLocation($event)"
           (addRequest)="onAddRequest($event)"
         />

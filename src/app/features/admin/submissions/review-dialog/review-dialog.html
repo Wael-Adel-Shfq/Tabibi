@@ -86,14 +86,7 @@
       <label class="mb-1 block text-sm font-semibold text-slate-800" for="r-specialty">
         {{ 'admin.review.specialtyToUse' | translate }}
       </label>
-      <select id="r-specialty" class="control" [value]="specialtyId()" (change)="onSpecialty($event)">
-        <option value="">{{ 'common.choose' | translate }}</option>
-        @for (specialty of locations.specialties(); track specialty.id) {
-          <option [value]="specialty.id" [selected]="specialty.id === specialtyId()">
-            {{ language.name(specialty) }}
-          </option>
-        }
-      </select>
+      <app-search-select inputId="r-specialty" [options]="locations.specialtyOptions()" [(value)]="specialtyId" />
       @if (!submission.specialty_id) {
         <p class="mt-1 text-xs text-slate-600">{{ 'admin.review.specialtyHint' | translate }}</p>
       }
@@ -113,6 +106,7 @@
         mode="form"
         [(path)]="location.path"
         [allowAdd]="true"
+        [twoLevel]="true"
         (selection)="onLocation($event)"
         (addRequest)="onAddRequest($event)"
       />

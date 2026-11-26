@@ -1,12 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, pattern, required, submit } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { CHILD_KINDS, Location, LocationKind } from '../../../../core/models/entities';
 import { orNull } from '../../../../core/supabase/unwrap';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
+import { SearchSelect, SelectOption } from '../../../../shared/components/search-select/search-select';
 import { LocationsAdminService } from '../../data/locations-admin.service';
 import { adminErrorKey } from '../../shared/admin-errors';
 
@@ -21,7 +22,7 @@ export interface LocationDialogData {
 
 @Component({
   selector: 'app-location-dialog',
-  imports: [FormField, MatDialogModule, MatButtonModule, TranslatePipe, FormFieldWrapper],
+  imports: [FormField, MatDialogModule, MatButtonModule, TranslatePipe, FormFieldWrapper, SearchSelect],
   templateUrl: './location-dialog.html',
   styleUrl: './location-dialog.css',
 })
@@ -39,6 +40,15 @@ export class LocationDialog {
   protected readonly isGovernorate = (this.data.item?.kind ?? this.defaultKind) === 'governorate';
   /** Where an existing location may be moved to (editing only). */
   protected readonly parents = signal<Location[]>([]);
+  private readonly translate = inject(TranslateService);
+  /** The possible parents as searchable options, e.g. "Nasr City (District)". */
+  protected readonly parentOptions = computed<SelectOption[]>(() => {
+    this.language.lang(); // relabel when the language changes
+    return this.parents().map((parent) => ({
+      value: parent.id,
+      label: `${this.language.name(parent)} (${String(this.translate.instant('locationKinds.' + parent.kind))})`,
+    }));
+  });
   protected readonly failure = signal<string | null>(null);
 
   protected readonly model = signal({

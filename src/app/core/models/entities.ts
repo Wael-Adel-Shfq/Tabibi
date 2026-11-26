@@ -67,6 +67,12 @@ export const CHILD_KINDS: Readonly<Record<LocationKind | 'root', readonly Locati
   area: [],
 };
 
+/**
+ * Governorates (by English name) whose places are picked from one list:
+ * governorate → district / city / neighbourhood, with no deeper level.
+ */
+export const TWO_LEVEL_GOVERNORATES: ReadonlySet<string> = new Set(['Cairo', 'Giza']);
+
 /** Too broad to place a doctor, facility or suggestion at. */
 export function isTooBroad(kind: LocationKind | null | undefined): boolean {
   return kind === 'governorate' || kind === 'region';

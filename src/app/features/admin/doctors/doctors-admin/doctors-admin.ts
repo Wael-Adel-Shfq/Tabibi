@@ -10,6 +10,7 @@ import { EmptyState } from '../../../../shared/components/empty-state/empty-stat
 import { ErrorState } from '../../../../shared/components/error-state/error-state';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { SearchSelect } from '../../../../shared/components/search-select/search-select';
 import { PagedList } from '../../../../shared/utils/paged-list';
 import { DoctorsService } from '../../../doctors/doctors.service';
 import { LocationsService } from '../../../locations/locations.service';
@@ -22,6 +23,7 @@ type StatusFilter = 'all' | 'active' | 'inactive';
 @Component({
   selector: 'app-doctors-admin',
   imports: [
+    SearchSelect,
     MatButtonModule,
     MatPaginatorModule,
     MatSlideToggleModule,
@@ -76,10 +78,6 @@ export class DoctorsAdmin {
     const value = (event.target as HTMLInputElement).value;
     clearTimeout(this.debounce);
     this.debounce = setTimeout(() => this.term.set(value.trim()), 300);
-  }
-
-  protected onSpecialty(event: Event): void {
-    this.specialtyId.set((event.target as HTMLSelectElement).value);
   }
 
   protected onStatus(event: Event): void {

@@ -99,8 +99,29 @@
 
 /* The sheet shell is styled globally (styles.css, `ion-modal.filter-sheet`). */
 .sheet {
+  display: flex;
+  flex-direction: column;
+  /* dvh shrinks while the on-screen keyboard is up, so the body stays scrollable. */
+  max-height: 88vh;
+  max-height: 88dvh;
   padding: 0.5rem 1rem calc(1rem + env(safe-area-inset-bottom));
   background: #ffffff;
+}
+
+/* The only scrolling part of the sheet. */
+.sheet-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Room for the focus outlines of the fields at the edges. */
+  margin-inline: -0.25rem;
+  padding: 0.25rem;
+}
+
+.sheet-head,
+.sheet-foot {
+  flex: none;
 }
 
 .sheet-head {

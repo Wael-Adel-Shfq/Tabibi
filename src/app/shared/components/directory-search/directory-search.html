@@ -37,10 +37,8 @@
 <ion-modal
   class="filter-sheet"
   [isOpen]="sheetOpen()"
-  [initialBreakpoint]="1"
-  [breakpoints]="[0, 1]"
   [attr.aria-label]="'search.filtersTitle' | translate"
-  (didDismiss)="sheetOpen.set(false)"
+  (didDismiss)="onSheetDismissed()"
 >
   <ng-template>
     <div class="sheet">
@@ -56,25 +54,18 @@
         </button>
       </div>
 
-      <div class="space-y-4">
+      <div class="sheet-body space-y-4">
         @if (kind() === 'doctors') {
           <div>
             <label class="mb-1 block text-sm font-semibold text-slate-800" [for]="inputId() + '-specialty'">
               {{ 'filters.specialty' | translate }}
             </label>
-            <select
-              class="control"
-              [id]="inputId() + '-specialty'"
-              [value]="filter.specialtyId()"
-              (change)="onSpecialty($event)"
-            >
-              <option value="">{{ 'filters.allSpecialties' | translate }}</option>
-              @for (specialty of locations.specialties(); track specialty.id) {
-                <option [value]="specialty.id" [selected]="specialty.id === filter.specialtyId()">
-                  {{ language.name(specialty) }}
-                </option>
-              }
-            </select>
+            <app-search-select
+              [inputId]="inputId() + '-specialty'"
+              [options]="locations.specialtyOptions()"
+              [(value)]="filter.specialtyId"
+              placeholder="filters.allSpecialties"
+            />
           </div>
         }
         <app-location-filter [idPrefix]="inputId() + '-location'" />

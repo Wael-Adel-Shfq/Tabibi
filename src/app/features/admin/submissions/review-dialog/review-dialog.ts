@@ -6,6 +6,7 @@ import { LanguageService } from '../../../../core/i18n/language.service';
 import type { DoctorSubmission, DuplicateDoctor, Location } from '../../../../core/models/entities';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { SearchSelect } from '../../../../shared/components/search-select/search-select';
 import { LocationField } from '../../../../shared/utils/location-field';
 import { LocationQuickAdd } from '../../shared/location-quick-add.service';
 import { mapHref } from '../../../../shared/utils/links';
@@ -27,7 +28,7 @@ export type ReviewResult = 'approved' | 'rejected';
  */
 @Component({
   selector: 'app-review-dialog',
-  imports: [MatDialogModule, MatButtonModule, TranslatePipe, LoadingState, LocationPicker],
+  imports: [MatDialogModule, MatButtonModule, TranslatePipe, LoadingState, LocationPicker, SearchSelect],
   templateUrl: './review-dialog.html',
   styleUrl: './review-dialog.css',
 })
@@ -79,10 +80,6 @@ export class ReviewDialog {
     if (!created) return;
     this.location.path.set([...created.path]);
     this.onLocation(created);
-  }
-
-  protected onSpecialty(event: Event): void {
-    this.specialtyId.set((event.target as HTMLSelectElement).value);
   }
 
   protected onAllowDuplicate(event: Event): void {

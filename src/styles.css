@@ -276,18 +276,25 @@ ion-modal.ad-popup .ion-page {
   overflow-y: auto;
 }
 
-/* Filter bottom sheet (DirectorySearch): grows with its content. */
+/*
+ * Filter bottom sheet (DirectorySearch): a plain modal pinned to the bottom
+ * and sized to its content. Deliberately not an Ionic sheet modal: its swipe
+ * gesture blocks scrolling inside the sheet and moves focus away from the
+ * open dropdown, closing it. Close button, backdrop, Escape and back close it.
+ */
 ion-modal.filter-sheet {
+  --width: 100%;
+  --max-width: 40rem;
   --height: auto;
-  --border-radius: 1.25rem;
+  --border-radius: 1.25rem 1.25rem 0 0;
+  align-items: flex-end;
 }
 
+/* The sheet sizes to its content; its own body scrolls (see directory-search.css). */
 ion-modal.filter-sheet .ion-page {
   position: relative;
   display: block;
   contain: content;
-  max-height: 90vh;
-  overflow-y: auto;
 }
 
 /* Arrow icons that point "forward" in the reading direction. */

@@ -341,7 +341,8 @@
     "noneYet": "Nothing added yet",
     "noneYetHint": "No places have been added under this level yet.",
     "noneYetAdd": "No places here yet. Choose \"Add a new place\" if yours is missing.",
-    "addNew": "+ Add a new place…"
+    "addNew": "+ Add a new place…",
+    "placeLevel": "District / neighbourhood"
   },
   "adTypes": {
     "slot": "Fixed in page",
@@ -364,5 +365,10 @@
   },
   "tips": {
     "title": "Tip of the day"
+  },
+  "select": {
+    "search": "Search the list",
+    "options": "Options",
+    "noMatch": "No matching results"
   }
 }

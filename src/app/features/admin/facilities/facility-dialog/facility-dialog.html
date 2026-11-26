@@ -35,6 +35,7 @@
           [(path)]="location.path"
           [invalid]="facility.location_id().touched() && facility.location_id().invalid()"
           [allowAdd]="true"
+          [twoLevel]="true"
           (selection)="onLocation($event)"
           (addRequest)="onAddRequest($event)"
         />

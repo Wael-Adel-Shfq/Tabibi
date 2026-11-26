@@ -44,7 +44,8 @@ For example, Cairo → Southern Region → Helwan → Hadayek Helwan, or Minya �
 - Every record stores its ancestor chain (`location_path`), so filtering by any level also returns everything beneath it.
 - Moving a location in the admin moves everything under it, including the records placed there.
 - Deactivating a location hides it and everything under it from visitors.
-- Regions are only for the admin. Visitors never see them: the public filters and the suggestion form go straight from Cairo to its districts and cities (all regions merged), and the public pages leave regions out of the location text.
+- **Cairo and Giza take two steps** wherever doctors and facilities are filtered or added (public filters, the suggestion form, the admin doctor, facility and review forms, and the admin list filters): the governorate, then one "District / neighbourhood" list holding every place under it (districts, cities and areas; regions left out), with no third dropdown. Other governorates keep their levels. The list of two-step governorates is `TWO_LEVEL_GOVERNORATES` in `src/app/core/models/entities.ts`.
+- Regions are only for organising Cairo in **Admin → Locations** and for ad targeting; the public pages leave them out of the location text.
 
 Adding places:
 

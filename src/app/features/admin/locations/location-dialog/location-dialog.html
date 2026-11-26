@@ -22,16 +22,13 @@
 
     @if (data.item && !isGovernorate) {
       <app-form-field label="fields.parent" for="loc-parent" [field]="location.parent_id" hint="hints.moveLocation">
-        <select id="loc-parent" class="control" [formField]="location.parent_id">
-          @if (parents().length === 0) {
-            <option [value]="model().parent_id">{{ 'common.loading' | translate }}</option>
-          }
-          @for (parent of parents(); track parent.id) {
-            <option [value]="parent.id" [selected]="parent.id === model().parent_id">
-              {{ language.name(parent) }} ({{ 'locationKinds.' + parent.kind | translate }})
-            </option>
-          }
-        </select>
+        <app-search-select
+          inputId="loc-parent"
+          [options]="parentOptions()"
+          [clearable]="false"
+          [placeholder]="parents().length === 0 ? 'common.loading' : 'common.choose'"
+          [formField]="location.parent_id"
+        />
       </app-form-field>
     }
 

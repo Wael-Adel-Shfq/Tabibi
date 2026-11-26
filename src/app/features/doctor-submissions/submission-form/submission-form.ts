@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   form,
   FormField,
@@ -10,13 +11,14 @@ import {
   validate,
 } from '@angular/forms/signals';
 import { IonContent } from '@ionic/angular';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/i18n/language.service';
 import type { Location } from '../../../core/models/entities';
 import { orNull } from '../../../core/supabase/unwrap';
 import { FieldGroup } from '../../../shared/components/field-group/field-group';
 import { FormFieldWrapper } from '../../../shared/components/form-field/form-field';
 import { LocationPicker } from '../../../shared/components/location-picker/location-picker';
+import { SearchSelect } from '../../../shared/components/search-select/search-select';
 import { LocationField } from '../../../shared/utils/location-field';
 import { PublicHeader } from '../../../shared/components/public-header/public-header';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../shared/utils/validation';
@@ -62,6 +64,7 @@ function emptyModel(): SuggestionModel {
 @Component({
   selector: 'app-submission-form',
   imports: [
+    SearchSelect,
     IonContent,
     FormField,
     TranslatePipe,
@@ -79,6 +82,14 @@ export class SubmissionForm {
   protected readonly language = inject(LanguageService);
 
   protected readonly other = OTHER;
+  private readonly otherLabel = toSignal(inject(TranslateService).stream('suggest.otherSpecialty'), {
+    initialValue: '',
+  });
+  /** The specialties plus "Other (not listed)" at the end. */
+  protected readonly specialtyOptions = computed(() => [
+    ...this.locations.specialtyOptions(),
+    { value: OTHER, label: String(this.otherLabel()) },
+  ]);
   protected readonly model = signal<SuggestionModel>(emptyModel());
   protected readonly location = new LocationField();
   /** Set while the visitor is proposing a place missing under this location. */

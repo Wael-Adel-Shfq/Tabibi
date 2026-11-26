@@ -1,0 +1,85 @@
+<button
+  #trigger
+  type="button"
+  role="combobox"
+  class="control trigger"
+  [id]="inputId()"
+  [disabled]="disabled()"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="listId()"
+  [attr.aria-invalid]="showInvalid()"
+  [attr.aria-describedby]="describedBy()"
+  (click)="toggle()"
+  (keydown)="onTriggerKey($event)"
+>
+  <span class="trigger-text" [class.placeholder]="selectedLabel() === null">
+    {{ selectedLabel() ?? (placeholder() | translate) }}
+  </span>
+  <svg class="chevron" [class.up]="open()" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+    <path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</button>
+
+@if (open()) {
+  <div class="panel">
+    <div class="search">
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" stroke-width="2" />
+        <path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <input
+        #searchBox
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="true"
+        [attr.aria-label]="'select.search' | translate"
+        [attr.aria-controls]="listId()"
+        [attr.aria-activedescendant]="rows().length ? optionId(active()) : null"
+        [placeholder]="'select.search' | translate"
+        [value]="query()"
+        (input)="onQuery($event)"
+        (keydown)="onListKey($event)"
+        (focus)="onSearchFocus()"
+      />
+    </div>
+
+    <ul
+      #listBox
+      class="list"
+      role="listbox"
+      tabindex="-1"
+      [id]="listId()"
+      [attr.aria-label]="'select.options' | translate"
+      [attr.aria-activedescendant]="rows().length ? optionId(active()) : null"
+      (keydown)="onListKey($event)"
+    >
+      @for (row of rows(); track row.value; let index = $index) {
+        <li
+          role="option"
+          [id]="optionId(index)"
+          [class.active]="index === active()"
+          [class.action]="row.value === actionValue"
+          [class.clear]="row.value === ''"
+          [attr.aria-selected]="row.value === value() && row.value !== actionValue"
+          (mousedown)="$event.preventDefault()"
+          (pointerenter)="active.set(index)"
+          (click)="choose(row)"
+        >
+          @if (row.value === actionValue) {
+            {{ actionLabel()! | translate }}
+          } @else if (row.value === '') {
+            {{ placeholder() | translate }}
+          } @else {
+            {{ row.label }}
+          }
+        </li>
+      }
+    </ul>
+    @if (rows().length === 0 || (query() && rows().length === (actionLabel() ? 1 : 0))) {
+      <p class="empty" role="status">{{ 'select.noMatch' | translate }}</p>
+    }
+  </div>
+}

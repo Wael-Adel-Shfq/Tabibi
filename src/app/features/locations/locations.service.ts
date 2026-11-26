@@ -1,9 +1,17 @@
-import { inject, Service, signal } from '@angular/core';
+import { computed, inject, Service, signal } from '@angular/core';
+import { LanguageService } from '../../core/i18n/language.service';
 import type { Location, Specialty } from '../../core/models/entities';
 import { SupabaseService } from '../../core/supabase/supabase.service';
 import { unwrap } from '../../core/supabase/unwrap';
+import type { SelectOption } from '../../shared/components/search-select/search-select';
 
 const ROOT = 'root';
+/** Cache-key prefix for `placesUnder` lists. */
+const FLAT = 'flat:';
+/** Cache key for `allPlaces`. */
+const ALL = 'all';
+/** Rows per request; the API returns at most 1000. */
+const PAGE = 1000;
 
 /**
  * Read-only reference data for pickers and filters: the active location tree
@@ -19,6 +27,12 @@ export class LocationsService {
   private loading: Promise<void> | null = null;
 
   readonly specialties = this.specialtyState.asReadonly();
+
+  private readonly language = inject(LanguageService);
+  /** The specialties as searchable-dropdown options, named in the current language. */
+  readonly specialtyOptions = computed<SelectOption[]>(() =>
+    this.specialties().map((specialty) => ({ value: specialty.id, label: this.language.name(specialty) })),
+  );
 
   private readonly versionState = signal(0);
   /** Increments whenever cached tree data is dropped; pickers reload when it changes. */
@@ -64,6 +78,41 @@ export class LocationsService {
     return groups.flat().sort((a, b) => a.name_ar.localeCompare(b.name_ar, 'ar'));
   }
 
+  /**
+   * Every active place under a governorate except regions (districts, cities
+   * and neighbourhoods together), as one list sorted by name. Used for the
+   * governorates picked in two levels (Cairo, Giza).
+   */
+  placesUnder(governorateId: string): Promise<Location[]> {
+    const key = FLAT + governorateId;
+    let pending = this.childCache.get(key);
+    if (!pending) {
+      pending = this.fetchPlacesUnder(governorateId).catch((error: unknown) => {
+        this.childCache.delete(key);
+        throw error;
+      });
+      this.childCache.set(key, pending);
+    }
+    return pending;
+  }
+
+  /**
+   * Every active place below the governorates except regions (districts,
+   * cities and neighbourhoods of the whole country), sorted by name. Lets the
+   * public filter pick a neighbourhood directly, before any governorate.
+   */
+  allPlaces(): Promise<Location[]> {
+    let pending = this.childCache.get(ALL);
+    if (!pending) {
+      pending = this.fetchAllPlaces().catch((error: unknown) => {
+        this.childCache.delete(ALL);
+        throw error;
+      });
+      this.childCache.set(ALL, pending);
+    }
+    return pending;
+  }
+
   refresh(): Promise<void> {
     this.childCache.clear();
     this.loading = null;
@@ -74,6 +123,11 @@ export class LocationsService {
   /** Drops the cached children of one location, e.g. after an admin adds a place under it. */
   invalidate(parentId: string | null): void {
     this.childCache.delete(parentId ?? ROOT);
+    // A new place may sit anywhere under a two-level governorate, and is in the all-places list.
+    this.childCache.delete(ALL);
+    for (const key of [...this.childCache.keys()]) {
+      if (key.startsWith(FLAT)) this.childCache.delete(key);
+    }
     this.versionState.update((v) => v + 1);
   }
 
@@ -85,6 +139,35 @@ export class LocationsService {
       .order('sort_order')
       .order('name_ar');
     this.specialtyState.set(unwrap<Specialty[]>(result) ?? []);
+  }
+
+  private async fetchAllPlaces(): Promise<Location[]> {
+    const places: Location[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const result = await this.supabase
+        .from('locations')
+        .select('*')
+        .eq('is_active', true)
+        .not('kind', 'in', '(governorate,region)')
+        .order('name_ar')
+        .order('id')
+        .range(from, from + PAGE - 1);
+      const page = unwrap<Location[]>(result) ?? [];
+      places.push(...page);
+      if (page.length < PAGE) return places;
+    }
+  }
+
+  private async fetchPlacesUnder(governorateId: string): Promise<Location[]> {
+    const result = await this.supabase
+      .from('locations')
+      .select('*')
+      .eq('is_active', true)
+      .contains('path', [governorateId])
+      .neq('id', governorateId)
+      .neq('kind', 'region')
+      .order('name_ar');
+    return unwrap<Location[]>(result) ?? [];
   }
 
   private async fetchChildren(parentId: string | null): Promise<Location[]> {

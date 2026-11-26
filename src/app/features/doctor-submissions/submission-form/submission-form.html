@@ -21,13 +21,7 @@
         </app-form-field>
 
         <app-form-field label="fields.specialty" for="s-specialty" [field]="suggestion.specialty_id" [required]="true">
-          <select id="s-specialty" class="control" [formField]="suggestion.specialty_id">
-            <option value="">{{ 'common.choose' | translate }}</option>
-            @for (specialty of locations.specialties(); track specialty.id) {
-              <option [value]="specialty.id">{{ language.name(specialty) }}</option>
-            }
-            <option [value]="other">{{ 'suggest.otherSpecialty' | translate }}</option>
-          </select>
+          <app-search-select inputId="s-specialty" [options]="specialtyOptions()" [formField]="suggestion.specialty_id" />
         </app-form-field>
 
         @if (model().specialty_id === other) {
@@ -72,6 +66,7 @@
             [invalid]="suggestion.location_id().touched() && suggestion.location_id().invalid()"
             [allowAdd]="true"
             [skipRegions]="true"
+            [twoLevel]="true"
             (selection)="onLocation($event)"
             (addRequest)="onAddRequest($event)"
           />

@@ -20,6 +20,7 @@ import { FieldGroup } from '../../../../shared/components/field-group/field-grou
 import { ImageField } from '../../../../shared/components/image-field/image-field';
 import { FormFieldWrapper } from '../../../../shared/components/form-field/form-field';
 import { LocationPicker } from '../../../../shared/components/location-picker/location-picker';
+import { SearchSelect } from '../../../../shared/components/search-select/search-select';
 import { LocationField } from '../../../../shared/utils/location-field';
 import { LoadingState } from '../../../../shared/components/loading-state/loading-state';
 import { PHONE_PATTERN, URL_PATTERN } from '../../../../shared/utils/validation';
@@ -37,6 +38,7 @@ export interface DoctorDialogData {
 @Component({
   selector: 'app-doctor-dialog',
   imports: [
+    SearchSelect,
     FormField,
     MatDialogModule,
     MatButtonModule,
